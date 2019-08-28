@@ -1,9 +1,9 @@
 [
     {
         "cmd": "/usr/share/appconfig/bin/appconfig-polkit-helper.py",
-        "prefix": "net.lliurex.deskedit-helper",
-        "nameaction": "deskedit-helper",
-        "icon": "deskedit",
+        "prefix": "net.lliurex.appconfig-polkit-helper",
+        "nameaction": "appconfig-polkit-helper",
+        "icon": "appconfig",
         "auths": [
             {
                 "type": "group",

@@ -10,10 +10,10 @@ Homepage: http://lliurex.net
 
 Package: python3-appconfig
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends},appconfig-polkit-helper
+Depends: ${python3:Depends}, appconfig-polkit-helper
 Description: Lib for generate desktop files
 
 Package: appconfig-polkit-helper
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}
+Depends: ${python3:Depends}
 Description: Helper for polkit

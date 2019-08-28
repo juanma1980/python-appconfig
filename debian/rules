@@ -12,5 +12,6 @@ export PYBUILD_NAME=appconfig
 
 %:
 	dh $@ --with zero,python3 --buildsystem pybuild
+#	dh $@ --with zero
 
 	
