@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import subprocess
 
 try:
 	import xmlrpc.client as n4d
@@ -53,6 +54,7 @@ class appConfig():
 		self._read_config_from_system(level)
 		self._read_config_from_n4d()
 		config=self.config.copy()
+		self._debug("Data -> %s"%(self.config))
 		return (config)
 
 	def _read_config_from_system(self,level=None):
@@ -66,6 +68,7 @@ class appConfig():
 					self._debug("Error opening %s: %s"%(confFile,e))
 					
 			if data:
+				self._debug("Updating %s -> %s"%(confFile,level))
 				self.config.update({level:data})
 		#def _read_file
 		confFiles=self.get_configFile(level)
@@ -74,21 +77,32 @@ class appConfig():
 	#def read_config_from_system
 
 	def write_config(self,data,level='user',key=None,pk=None):
-		self._debug("Writing key %s to %s"%(key,level))
+		self._debug("Writing key %s to %s Polkit:%s"%(key,level,pk))
 		retval=True
-		if key=='system' and not pk:
+		if level=='system' and not pk:
+			self._debug("Invoking pk")
 			try:
-				subprocess.check_call(["pkexec","/usr/share/appconfig/bin/appconfig-polkit-helper.py",data,level,key])
-			except:
+				data=json.dumps(data)
+				subprocess.check_call(["pkexec","/usr/share/appconfig/bin/appconfig-polkit-helper.py",data,level,key,self.confFile,self.baseDirs[level]])
+			except Exception as e:
+				self._debug("Invoking pk failed: %s"%e)
 				retval=False
 		else:
 			oldConf=self.get_config(level)
 			self._debug("Old: %s"%oldConf)
 			newConf=oldConf.copy()
 			if key:
+				if not level in newConf.keys():
+					newConf[level]={key:None}
+				if not key in newConf[level].keys():
+					newConf[level][key]=None
 				newConf[level][key]=data
 			else:
 				for key in data.keys():
+					if not level in newConf.keys():
+						newConf[level]={key:None}
+					if not key in newConf[level].keys():
+						newConf[level][key]=None
 					newConf[level][key]=data[key]
 			if key=='n4d':
 				retval=self._write_config_to_n4d(newConf)
@@ -100,6 +114,8 @@ class appConfig():
 	def _write_config_to_system(self,conf,level='user'):
 		data={}
 		retval=True
+		if not level in self.config.keys():
+			self.config[level]={}
 		self._debug("Writing info %s"%self.config[level])
 		if level and level in self.baseDirs.keys():
 			confDir=self.baseDirs[level]

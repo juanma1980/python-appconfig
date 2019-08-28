@@ -14,7 +14,7 @@
                 ],
                 "any": "no",
                 "inactive": "no",
-                "active": "auth_self"
+                "active": "auth_self_keep"
             }
         ],
         "default_auth": {
