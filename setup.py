@@ -23,9 +23,9 @@ from distutils.core import setup
 
 if __name__ == '__main__':
 
-    setup(name='python3-appconf',
+    setup(name='python3-appconfig',
         version='0.1',
-        description='Lliurex appconf',
+        description='Lliurex appconfig',
         long_description="""""",
         author='Lliurex Team',
         author_email='juanma1980@gmail.com',
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         platforms='UNIX',
 #        scripts = [''],
         package_dir = {'':'src'},
-        packages = ['appconf'],
+        packages = ['appconfig'],
         data_files = [],
         classifiers=[
                 'Development Status :: 4 - Beta',
