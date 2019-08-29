@@ -1,8 +1,13 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 import sys
 import os
 import json
 import subprocess
+
+try:
+	from xmlrpclib import *
+except ImportError:
+	raise ImportError("xmlrpc not available. Disabling server queries")
 
 try:
 	import xmlrpc.client as n4d
@@ -166,6 +171,7 @@ class appConfig():
 
 	def _write_config_to_n4d(self,conf):
 		pass
+
 	def _execute_n4d_query(self):
 		retval={}
 		try:

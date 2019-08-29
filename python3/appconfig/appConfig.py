@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import tempfile
 import subprocess
 
 try:
@@ -14,11 +15,16 @@ class appConfig():
 	def __init__(self):
 		self.dbg=True
 		self.home=os.environ['HOME']
-		self.baseDirs={"user":"%s/.config"%self.home}
 		self.confFile="app.conf"
 		self.passFile="app.pwd"
+		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share"}
 		self.config={}
+		self.n4dcredentials=[]
+		self.server="172.20.9.174"
 		self.n4d=None
+		self.n4dclass=None
+		self.n4dmethod=None
+		self.n4dparms={}
 	#def __init__
 
 	def _debug(self,msg):
@@ -28,6 +34,7 @@ class appConfig():
 
 	def set_baseDirs(self,dirs):
 		self.baseDirs=dirs.copy()
+		self.baseDirs['n4d']=self.baseDirs['system']
 		self._debug("baseDirs: %s"%self.baseDirs)
 	#def set_baseDirs
 
@@ -104,7 +111,10 @@ class appConfig():
 					if not key in newConf[level].keys():
 						newConf[level][key]=None
 					newConf[level][key]=data[key]
-			if key=='n4d':
+			if level=='n4d':
+				if not self.n4d:
+					self.n4d=self._n4d_connect(self.server)
+				self._debug("Sending config to n4d")
 				retval=self._write_config_to_n4d(newConf)
 			else:
 				retval=self._write_config_to_system(newConf,level)
@@ -164,21 +174,46 @@ class appConfig():
 		return (self.config)
 	#def read_config_from_n4d
 
-	def _write_config_to_n4d(self,conf):
-		pass
-	def _execute_n4d_query(self):
-		retval={}
+	def _write_config_to_n4d(self,conf,level='n4d'):
+		retval=True
+		self.n4dcredentials={'user':'lliurex','password':'lliurex','server':'172.20.9.174'}
+		if not self.n4dcredentials:
+			retval=False
+		if retval:
+			if not self.n4dclass:
+				#create tmp file (will be sended to n4d server)
+				confFile=tempfile.mkstemp()[1]
+				self.config[level]=conf[level]
+				try:
+					with open(confFile,'w') as f:
+						json.dump(self.config[level],f,indent=4,sort_keys=True)
+				except Exception as e:
+					retval=False
+					print("Error writing system config: %s"%e)
+				self.n4dclass="ScpManager"
+				self.n4dmethod="send_file"
+				self.n4dparms.update({self.n4dmethod:["\"%s\""%self.n4dcredentials['user'],"\"%s\""%self.n4dcredentials['password'],"\"%s\""%self.n4dcredentials['server'],"\"%s\""%confFile,"\"%s/%s\""%(self.baseDirs['system'],self.confFile)]})
+				query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
+				retval=self._execute_n4d_query(query)
+		return retval
+
+	def _execute_n4d_query(self,query):
+		retval=True
+		data={}
 		try:
+			self._debug("Executing query %s"%query)
 			data=eval(query)
 		except Exception as e:
 			self._debug("Error accessing n4d: %s"%e)
-			sw=False
-		if 'status' and 'data' in data.keys():
-			retval=data
-			if data['status']!=True:
-				self._debug("Call to method %s of class %s failed,"%(self.n4dmethod,self.n4dclass))
-		elif sw:
-			self._debug("Unable to get status or data from n4d method. Please update your method")
+			retval['status']=False
+		if type(data)==type({}):
+			if 'status' in data.keys():
+				retval=data['status']
+#				data=data['status']
+				if data['status']!="True":
+					self._debug("Call to method %s of class %s failed,"%(self.n4dmethod,self.n4dclass))
+					self._debug("%s"%data)
+		self._debug(data)
 		return(retval)
 
 	def set_credentials(self,user,pwd,server):
