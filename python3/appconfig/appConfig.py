@@ -176,7 +176,7 @@ class appConfig():
 
 	def _write_config_to_n4d(self,conf,level='n4d'):
 		retval=True
-		self.n4dcredentials={'user':'lliurex','password':'lliurex','server':'172.20.9.174'}
+		self.n4dcredentials={'user':'','password':'','server':''}
 		if not self.n4dcredentials:
 			retval=False
 		if retval:
