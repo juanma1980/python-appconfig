@@ -10,16 +10,6 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import QSize,pyqtSlot,Qt, QPropertyAnimation,QThread,QRect,QTimer,pyqtSignal,QSignalMapper,QProcess,QEvent
 import gettext
 from edupals.ui import QAnimatedStatusBar
-modules=[]
-for mod in os.listdir("stacks"):
-	if mod.endswith(".py"):
-		mod_name=mod.split(".")[0]
-		mod_import="from stacks.%s import *"%mod_name
-		try:
-			exec(mod_import)
-			modules.append(mod_name)
-		except:
-			pass
 
 gettext.textdomain('testConfig')
 _ = gettext.gettext
@@ -33,19 +23,41 @@ BTN_MENU_SIZE=24
 class appConfig(QWidget):
 	keybind_signal=pyqtSignal("PyQt_PyObject")
 	update_signal=pyqtSignal("PyQt_PyObject")
-	def __init__(self):
+	def __init__(self,parms={}):
 		super().__init__()
 		self.dbg=True
-		self.instance().setStyleSheet(_define_css())
+		self.parms=parms
+		self.modules=[]
+		self.setStyleSheet(self._define_css())
 		self.appName="Run-O-Matic"
 		self.categories={}
 		self.desktops={}
 		self.app_icons={}
 		self.icon='shell'
-		self.runner=appRun()
 		self.options={0:{'name':"Options",'icon':'icon'}}
+		self.widgets={}
+	#def init
+	
+	def _debug(self,msg):
+		if self.dbg:
+			print("%s"%msg)
+	#def _debug
+
+	def load_stacks(self):
+		if os.path.isdir("stacks"):
+			for mod in os.listdir("stacks"):
+				if mod.endswith(".py"):
+					mod_name=mod.split(".")[0]
+					mod_import="from stacks.%s import *"%mod_name
+					try:
+						exec(mod_import)
+						self.modules.append(mod_name)
+						self._debug("Load stack %s"%mod_name)
+					except:
+						print("KO")
+						pass
 		idx=1
-		for mod_name in modules:
+		for mod_name in self.modules:
 			mod=eval("%s()"%mod_name)
 			if mod.index>0:
 				idx=mod.index
@@ -54,19 +66,15 @@ class appConfig(QWidget):
 			while idx in self.options.keys():
 				idx+=1
 			try:
-				if mod.parm:
-					mod.apply_parms(eval("%s"%mod.parm))
-			except:
+				if 'parm' in mod.__dict__.keys():
+					if mod.parm:
+						self._debug("Setting parms for %s"%mod_name)
+						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
+			except Exception as e:
+				print("KO %s"%e)
 				pass
 			self.options[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
-		self.widgets={}
 		self._render_gui()
-	#def init
-	
-	def _debug(self,msg):
-		if self.dbg:
-			print("%s"%msg)
-	#def _debug
 	
 	def _render_gui(self):
 		box=QGridLayout()
@@ -175,7 +183,7 @@ class appConfig(QWidget):
 			self.statusBar.show()
 	#def _show_message
 
-	def _define_css():
+	def _define_css(self):
 		css="""
 		QPushButton{
 			padding: 6px;
