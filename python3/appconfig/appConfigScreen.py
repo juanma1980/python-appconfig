@@ -17,7 +17,6 @@ _ = gettext.gettext
 QString=type("")
 QInt=type(0)
 
-RSRC="/home/lliurex/git/testkid/rsrc"
 BTN_MENU_SIZE=24
 
 class appConfig(QWidget):
@@ -26,10 +25,11 @@ class appConfig(QWidget):
 	def __init__(self,parms={}):
 		super().__init__()
 		self.dbg=True
+		self.rsrc=""
 		self.parms=parms
 		self.modules=[]
 		self.setStyleSheet(self._define_css())
-		self.appName="Run-O-Matic"
+		self.appName=""
 		self.categories={}
 		self.desktops={}
 		self.app_icons={}
