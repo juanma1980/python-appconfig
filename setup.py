@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # $Id: setup.py,v 1.32 2010/10/17 15:47:21 ghantoos Exp $
 #
@@ -23,7 +23,7 @@ from distutils.core import setup
 
 if __name__ == '__main__':
 
-    setup(name='python-appconfig',
+    setup(name='python3-appconfig',
         version='0.1',
         description='Lliurex appconfig',
         long_description="""""",
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         license='GPL',
         platforms='UNIX',
 #        scripts = [''],
-        package_dir = {'':'python2'},
+        package_dir = {'':'python3'},
         packages = ['appconfig'],
         data_files = [],
         classifiers=[
