@@ -77,7 +77,7 @@ class appConfigScreen(QWidget):
 	def _render_gui(self):
 		box=QGridLayout()
 		img_banner=QLabel()
-		img=QtGui.QPixmap("%s/banner.png"%RSRC)
+		img=QtGui.QPixmap("%s/banner.png"%self.rsrc)
 		img_banner.setPixmap(img)
 		img_banner.setAlignment(Qt.AlignCenter)
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
