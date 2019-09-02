@@ -4,20 +4,20 @@ import os
 import json
 import tempfile
 import subprocess
-
+N4D=True
 try:
 	import xmlrpc.client as n4d
 except ImportError:
 	raise ImportError("xmlrpc not available. Disabling server queries")
+	N4D=False
 import ssl
 
 class appConfig():
 	def __init__(self):
 		self.dbg=True
 		self.home=os.environ['HOME']
-		self.confFile="app.conf"
-		self.passFile="app.pwd"
-		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share"}
+		self.confFile="appconfig.conf"
+		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share/%s"%self.confFile.split('.')[0]}
 		self.config={}
 		self.n4dcredentials=[]
 		self.server="172.20.9.174"
@@ -49,6 +49,8 @@ class appConfig():
 			confFile.update({level:"%s/%s"%(self.baseDirs[level],self.confFile)})
 		else:
 			for key,item in self.baseDirs.items():
+				if key=='n4d':
+					continue
 				confFile.update({key:"%s/%s"%(item,self.confFile)})
 		return confFile
 
@@ -58,8 +60,14 @@ class appConfig():
 	#def set_defaultConfig
 
 	def get_config(self,level=None):
-		self._read_config_from_system(level)
-		self._read_config_from_n4d()
+		self.config={}
+		if N4D==False and level=='n4d':
+			level='system'
+		if level=='n4d':
+			self._read_config_from_n4d()
+		else:
+			self._read_config_from_system(level)
+
 		config=self.config.copy()
 		self._debug("Data -> %s"%(self.config))
 		return (config)
@@ -86,6 +94,8 @@ class appConfig():
 	def write_config(self,data,level='user',key=None,pk=None):
 		self._debug("Writing key %s to %s Polkit:%s"%(key,level,pk))
 		retval=True
+		if N4D==False and level=='n4d':
+			level='system'
 		if level=='system' and not pk:
 			self._debug("Invoking pk")
 			try:
