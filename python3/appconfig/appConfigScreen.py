@@ -30,18 +30,21 @@ class appConfigScreen(QWidget):
 		self.setStyleSheet(self._define_css())
 		self.appName=appName
 		gettext.textdomain(self.appName.lower().replace(" ","_"))
-		self.categories={}
-		self.desktops={}
-		self.app_icons={}
-		self.icon='shell'
 		self.options={0:{'name':"Options",'icon':'icon'}}
-		self.widgets={}
 	#def init
 	
 	def _debug(self,msg):
 		if self.dbg:
 			print("%s"%msg)
 	#def _debug
+
+	def setIcon(self,icon):
+		if os.path.isfile(icon):
+			self.setWindowIcon(QtGui.QIcon(icon))
+		elif os.path.isfile("%s/%s"%(self.rsrc,icon):
+			self.setWindowIcon(QtGui.QIcon("%s/%s"%(self.rsrc,icon)))
+	#def setIcon
+
 
 	def load_stacks(self):
 		if os.path.isdir("stacks"):
@@ -57,13 +60,17 @@ class appConfigScreen(QWidget):
 						self._debug("Unable to load %s: %s"%(mod_name,e))
 		idx=1
 		for mod_name in self.modules:
-			mod=eval("%s()"%mod_name)
+			try:
+				mod=eval("%s()"%mod_name)
+			except Exception as e:
+				self._debug("Import failed for %s: %s"%(mod_name,e))
 			if mod.index>0:
 				idx=mod.index
 			if mod.enabled==False:
 				continue
 			while idx in self.options.keys():
 				idx+=1
+				self._debug("New idx: %s"%idx)
 			try:
 				if 'parm' in mod.__dict__.keys():
 					if mod.parm:
@@ -72,7 +79,7 @@ class appConfigScreen(QWidget):
 			except Exception as e:
 				self._debug("Failed to pass parm %s to %s: %s"%(mod_parm,mod_name,e))
 			try:
-				mod.set_textdomain(self.appName.lower().replace(" ","_"))
+				mod.set_textDomain(self.appName.lower().replace(" ","_"))
 			except Exception as e:
 				print("Can't set textdomain for %s: %s"%(mod_name,e))
 			self.options[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
@@ -125,7 +132,9 @@ class appConfigScreen(QWidget):
 				lst_widget.setIcon(icn)
 				if 'tooltip' in option.keys():
 					lst_widget.setToolTip(option['tooltip'])
-					indexes.insert(index,index)
+				while index in indexes:
+					index+=1
+				indexes.insert(index,index)
 			self.options[index]['widget' ]=lst_widget
 
 		new_dict={}
