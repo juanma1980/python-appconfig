@@ -14,7 +14,7 @@ config=appConfig()
 level='system'
 key='default'
 confFile='app.conf'
-defaultDir="/usr/share"
+defaultDir="/usr/share/appconfig"
 data=json.loads(sys.argv[1])
 if len(sys.argv)>2:
 	level=sys.argv[2]
