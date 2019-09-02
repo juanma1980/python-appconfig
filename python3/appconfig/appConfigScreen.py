@@ -24,11 +24,12 @@ class appConfigScreen(QWidget):
 	def __init__(self,appName,parms={}):
 		super().__init__()
 		self.dbg=True
-		self.rsrc=""
+		self.rsrc="../rsrc"
 		self.parms=parms
 		self.modules=[]
-		self.setStyleSheet(self._define_css())
 		self.appName=appName
+		self.background="../rsrc/background.png"
+		self.banner="%s/%s"%(self.rsrc,"banner.png")
 		gettext.textdomain(self.appName.lower().replace(" ","_"))
 		self.options={0:{'name':"Options",'icon':'icon'}}
 	#def init
@@ -38,15 +39,44 @@ class appConfigScreen(QWidget):
 			print("%s"%msg)
 	#def _debug
 
+	def setRsrcPath(self,rsrc):
+		if os.path.isdir(rsrc):
+			self.rsrc=rsrc
+		else:
+			self._debug("%s doesn't exists")
+		self._debug("RSRC: %s"%self.rsrc)
+
 	def setIcon(self,icon):
-		if os.path.isfile(icon):
-			self.setWindowIcon(QtGui.QIcon(icon))
-		elif os.path.isfile("%s/%s"%(self.rsrc,icon)):
-			self.setWindowIcon(QtGui.QIcon("%s/%s"%(self.rsrc,icon)))
+		if not os.path.isfile(icon):
+			if os.path.isfile("%s/%s"%(self.rsrc,icon)):
+				icon="%s/%s"%(self.rsrc,icon)
+			else:
+				self._debug("Icon not found at %s"%self.rsrc)
+		self.setWindowIcon(QtGui.QIcon(icon))
 	#def setIcon
 
+	def setBanner(self,banner):
+		if not os.path.isfile(banner):
+			if os.path.isfile("%s/%s"%(self.rsrc,banner)):
+				banner="%s/%s"%(self.rsrc,banner)
+			else:
+				banner=""
+				self._debug("Banner not found at %s"%self.rsrc)
+		self.banner=banner
+	#def setBanner
+	
+	def setBackgroundImage(self,background):
+		if not os.path.isfile(background):
+			if os.path.isfile("%s/%s"%(self.rsrc,background)):
+				background="%s/%s"%(self.rsrc,background)
+			else:
+				background=""
+				self._debug("Background not found at %s"%self.rsrc)
+		self.background=background
+	#def setBanner
 
 	def load_stacks(self):
+		self.setStyleSheet(self._define_css())
 		if os.path.isdir("stacks"):
 			for mod in os.listdir("stacks"):
 				if mod.endswith(".py"):
@@ -77,9 +107,9 @@ class appConfigScreen(QWidget):
 						self._debug("Setting parms for %s"%mod_name)
 						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
 			except Exception as e:
-				self._debug("Failed to pass parm %s to %s: %s"%(mod_parm,mod_name,e))
+				self._debug("Failed to pass parm %s to %s: %s"%(mod.parm,mod_name,e))
 			try:
-				mod.set_textDomain(self.appName.lower().replace(" ","_"))
+				mod.setTextDomain(self.appName.lower().replace(" ","_"))
 			except Exception as e:
 				print("Can't set textdomain for %s: %s"%(mod_name,e))
 			self.options[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
@@ -88,8 +118,9 @@ class appConfigScreen(QWidget):
 	def _render_gui(self):
 		box=QGridLayout()
 		img_banner=QLabel()
-		img=QtGui.QPixmap("%s/banner.png"%self.rsrc)
-		img_banner.setPixmap(img)
+		if os.path.isfile(self.banner):
+			img=QtGui.QPixmap(self.banner)
+			img_banner.setPixmap(img)
 		img_banner.setAlignment(Qt.AlignCenter)
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
@@ -229,7 +260,8 @@ class appConfigScreen(QWidget):
 			margin-right:6px;
 		}
 		#panel{
-			background-image:url("../rsrc/background.png");
+			background-image:url("%s");
+			background-size:stretch;
 			background-repeat:no-repeat;
 			background-position:center;
 		}
@@ -237,7 +269,7 @@ class appConfigScreen(QWidget):
 			background-color:rgba(255,255,255,0.7);
 			color:black;
 		}
-		"""
+		"""%self.background
 		return(css)
 		#def _define_css
 
