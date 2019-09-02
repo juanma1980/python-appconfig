@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="11.218333mm"
+   height="26.528627mm"
+   viewBox="0 0 11.218333 26.528627"
+   version="1.1"
+   id="svg3838"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/home/lliurex/git/testkid/rsrc/banner.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <defs
+     id="defs3832">
+    <linearGradient
+       id="gradient0"
+       gradientUnits="userSpaceOnUse"
+       x1="26.68"
+       y1="46.52"
+       x2="34.48"
+       y2="36.389999">
+      <stop
+         offset="0"
+         stop-color="#c6d7f5"
+         id="stop1289" />
+      <stop
+         offset="1"
+         stop-color="#6b94dd"
+         id="stop1291" />
+    </linearGradient>
+    <linearGradient
+       id="gradient2"
+       gradientUnits="userSpaceOnUse"
+       x1="70.400002"
+       y1="34.52"
+       x2="71.080002"
+       y2="50.830002">
+      <stop
+         offset="0"
+         stop-color="#a3043c"
+         id="stop1313" />
+      <stop
+         offset="1"
+         stop-color="#ffdce6"
+         id="stop1315" />
+    </linearGradient>
+    <linearGradient
+       id="gradient3"
+       gradientUnits="userSpaceOnUse"
+       x1="138.84"
+       y1="49.93"
+       x2="86.239998"
+       y2="116.1">
+      <stop
+         offset="0"
+         stop-color="#c13e3e"
+         id="stop1322" />
+      <stop
+         offset="1"
+         stop-color="#e27a7a"
+         id="stop1324" />
+    </linearGradient>
+    <linearGradient
+       id="gradient4"
+       gradientUnits="userSpaceOnUse"
+       x1="-19.870001"
+       y1="-1.53"
+       x2="5.48"
+       y2="-26.290001">
+      <stop
+         offset="0"
+         stop-color="#ffec4b"
+         id="stop1331" />
+      <stop
+         offset="1"
+         stop-color="#f0a506"
+         id="stop1333" />
+    </linearGradient>
+    <linearGradient
+       id="gradient5"
+       gradientUnits="userSpaceOnUse"
+       x1="30.5"
+       y1="-22.809999"
+       x2="56.009998"
+       y2="-9.1300001">
+      <stop
+         offset="0"
+         stop-color="#ffffff"
+         id="stop1338" />
+      <stop
+         offset="1"
+         stop-color="#fff289"
+         id="stop1340" />
+    </linearGradient>
+    <linearGradient
+       id="gradient6"
+       gradientUnits="userSpaceOnUse"
+       x1="53.009998"
+       y1="-9.5500002"
+       x2="69.940002"
+       y2="3.4300001">
+      <stop
+         offset="0"
+         stop-color="#f99b05"
+         id="stop1345" />
+      <stop
+         offset="1"
+         stop-color="#fcb23d"
+         id="stop1347" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="-394.21966"
+     inkscape:cy="-112.73191"
+     inkscape:document-units="mm"
+     inkscape:current-layer="flowRoot121"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="950"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3835">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(7.4507941,-24.462517)">
+    <g
+       aria-label="EXAMPLE CONFIG APP"
+       transform="matrix(0.26458333,0,0,0.26458333,-332.61905,18.658335)"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:128px;line-height:1.25;font-family:Breip;-inkscape-font-specification:Breip;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       id="flowRoot121">
+      <rect
+         style="fill:#fff900;fill-opacity:1;stroke:#000000;stroke-width:1.02235067;stroke-opacity:1;opacity:1"
+         id="rect836"
+         width="44.071712"
+         height="100.73981"
+         x="1229.3574"
+         y="23.483242" />
+      <path
+         d="m 1242.3574,117.58984 q -2.125,-17.999996 -3.5,-34.749996 -1.875,-21.75 -2.25,-38 -0.5,-15.125 0.875,-15.125 3.25,-0.25 6.375,-1.75 1,-0.25 2.375,-0.125 8.75,0.875 12.125,2.75 1.125,0.625 2.375,1.5 3.875,2.75 3.5,9.25 0,2.375 -3,5.625 -0.625,0.625 -0.875,1.125 -5.875,7 -11.125,10.5 -1.5,1.125 -7,2.875 -2.625,0.875 -4.25,2.25 -1.75,1.5 -1.25,3.5 0.125,0.625 0.75,0.625 6.875,0.125 13.5,-3.75 6.625,-3.625 13.875,-11.125 0.25,-0.375 1.375,-1.5 4.375,-4.375 5,-8 0.75,-5.25 -2.25,-11 -2.5,-5.125 -7.125,-7.25 -5.75,-2.75 -14.875,-3.25 -6.375,-0.25 -13,1.75 -4,1.375 -4.625,4.125 -0.75,4.75 0,15.25 0.375,2.625 0.375,5 0.875,22.125 1.375,30 1.125,20.625 2.5,34.749996 v 6.375 q 0.5,1.75 2,2.5 2.75,1.375 5.5,-1.125 1.625,-1.375 1.25,-3 z"
+         id="path169"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#000000;stroke-opacity:1" />
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot131"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,-332.61905,11.25)"><flowRegion
+         id="flowRegion133"><rect
+           id="rect135"
+           width="1382.8572"
+           height="314.28571"
+           x="-77.14286"
+           y="-134.28572" /></flowRegion><flowPara
+         id="flowPara137" /></flowRoot>  </g>
+</svg>
