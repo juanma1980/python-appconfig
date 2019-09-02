@@ -71,6 +71,10 @@ class appConfigScreen(QWidget):
 						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
 			except Exception as e:
 				self._debug("Failed to pass parm %s to %s: %s"%(mod_parm,mod_name,e))
+			try:
+				mod.set_textdomain(self.appName.lower().replace(" ","_"))
+			except Exception as e:
+				print("Can't set textdomain for %s: %s"%(mod_name,e))
 			self.options[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
 		self._render_gui()
 	
