@@ -41,7 +41,7 @@ class appConfigScreen(QWidget):
 	def setIcon(self,icon):
 		if os.path.isfile(icon):
 			self.setWindowIcon(QtGui.QIcon(icon))
-		elif os.path.isfile("%s/%s"%(self.rsrc,icon):
+		elif os.path.isfile("%s/%s"%(self.rsrc,icon)):
 			self.setWindowIcon(QtGui.QIcon("%s/%s"%(self.rsrc,icon)))
 	#def setIcon
 
