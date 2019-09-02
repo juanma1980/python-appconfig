@@ -7,7 +7,7 @@ from appconfig.appConfigScreen import appConfigScreen as appConfig
 app=QApplication(["Config app"])
 name="Parameter1"
 config=appConfig("Config App",{'parameter1':name})
-config.setRsrcPath("%s/rsrc"%("/home/lliurex/git/python3-appconfig/examples"))
+config.setRsrcPath("%s/rsrc"%("."))
 config.setIcon('icon.png')
 config.setBanner('banner.png')
 config.setBackgroundImage('background.svg')
