@@ -11,7 +11,6 @@ from PyQt5.QtCore import QSize,pyqtSlot,Qt, QPropertyAnimation,QThread,QRect,QTi
 import gettext
 from edupals.ui import QAnimatedStatusBar
 
-gettext.textdomain('testConfig')
 _ = gettext.gettext
 
 QString=type("")
@@ -19,17 +18,18 @@ QInt=type(0)
 
 BTN_MENU_SIZE=24
 
-class appConfig(QWidget):
+class appConfigScreen(QWidget):
 	keybind_signal=pyqtSignal("PyQt_PyObject")
 	update_signal=pyqtSignal("PyQt_PyObject")
-	def __init__(self,parms={}):
+	def __init__(self,appName,parms={}):
 		super().__init__()
 		self.dbg=True
 		self.rsrc=""
 		self.parms=parms
 		self.modules=[]
 		self.setStyleSheet(self._define_css())
-		self.appName=""
+		self.appName=appName
+		gettext.textdomain(self.appName.lower().replace(" ","_"))
 		self.categories={}
 		self.desktops={}
 		self.app_icons={}
@@ -53,9 +53,8 @@ class appConfig(QWidget):
 						exec(mod_import)
 						self.modules.append(mod_name)
 						self._debug("Load stack %s"%mod_name)
-					except:
-						print("KO")
-						pass
+					except Exception as e:
+						self._debug("Unable to load %s: %s"%(mod_name,e))
 		idx=1
 		for mod_name in self.modules:
 			mod=eval("%s()"%mod_name)
@@ -71,8 +70,7 @@ class appConfig(QWidget):
 						self._debug("Setting parms for %s"%mod_name)
 						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
 			except Exception as e:
-				print("KO %s"%e)
-				pass
+				self._debug("Failed to pass parm %s to %s: %s"%(mod_parm,mod_name,e))
 			self.options[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
 		self._render_gui()
 	
@@ -108,7 +106,7 @@ class appConfig(QWidget):
 		btn_menu.setMaximumHeight(BTN_MENU_SIZE)
 		btn_menu.setToolTip(_("Options"))
 		btn_menu.setObjectName("menuButton")
-		box.addWidget(btn_menu,Qt.Alignment(1))
+#		box.addWidget(btn_menu,Qt.Alignment(1))
 		indexes=[]
 		for i in range (100):
 			indexes.append("")
