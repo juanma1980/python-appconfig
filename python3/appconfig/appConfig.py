@@ -34,7 +34,8 @@ class appConfig():
 
 	def set_baseDirs(self,dirs):
 		self.baseDirs=dirs.copy()
-		self.baseDirs['n4d']=self.baseDirs['system']
+		if 'nd4' not in self.baseDirs.keys():
+			self.baseDirs['n4d']=self.baseDirs['system']
 		self._debug("baseDirs: %s"%self.baseDirs)
 	#def set_baseDirs
 
@@ -46,18 +47,44 @@ class appConfig():
 	def get_configFile(self,level=None):
 		confFile={}
 		if level in self.baseDirs.keys():
-			confFile.update({level:"%s/%s"%(self.baseDirs[level],self.confFile)})
+			conf=os.path.join(self.baseDirs[level],self.confFile)
+			confFile.update({level:conf})
 		else:
-			for key,item in self.baseDirs.items():
+			for level,item in self.baseDirs.items():
 				if key=='n4d':
 					continue
-				confFile.update({key:"%s/%s"%(item,self.confFile)})
+				conf=os.path.join(item,self.confFile)
+				confFile.update({level:conf})
 		return confFile
+	#def get_configFile
 
 	def set_defaultConfig(self,config):
 		self.config.update({'default':config})
 		self._debug(self.config)
 	#def set_defaultConfig
+
+	def set_level(self,level):
+		self.level=level
+	#def set_level
+
+	def get_level(self):
+		config=get_config()
+		#N4d wons over all
+		#User wons over system
+		level=config['n4d'].get('enabled','user')
+		if level=='user':
+			level=config['user'].get('enabled','system')
+			if level=='system':
+				level=config['system'].get('enabled','user')
+				if level!='system':
+					level='system'
+			else:
+				level='user'
+		else:
+			level='n4d'
+		self.set_level(level)
+		return(level)
+	#def get_level
 
 	def get_config(self,level=None):
 		self.config={}
@@ -71,6 +98,7 @@ class appConfig():
 		config=self.config.copy()
 		self._debug("Data -> %s"%(self.config))
 		return (config)
+	#def get_config
 
 	def _read_config_from_system(self,level=None):
 		def _read_file(confFile,level):
@@ -91,9 +119,11 @@ class appConfig():
 			_read_file(confFile,confLevel)
 	#def read_config_from_system
 
-	def write_config(self,data,level='user',key=None,pk=None):
+	def write_config(self,data,level=None,key=None,pk=None,create=True):
 		self._debug("Writing key %s to %s Polkit:%s"%(key,level,pk))
 		retval=True
+		if level==None:
+			level=self.get_level()
 		if N4D==False and level=='n4d':
 			level='system'
 		if level=='system' and not pk:
@@ -121,6 +151,8 @@ class appConfig():
 					if not key in newConf[level].keys():
 						newConf[level][key]=None
 					newConf[level][key]=data[key]
+			if 'enabled' not in newConf[level].keys():
+				data['enabled']=True
 			if level=='n4d':
 				if not self.n4d:
 					self.n4d=self._n4d_connect(self.server)
@@ -129,7 +161,7 @@ class appConfig():
 			else:
 				retval=self._write_config_to_system(newConf,level)
 		return (retval)
-
+	#def write_config
 
 	def _write_config_to_system(self,conf,level='user'):
 		data={}
@@ -158,7 +190,7 @@ class appConfig():
 				retval=False
 				print("Error writing system config: %s"%e)
 		return (retval)
-	#def read_config_from_system
+	#def _write_config_to_system
 
 	def set_class_for_n4d(self,n4dclass):
 		self.n4dclass=n4dclass
@@ -206,6 +238,7 @@ class appConfig():
 				query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
 				retval=self._execute_n4d_query(query)
 		return retval
+	#def _write_config_to_n4d
 
 	def _execute_n4d_query(self,query):
 		retval=True
@@ -225,6 +258,7 @@ class appConfig():
 					self._debug("%s"%data)
 		self._debug(data)
 		return(retval)
+	#def _execute_n4d_query(self,query):
 
 	def set_credentials(self,user,pwd,server):
 		self.credentials=[user,pwd]
