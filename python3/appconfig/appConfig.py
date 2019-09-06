@@ -51,7 +51,7 @@ class appConfig():
 			confFile.update({level:conf})
 		else:
 			for level,item in self.baseDirs.items():
-				if key=='n4d':
+				if level=='n4d':
 					continue
 				conf=os.path.join(item,self.confFile)
 				confFile.update({level:conf})

@@ -31,6 +31,7 @@ class appConfigScreen(QWidget):
 		self.background="../rsrc/background.png"
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
 		gettext.textdomain(self.appName.lower().replace(" ","_"))
+		self.last_index=0
 		self.options={0:{'name':"Options",'icon':'icon'}}
 	#def init
 	
@@ -105,6 +106,7 @@ class appConfigScreen(QWidget):
 				if 'parm' in mod.__dict__.keys():
 					if mod.parm:
 						self._debug("Setting parms for %s"%mod_name)
+						self._debug("self.parms['%s']"%mod.parm)
 						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
 			except Exception as e:
 				self._debug("Failed to pass parm %s to %s: %s"%(mod.parm,mod_name,e))
@@ -214,7 +216,19 @@ class appConfigScreen(QWidget):
 	#def _right_panel
 	
 	def _show_stack(self):
+		try:
+			if self.options[self.last_index]['module'].get_changes():
+				self.options[self.last_index]['module'].write_changes()
+		except:
+			pass
 		self.stk_widget.setCurrentIndex(self.lst_options.currentRow())
+		try:
+			self.options[self.lst_options.currentRow()]['module'].update_screen()
+		except:
+			pass
+		finally:
+			self.last_index=self.lst_options.currentRow()
+
 	#def _show_stack
 
 	def _show_message(self,msg,status=None):
