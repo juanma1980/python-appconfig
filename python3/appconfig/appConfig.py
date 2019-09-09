@@ -18,7 +18,7 @@ class appConfig():
 		self.home=os.environ['HOME']
 		self.confFile="appconfig.conf"
 		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share/%s"%self.confFile.split('.')[0]}
-		self.config={}
+		self.config={'user':{},'system':{},'n4d':{}}
 		self.n4dcredentials=[]
 		self.server="172.20.9.174"
 		self.n4d=None
@@ -87,7 +87,7 @@ class appConfig():
 	#def get_level
 
 	def get_config(self,level=None):
-		self.config={}
+		self.config={'user':{},'system':{},'n4d':{}}
 		if N4D==False and level=='n4d':
 			level='system'
 		if level=='n4d':
