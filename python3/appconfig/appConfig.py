@@ -68,6 +68,9 @@ class appConfig():
 	#def set_level
 
 	def get_level(self):
+		return(self.getLevel())
+
+	def getLevel(self):
 		config=get_config()
 		#N4d wons over all
 		#User wons over system
@@ -87,6 +90,9 @@ class appConfig():
 	#def get_level
 
 	def get_config(self,level=None):
+		return(self.getConfig(level))
+
+	def getConfig(self,level=None):
 		self.config={'user':{},'system':{},'n4d':{}}
 		if N4D==False and level=='n4d':
 			level='system'
@@ -151,8 +157,6 @@ class appConfig():
 					if not key in newConf[level].keys():
 						newConf[level][key]=None
 					newConf[level][key]=data[key]
-			if 'enabled' not in newConf[level].keys():
-				data['enabled']=True
 			if level=='n4d':
 				if not self.n4d:
 					self.n4d=self._n4d_connect(self.server)

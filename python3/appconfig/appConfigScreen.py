@@ -8,9 +8,10 @@ from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayo
 				QHeaderView
 from PyQt5 import QtGui
 from PyQt5.QtCore import QSize,pyqtSlot,Qt, QPropertyAnimation,QThread,QRect,QTimer,pyqtSignal,QSignalMapper,QProcess,QEvent
-import gettext
 from edupals.ui import QAnimatedStatusBar
+from appconfig.appConfig import appConfig 
 
+import gettext
 _ = gettext.gettext
 
 QString=type("")
@@ -24,6 +25,7 @@ class appConfigScreen(QWidget):
 	def __init__(self,appName,parms={}):
 		super().__init__()
 		self.dbg=True
+		self.level='user'
 		self.rsrc="../rsrc"
 		self.parms=parms
 		self.modules=[]
@@ -32,7 +34,9 @@ class appConfigScreen(QWidget):
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
 		gettext.textdomain(self.appName.lower().replace(" ","_"))
 		self.last_index=0
-		self.options={0:{'name':"Options",'icon':'icon'}}
+		self.stacks={0:{'name':"Options",'icon':'icon'}}
+		self.appConfig=appConfig()
+		self.config={}
 	#def init
 	
 	def _debug(self,msg):
@@ -76,7 +80,36 @@ class appConfigScreen(QWidget):
 		self.background=background
 	#def setBanner
 
-	def load_stacks(self):
+	def setConfig(self,confDirs,confFile):
+		self.appConfig.set_baseDirs(confDirs)
+		self.appConfig.set_configFile(confFile)
+	#def setConfig(self,confDirs,confFile):
+	
+	def _get_default_config(self):
+		data={}
+		data=self.appConfig.get_config('system')
+		if 'config' not in data['system'].keys():
+			data['system']['config']='user'
+		self.level=data['system']['config']
+		self._debug("Read level from config: %s"%self.level)
+		return (data)
+	#def get_config(self,level):
+	
+	def getConfig(self,level=None):
+		data=self._get_default_config()
+		if not level:
+			level=self.level
+		if level!='system':
+			data={}
+			data=self.appConfig.get_config(level)
+		self.config=data.copy()
+		self._debug("Read level from config: %s"%level)
+		return (data)
+	#def get_config(self,level):
+
+	def Show(self):
+		if self.config=={}:
+			self.getConfig()
 		self.setStyleSheet(self._define_css())
 		if os.path.isdir("stacks"):
 			for mod in os.listdir("stacks"):
@@ -99,7 +132,7 @@ class appConfigScreen(QWidget):
 				idx=mod.index
 			if mod.enabled==False:
 				continue
-			while idx in self.options.keys():
+			while idx in self.stacks.keys():
 				idx+=1
 				self._debug("New idx: %s"%idx)
 			try:
@@ -114,8 +147,13 @@ class appConfigScreen(QWidget):
 				mod.setTextDomain(self.appName.lower().replace(" ","_"))
 			except Exception as e:
 				print("Can't set textdomain for %s: %s"%(mod_name,e))
-			self.options[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
+			try:
+				mod.setAppConfig(self.appConfig)
+			except Exception as e:
+				print("Can't set appConfig for %s: %s"%(mod_name,e))
+			self.stacks[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
 		self._render_gui()
+		return(False)
 	
 	def _render_gui(self):
 		box=QGridLayout()
@@ -154,7 +192,7 @@ class appConfigScreen(QWidget):
 		indexes=[]
 		for i in range (100):
 			indexes.append("")
-		for index,option in self.options.items():
+		for index,option in self.stacks.items():
 			lst_widget=QListWidgetItem()
 			lst_widget.setText(option['name'])
 			mod=option.get('module',None)
@@ -168,19 +206,19 @@ class appConfigScreen(QWidget):
 				while index in indexes:
 					index+=1
 				indexes.insert(index,index)
-			self.options[index]['widget' ]=lst_widget
+			self.stacks[index]['widget' ]=lst_widget
 
 		new_dict={}
-		new_dict[0]=self.options[0]
+		new_dict[0]=self.stacks[0]
 		self.lst_options.addItem(new_dict[0]['widget'])
 		cont=1
 		for index in indexes:
 			if index:
-				new_dict[cont]=self.options[index]
+				new_dict[cont]=self.stacks[index]
 				self.lst_options.addItem(new_dict[cont]['widget'])
 				cont+=1
 
-		self.options=new_dict.copy()
+		self.stacks=new_dict.copy()
 		box.addWidget(self.lst_options)
 		self.lst_options.itemClicked.connect(self._show_stack)
 		panel.setLayout(box)
@@ -194,11 +232,15 @@ class appConfigScreen(QWidget):
 		text=[
 			_("Welcome to %s config."%self.appName),
 			_("From here you can:")]
-		for idx,data in self.options.items():
-			stack=self.options[idx].get('module',None)
+		for idx,data in self.stacks.items():
+			stack=self.stacks[idx].get('module',None)
 			if stack:
+				stack._load_screen()
 				text.append(" * %s"%stack.menu_description)
-				self.stk_widget.insertWidget(idx,stack)
+				try:
+					self.stk_widget.insertWidget(idx,stack)
+				except:
+					self.stk_widget.insertWidget(idx,stack.init_stack())
 		stack=QWidget()
 		stack.setObjectName("panel")
 		s_box=QVBoxLayout()
@@ -208,7 +250,7 @@ class appConfigScreen(QWidget):
 		s_box.addWidget(lbl_txt,Qt.Alignment(1))
 		stack.setLayout(s_box)
 		self.stk_widget.insertWidget(0,stack)
-		self.options[0]['module']=stack
+		self.stacks[0]['module']=stack
 
 		box.addWidget(self.stk_widget)
 		panel.setLayout(box)
@@ -216,18 +258,14 @@ class appConfigScreen(QWidget):
 	#def _right_panel
 	
 	def _show_stack(self):
-		try:
-			if self.options[self.last_index]['module'].get_changes():
-				self.options[self.last_index]['module'].write_changes()
-		except:
-			pass
+#		try:
+#			if self.stacks[self.last_index]['module'].get_changes():
+#				self.stacks[self.last_index]['module'].write_changes()
+#		except Exception as e:
+#			print(e)
+		self.last_index=self.lst_options.currentRow()
+		self.stacks[self.last_index]['module'].setConfig(self.config)
 		self.stk_widget.setCurrentIndex(self.lst_options.currentRow())
-		try:
-			self.options[self.lst_options.currentRow()]['module'].update_screen()
-		except:
-			pass
-		finally:
-			self.last_index=self.lst_options.currentRow()
 
 	#def _show_stack
 
