@@ -268,6 +268,8 @@ class appConfigScreen(QWidget):
 	#def _right_panel
 	
 	def _show_stack(self):
+		if self.last_index==self.lst_options.currentRow():
+			return
 		try:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
@@ -275,10 +277,15 @@ class appConfigScreen(QWidget):
 					return
 				else:
 					self.stacks[self.last_index]['module'].setChanged("",False)
+			if self.stacks[self.last_index]['module'].refresh:
+				self.getConfig()
 		except Exception as e:
 			print(e)
 		self.last_index=self.lst_options.currentRow()
-		self.stacks[self.last_index]['module'].setConfig(self.config)
+		try:
+			self.stacks[self.last_index]['module'].setConfig(self.config)
+		except:
+			pass
 		self.stk_widget.setCurrentIndex(self.lst_options.currentRow())
 
 	#def _show_stack

@@ -63,6 +63,7 @@ class appConfigStack(QWidget):
 				data[self.level]['config']=self.level
 
 		self._debug("Read level from config: %s"%self.level)
+		self.refresh=False
 		return (data)
 	#def get_default_config
 
@@ -71,11 +72,18 @@ class appConfigStack(QWidget):
 	#def setConfig
 	
 	def saveChanges(self,key,data,level=None):
+		retval=False
 		if not level:
+			self.getConfig()
 			level=self.level
 		self.changes=False
 		self._debug("Saving to level %s"%level)
-		self.appConfig.write_config(data,level=level,key=key)
+		if self.appConfig.write_config(data,level=level,key=key):
+			self.refresh=True
+			retval=True
+		else:
+			self.showMsg("Failed to write config")
+		return retval
 	#def saveChanges
 
 	def _reset_screen(self):
@@ -123,12 +131,13 @@ class appConfigStack(QWidget):
 			layout=self.layout()
 			recursive_add_events(layout)
 			box_btns=QHBoxLayout()
-			btn_ok=QPushButton(_("Apply"))
-			btn_ok.clicked.connect(self.writeConfig)
-			btn_cancel=QPushButton(_("Cancel"))
-			btn_cancel.clicked.connect(self._reset_screen)
-			box_btns.addWidget(btn_ok)
-			box_btns.addWidget(btn_cancel)
+			self.btn_ok=QPushButton(_("Apply"))
+			self.btn_ok.clicked.connect(self.writeConfig)
+			self.btn_ok.setEnabled(False)
+			self.btn_cancel=QPushButton(_("Cancel"))
+			self.btn_cancel.clicked.connect(self._reset_screen)
+			box_btns.addWidget(self.btn_ok)
+			box_btns.addWidget(self.btn_cancel)
 			try:
 				layout.addLayout(box_btns)
 			except:
@@ -141,6 +150,7 @@ class appConfigStack(QWidget):
 
 	def setChanged(self,widget,state=True):
 		self._debug("State: %s"%state)
+		self.btn_ok.setEnabled(state)
 		self.changes=state
 	#def setChanged
 

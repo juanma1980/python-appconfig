@@ -98,6 +98,8 @@ class appConfig():
 			level='system'
 		if level=='n4d':
 			self._read_config_from_n4d()
+			if not self.confFile.startswith("n4d-"):
+				self.confFile="n4d-%s"%self.confFile
 		else:
 			self._read_config_from_system(level)
 
@@ -215,9 +217,16 @@ class appConfig():
 	def _read_config_from_n4d(self):
 		sw=True
 		if self.n4d:
-			query="self.n4d.%s(self,credentials,%s"%(self.n4dmethod,self.n4dclass)
-			self.config['n4d']=self._execute_n4d_query(query)
-		return (self.config)
+			confFile=tempfile.mkstemp()[1]
+			self.n4dclass="ScpManager"
+			self.n4dmethod="unrestricted_get_file"
+			self.n4dparms.update({self.n4dmethod:["\"%s\""%self.n4dcredentials['user'],"\"%s\""%self.n4dcredentials['password'],"\"%s\""%self.n4dcredentials['server'],"\"%s/%s\""%(self.baseDirs['system'],self.confFile),"\"%s\""%confFile]})
+			query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
+			if self._execute_n4d_query(query):
+				path=os.dirname(confFile)
+				os.rename(confFile,"%s/s"%(path,self.confFile))
+				self.baseDirs['n4d']=path
+				self._read_config_from_system('n4d')
 	#def read_config_from_n4d
 
 	def _write_config_to_n4d(self,conf,level='n4d'):
@@ -252,7 +261,7 @@ class appConfig():
 			data=eval(query)
 		except Exception as e:
 			self._debug("Error accessing n4d: %s"%e)
-			retval['status']=False
+			retval=False
 		if type(data)==type({}):
 			if 'status' in data.keys():
 				retval=data['status']
