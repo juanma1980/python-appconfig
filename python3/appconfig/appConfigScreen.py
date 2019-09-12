@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayo
 				QDialog,QGridLayout,QHBoxLayout,QFormLayout,QLineEdit,QComboBox,\
 				QStatusBar,QFileDialog,QDialogButtonBox,QScrollBar,QScrollArea,QListWidget,\
 				QListWidgetItem,QStackedWidget,QButtonGroup,QComboBox,QTableWidget,QTableWidgetItem,\
-				QHeaderView
+				QHeaderView,QMessageBox
 from PyQt5 import QtGui
 from PyQt5.QtCore import QSize,pyqtSlot,Qt, QPropertyAnimation,QThread,QRect,QTimer,pyqtSignal,QSignalMapper,QProcess,QEvent
 from edupals.ui import QAnimatedStatusBar
@@ -128,21 +128,26 @@ class appConfigScreen(QWidget):
 				mod=eval("%s()"%mod_name)
 			except Exception as e:
 				self._debug("Import failed for %s: %s"%(mod_name,e))
-			if mod.index>0:
-				idx=mod.index
-			if mod.enabled==False:
 				continue
+			if type(mod.index)==type(0):
+				if mod.index>0:
+					idx=mod.index
+			try:
+				if mod.enabled==False:
+					continue
+			except:
+				pass
 			while idx in self.stacks.keys():
 				idx+=1
 				self._debug("New idx: %s"%idx)
-			try:
-				if 'parm' in mod.__dict__.keys():
+			if 'parm' in mod.__dict__.keys():
+				try:
 					if mod.parm:
 						self._debug("Setting parms for %s"%mod_name)
 						self._debug("self.parms['%s']"%mod.parm)
 						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
-			except Exception as e:
-				self._debug("Failed to pass parm %s to %s: %s"%(mod.parm,mod_name,e))
+				except Exception as e:
+					self._debug("Failed to pass parm %s to %s: %s"%(mod.parm,mod_name,e))
 			try:
 				mod.setTextDomain(self.appName.lower().replace(" ","_"))
 			except Exception as e:
@@ -152,6 +157,10 @@ class appConfigScreen(QWidget):
 			except Exception as e:
 				print("Can't set appConfig for %s: %s"%(mod_name,e))
 			self.stacks[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
+			try:
+				mod.message.connect(self._show_message)
+			except:
+				pass
 		self._render_gui()
 		return(False)
 	
@@ -164,6 +173,7 @@ class appConfigScreen(QWidget):
 		img_banner.setAlignment(Qt.AlignCenter)
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
+		self.statusBar.setStateCss("error","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(255,0,0,1), stop:1 rgba(255,0,0,0.6));color:white;text-align:center;text-decoration:none;")
 		self.lst_options=QListWidget()
 		self.stk_widget=QStackedWidget()
 		box.addWidget(self.statusBar,0,0,1,1)
@@ -258,24 +268,32 @@ class appConfigScreen(QWidget):
 	#def _right_panel
 	
 	def _show_stack(self):
-#		try:
-#			if self.stacks[self.last_index]['module'].get_changes():
-#				self.stacks[self.last_index]['module'].write_changes()
-#		except Exception as e:
-#			print(e)
+		try:
+			if self.stacks[self.last_index]['module'].getChanges():
+				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
+					self.lst_options.setCurrentRow(self.last_index)
+					return
+				else:
+					self.stacks[self.last_index]['module'].setChanged("",False)
+		except Exception as e:
+			print(e)
 		self.last_index=self.lst_options.currentRow()
 		self.stacks[self.last_index]['module'].setConfig(self.config)
 		self.stk_widget.setCurrentIndex(self.lst_options.currentRow())
 
 	#def _show_stack
 
-	def _show_message(self,msg,status=None):
+	def _show_message(self,msg,status="error"):
 		self.statusBar.setText(msg)
 		if status:
 			self.statusBar.show(status)
 		else:
 			self.statusBar.show()
 	#def _show_message
+
+	def _save_changes(self,module):
+		dia=QMessageBox(QMessageBox.Question,_("Confirm"),_("There're changes not saved"),QMessageBox.Discard|QMessageBox.Cancel,self)
+		return(dia.exec_())
 
 	def _define_css(self):
 		css="""
