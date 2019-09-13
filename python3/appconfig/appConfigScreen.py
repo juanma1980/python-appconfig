@@ -300,7 +300,7 @@ class appConfigScreen(QWidget):
 	#def _show_message
 
 	def _save_changes(self,module):
-		dia=QMessageBox(QMessageBox.Question,_("Confirm"),_("There're changes not saved"),QMessageBox.Discard|QMessageBox.Cancel,self)
+		dia=QMessageBox(QMessageBox.Question,_("Confirm"),_("There're changes not saved.\nIgnore them and continue?"),QMessageBox.Ignore|QMessageBox.Cancel,self)
 		return(dia.exec_())
 
 	def _define_css(self):

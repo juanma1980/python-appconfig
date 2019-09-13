@@ -147,7 +147,7 @@ class appConfigStack(QWidget):
 			self.btn_cancel=QPushButton(_("Cancel"))
 			self.btn_cancel.clicked.connect(self._reset_screen)
 			self.btn_cancel.setFixedWidth(100)
-			box_btns.addWidget(self.btn_ok,Qt.AlignLeft)
+			box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
 			box_btns.addWidget(self.btn_cancel,Qt.AlignRight)
 			try:
 				layout.addLayout(box_btns,Qt.Alignment(0))
@@ -156,6 +156,7 @@ class appConfigStack(QWidget):
 		try:
 			self.btn_ok.setEnabled(False)
 			self.updateScreen()
+			self.setChanged("",False)
 		except:
 			print("updateScreen method is not implemented in this stack")
 	#def showEvent
