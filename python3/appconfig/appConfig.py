@@ -17,6 +17,8 @@ class appConfig():
 		self.dbg=True
 		self.home=os.environ['HOME']
 		self.confFile="appconfig.conf"
+		self.localConf=self.confFile
+		self.n4dConf="n4d-%s"%self.confFile
 		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share/%s"%self.confFile.split('.')[0]}
 		self.config={'user':{},'system':{},'n4d':{}}
 		self.n4dcredentials=[]
@@ -41,6 +43,8 @@ class appConfig():
 
 	def set_configFile(self,confFile):
 		self.confFile=confFile
+		self.localConf=self.confFile
+		self.n4dConf="n4d-%s"%self.confFile
 		self._debug("ConfFile: %s"%self.confFile)
 	#def set_confFile
 
@@ -65,48 +69,34 @@ class appConfig():
 
 	def set_level(self,level):
 		self.level=level
+		if level=='n4d':
+			self.confFile=self.n4dConf
+		else:
+			self.confFile=self.localConf
 	#def set_level
 
-	def get_level(self):
-		return(self.getLevel())
-
 	def getLevel(self):
-		config=get_config()
-		#N4d wons over all
-		#User wons over system
-		level=config['n4d'].get('enabled','user')
-		if level=='user':
-			level=config['user'].get('enabled','system')
-			if level=='system':
-				level=config['system'].get('enabled','user')
-				if level!='system':
-					level='system'
-			else:
-				level='user'
-		else:
-			level='n4d'
+		config=self.getConfig('system')
+		level=config['system'].get('config','user')
 		self.set_level(level)
 		return(level)
-	#def get_level
-
-	def get_config(self,level=None):
-		return(self.getConfig(level))
+	#def getLevel
 
 	def getConfig(self,level=None):
 		self.config={'user':{},'system':{},'n4d':{}}
 		if N4D==False and level=='n4d':
 			level='system'
 		if level=='n4d':
+			self.confFile=self.n4dConf
 			self._read_config_from_n4d()
-			if not self.confFile.startswith("n4d-"):
-				self.confFile="n4d-%s"%self.confFile
 		else:
+			self.confFile=self.localConf
 			self._read_config_from_system(level)
 
 		config=self.config.copy()
 		self._debug("Data -> %s"%(self.config))
 		return (config)
-	#def get_config
+	#def getConfig
 
 	def _read_config_from_system(self,level=None):
 		def _read_file(confFile,level):
@@ -131,9 +121,13 @@ class appConfig():
 		self._debug("Writing key %s to %s Polkit:%s"%(key,level,pk))
 		retval=True
 		if level==None:
-			level=self.get_level()
+			level=self.getLevel()
 		if N4D==False and level=='n4d':
 			level='system'
+		elif level=='n4d':
+			self.confFile=self.n4dConf
+		else:
+			self.confFile=self.localConf
 		if level=='system' and not pk:
 			self._debug("Invoking pk")
 			try:
@@ -143,7 +137,7 @@ class appConfig():
 				self._debug("Invoking pk failed: %s"%e)
 				retval=False
 		else:
-			oldConf=self.get_config(level)
+			oldConf=self.getConfig(level)
 			self._debug("Old: %s"%oldConf)
 			newConf=oldConf.copy()
 			if key:
@@ -215,7 +209,7 @@ class appConfig():
 	#def set_method_for_n4d(self,n4dmethod):
 
 	def _read_config_from_n4d(self):
-		sw=True
+		retval=True
 		if self.n4d:
 			confFile=tempfile.mkstemp()[1]
 			self.n4dclass="ScpManager"
@@ -227,6 +221,10 @@ class appConfig():
 				os.rename(confFile,"%s/s"%(path,self.confFile))
 				self.baseDirs['n4d']=path
 				self._read_config_from_system('n4d')
+		else:
+			retval=False
+			self._debug("N4d not connected")
+		return(retval)
 	#def read_config_from_n4d
 
 	def _write_config_to_n4d(self,conf,level='n4d'):
@@ -235,21 +233,20 @@ class appConfig():
 		if not self.n4dcredentials:
 			retval=False
 		if retval:
-			if not self.n4dclass:
-				#create tmp file (will be sended to n4d server)
-				confFile=tempfile.mkstemp()[1]
-				self.config[level]=conf[level]
-				try:
-					with open(confFile,'w') as f:
-						json.dump(self.config[level],f,indent=4,sort_keys=True)
-				except Exception as e:
-					retval=False
-					print("Error writing system config: %s"%e)
-				self.n4dclass="ScpManager"
-				self.n4dmethod="send_file"
-				self.n4dparms.update({self.n4dmethod:["\"%s\""%self.n4dcredentials['user'],"\"%s\""%self.n4dcredentials['password'],"\"%s\""%self.n4dcredentials['server'],"\"%s\""%confFile,"\"%s/%s\""%(self.baseDirs['system'],self.confFile)]})
-				query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
-				retval=self._execute_n4d_query(query)
+			#create tmp file (will be sended to n4d server)
+			confFile=tempfile.mkstemp()[1]
+			self.config[level]=conf[level]
+			try:
+				with open(confFile,'w') as f:
+					json.dump(self.config[level],f,indent=4,sort_keys=True)
+			except Exception as e:
+				retval=False
+				print("Error writing system config: %s"%e)
+			self.n4dclass="ScpManager"
+			self.n4dmethod="send_file"
+			self.n4dparms.update({self.n4dmethod:["\"%s\""%self.n4dcredentials['user'],"\"%s\""%self.n4dcredentials['password'],"\"%s\""%self.n4dcredentials['server'],"\"%s\""%confFile,"\"%s/%s\""%(self.baseDirs['system'],self.confFile)]})
+			query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
+			retval=self._execute_n4d_query(query)
 		return retval
 	#def _write_config_to_n4d
 

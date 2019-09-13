@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from PyQt5.QtWidgets import QWidget,QHBoxLayout,QPushButton
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal,Qt
 from edupals.ui import QAnimatedStatusBar
 import gettext
 _ = gettext.gettext
@@ -26,6 +26,7 @@ class appConfigStack(QWidget):
 		self.add_events=False
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
+		self.refresh=True
 		self.__init_stack__()
 	#def __init__
 
@@ -52,23 +53,31 @@ class appConfigStack(QWidget):
 	#def apply_parms(self,app):
 
 	def getConfig(self):
+		self._debug("Getting CONFIG")
 		data={}
-		data=self.appConfig.getConfig('system')
-		self._debug("Data: %s"%data)
-		self.level=data['system'].get('config','user')
-		if self.level!='system':
-			data=self.appConfig.getConfig(self.level)
-			level=data[self.level].get('config','user')
-			if level!=self.level:
-				data[self.level]['config']=self.level
-
+		if self.refresh or self.changes:
+			data=self.appConfig.getConfig('system')
+			self._debug("Data: %s"%data)
+			self.level=data['system'].get('config','user')
+			if self.level!='system':
+				data=self.appConfig.getConfig(self.level)
+				level=data[self.level].get('config','user')
+				if level!=self.level:
+					data[self.level]['config']=self.level
+		else:
+			self._debug("NO REFRESH")
+			data=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
 		self.refresh=False
 		return (data)
 	#def get_default_config
 
 	def setConfig(self,config):
-		self.config=config.copy()
+		if self.config and self.config==config:
+			self.refresh=False
+		else:
+			self.config=config.copy()
+			self.refresh=True
 	#def setConfig
 	
 	def saveChanges(self,key,data,level=None):
@@ -79,6 +88,7 @@ class appConfigStack(QWidget):
 		self.changes=False
 		self._debug("Saving to level %s"%level)
 		if self.appConfig.write_config(data,level=level,key=key):
+			self.btn_ok.setEnabled(False)
 			self.refresh=True
 			retval=True
 		else:
@@ -99,7 +109,7 @@ class appConfigStack(QWidget):
 	def writeConfig(self):
 		print("writeConfig method not implemented in this stack")
 		raise NotImplementedError()
-	#def updateScreen
+	#def writeConfig
 
 	def showEvent(self,event):
 		def recursive_add_events(layout):
@@ -133,16 +143,18 @@ class appConfigStack(QWidget):
 			box_btns=QHBoxLayout()
 			self.btn_ok=QPushButton(_("Apply"))
 			self.btn_ok.clicked.connect(self.writeConfig)
-			self.btn_ok.setEnabled(False)
+			self.btn_ok.setFixedWidth(100)
 			self.btn_cancel=QPushButton(_("Cancel"))
 			self.btn_cancel.clicked.connect(self._reset_screen)
-			box_btns.addWidget(self.btn_ok)
-			box_btns.addWidget(self.btn_cancel)
+			self.btn_cancel.setFixedWidth(100)
+			box_btns.addWidget(self.btn_ok,Qt.AlignLeft)
+			box_btns.addWidget(self.btn_cancel,Qt.AlignRight)
 			try:
-				layout.addLayout(box_btns)
+				layout.addLayout(box_btns,Qt.Alignment(0))
 			except:
 				layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
 		try:
+			self.btn_ok.setEnabled(False)
 			self.updateScreen()
 		except:
 			print("updateScreen method is not implemented in this stack")

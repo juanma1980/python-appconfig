@@ -87,13 +87,13 @@ class appConfigScreen(QWidget):
 	
 	def _get_default_config(self):
 		data={}
-		data=self.appConfig.get_config('system')
+		data=self.appConfig.getConfig('system')
 		if 'config' not in data['system'].keys():
 			data['system']['config']='user'
 		self.level=data['system']['config']
 		self._debug("Read level from config: %s"%self.level)
 		return (data)
-	#def get_config(self,level):
+	#def _get_default_config(self,level):
 	
 	def getConfig(self,level=None):
 		data=self._get_default_config()
@@ -101,11 +101,11 @@ class appConfigScreen(QWidget):
 			level=self.level
 		if level!='system':
 			data={}
-			data=self.appConfig.get_config(level)
+			data=self.appConfig.getConfig(level)
 		self.config=data.copy()
 		self._debug("Read level from config: %s"%level)
 		return (data)
-	#def get_config(self,level):
+	#def getConfig(self,level):
 
 	def Show(self):
 		if self.config=={}:
@@ -232,6 +232,7 @@ class appConfigScreen(QWidget):
 		box.addWidget(self.lst_options)
 		self.lst_options.itemClicked.connect(self._show_stack)
 		panel.setLayout(box)
+		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
 		return(panel)
 	#def _left_panel
 
