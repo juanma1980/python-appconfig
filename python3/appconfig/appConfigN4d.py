@@ -77,27 +77,17 @@ class n4dGui(QDialog):
 	#def _show_message
 #class n4dGui
 
-class n4dCli():
-	def __init__():
-		self.username=''
-		self.password=''
-		self.server=''
-		self.username=input(_("Username: "))
-		self.password=input(_("Password: "))
-		self.server=input(_("Server: "))
-	#def __init__
-
-class n4dHelper():
+class appConfigN4d():
 	validate=pyqtSignal("PyQt_PyObject")
-	def __init__(self,n4dmethod="",n4dclass="",parms="",server='localhost'):
-		self.app=QApplication(["N4d credentials"])
-		self.username=''
-		self.password=''
+	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
+#		self.app=QApplication(["N4d credentials"])
+		self.username=username
+		self.password=password
 		self.server=server
 		self.query=''
 		self.n4dClass=n4dclass
 		self.n4dMethod=n4dmethod
-		self.n4dParms=parms
+		self.n4dParms=n4dparms
 		self.result={}
 		self.retval=0
 	#def __init__
@@ -113,7 +103,7 @@ class n4dHelper():
 		if p.returncode==0:
 			self.n4dAuth=n4dGui()
 			self.n4dAuth.validate.connect(self._validate)
-			self.app.exec_()
+#			self.app.exec_()
 		else:
 			user=input(_("Username: "))
 			password=input(_("Password: "))
@@ -166,8 +156,10 @@ class n4dHelper():
 	#def _on_validate
 
 	def execAction(self,auth):
-		if not self.username:
+		if not self.username and auth:
 			self.getCredentials()
+		elif self.username:
+			self._validate(self.username,self.password,self.server)
 		return(self.result)
 	#def setClassMethod
 
@@ -210,7 +202,7 @@ class n4dHelper():
 		return n4dClient
 	#def _n4d_connect
 
-a=n4dHelper(n4dclass="RepoManager",n4dmethod="list_default_repos")
-ap=a.execAction(auth=True)
-print(ap)
+#a=n4dHelper(n4dclass="RepoManager",n4dmethod="list_default_repos")
+#ap=a.execAction(auth=True)
+#print(ap)
 

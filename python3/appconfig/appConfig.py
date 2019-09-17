@@ -4,13 +4,7 @@ import os
 import json
 import tempfile
 import subprocess
-N4D=True
-try:
-	import xmlrpc.client as n4d
-except ImportError:
-	raise ImportError("xmlrpc not available. Disabling server queries")
-	N4D=False
-import ssl
+from appconfig.appConfigN4d import appConfigN4d
 
 class appConfig():
 	def __init__(self):
@@ -84,8 +78,6 @@ class appConfig():
 
 	def getConfig(self,level=None):
 		self.config={'user':{},'system':{},'n4d':{}}
-		if N4D==False and level=='n4d':
-			level='system'
 		if level=='n4d':
 			self.confFile=self.n4dConf
 			self._read_config_from_n4d()
@@ -122,9 +114,7 @@ class appConfig():
 		retval=True
 		if level==None:
 			level=self.getLevel()
-		if N4D==False and level=='n4d':
-			level='system'
-		elif level=='n4d':
+		if level=='n4d':
 			self.confFile=self.n4dConf
 		else:
 			self.confFile=self.localConf
@@ -154,8 +144,6 @@ class appConfig():
 						newConf[level][key]=None
 					newConf[level][key]=data[key]
 			if level=='n4d':
-				if not self.n4d:
-					self.n4d=self._n4d_connect(self.server)
 				self._debug("Sending config to n4d")
 				retval=self._write_config_to_n4d(newConf)
 			else:
@@ -192,100 +180,13 @@ class appConfig():
 		return (retval)
 	#def _write_config_to_system
 
-	def set_class_for_n4d(self,n4dclass):
-		self.n4dclass=n4dclass
-		self._debug("N4d Class: %s"%self.n4dclass)
-	#def set_class_for_n4d(self,n4dclass):
-
-	def set_method_for_n4d(self,n4dmethod,n4dclass=None,parms=None):
-		self.n4dmethod=n4dmethod
-		if parms:
-			self.n4dparms[n4dmethod]={'parms':parms}
-		if n4dclass:
-			self.n4dparms[n4dmethod]={'class':n4dclass}
-		else:
-			self.n4dparms[n4dmethod]={'class':self.n4dclass}
-		self._debug("N4d Method: %s"%self.n4dmethod)
-	#def set_method_for_n4d(self,n4dmethod):
-
-	def _read_config_from_n4d(self):
-		retval=True
-		if self.n4d:
-			confFile=tempfile.mkstemp()[1]
-			self.n4dclass="ScpManager"
-			self.n4dmethod="unrestricted_get_file"
-			self.n4dparms.update({self.n4dmethod:["\"%s\""%self.n4dcredentials['user'],"\"%s\""%self.n4dcredentials['password'],"\"%s\""%self.n4dcredentials['server'],"\"%s/%s\""%(self.baseDirs['system'],self.confFile),"\"%s\""%confFile]})
-			query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
-			if self._execute_n4d_query(query):
-				path=os.dirname(confFile)
-				os.rename(confFile,"%s/s"%(path,self.confFile))
-				self.baseDirs['n4d']=path
-				self._read_config_from_system('n4d')
-		else:
-			retval=False
-			self._debug("N4d not connected")
-		return(retval)
-	#def read_config_from_n4d
-
-	def _write_config_to_n4d(self,conf,level='n4d'):
-		retval=True
-		self.n4dcredentials={'user':'','password':'','server':''}
-		if not self.n4dcredentials:
-			retval=False
-		if retval:
-			#create tmp file (will be sended to n4d server)
-			confFile=tempfile.mkstemp()[1]
-			self.config[level]=conf[level]
-			try:
-				with open(confFile,'w') as f:
-					json.dump(self.config[level],f,indent=4,sort_keys=True)
-			except Exception as e:
-				retval=False
-				print("Error writing system config: %s"%e)
-			self.n4dclass="ScpManager"
-			self.n4dmethod="send_file"
-			self.n4dparms.update({self.n4dmethod:["\"%s\""%self.n4dcredentials['user'],"\"%s\""%self.n4dcredentials['password'],"\"%s\""%self.n4dcredentials['server'],"\"%s\""%confFile,"\"%s/%s\""%(self.baseDirs['system'],self.confFile)]})
-			query="self.n4d.%s([self.n4dcredentials['user'],self.n4dcredentials['password']],\"%s\",%s)"%(self.n4dmethod,self.n4dclass,",".join(self.n4dparms.get(self.n4dmethod,[])))
-			retval=self._execute_n4d_query(query)
-		return retval
-	#def _write_config_to_n4d
-
-	def _execute_n4d_query(self,query):
-		retval=True
-		data={}
-		try:
-			self._debug("Executing query %s"%query)
-			data=eval(query)
-		except Exception as e:
-			self._debug("Error accessing n4d: %s"%e)
-			retval=False
-		if type(data)==type({}):
-			if 'status' in data.keys():
-				retval=data['status']
-#				data=data['status']
-				if data['status']!="True":
-					self._debug("Call to method %s of class %s failed,"%(self.n4dmethod,self.n4dclass))
-					self._debug("%s"%data)
-		self._debug(data)
-		return(retval)
-	#def _execute_n4d_query(self,query):
-
-	def set_credentials(self,user,pwd,server):
-		self.credentials=[user,pwd]
-		if server!='localhost':
-			self._debug("Connecting to server %s"%server)						
-			self.n4d=self._n4d_connect(server)
-		else:
-			try:
-				server_ip=socket.gethostbyname("server")
-				self.n4d=self._n4d_connect("server")
-			except:
-				self.n4d=None
-	#def set_credentials
+	def _write_config_to_n4d(self,conf):
+		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="send_file_to_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
+		n4d.execAction(auth=True)
 	
-	def _n4d_connect(self,server):
-		#Setup SSL
-		context=ssl._create_unverified_context()
-		n4dclient = n4d.ServerProxy("https://"+server+":9779",context=context,allow_none=True)
-		return(n4dclient)
-	#def _n4d_connect
+	def _read_config_from_n4d(self):
+		n4d=appConfigN4d(n4dclass="ScpManager",n4dmethod="get_file",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile),username='anonymous',server='localhost')
+		data=n4d.execAction(auth=False)
+		print("****************")
+		print(data)
+		print("****************")
