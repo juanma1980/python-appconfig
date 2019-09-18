@@ -80,7 +80,7 @@ class n4dGui(QDialog):
 class appConfigN4d():
 	validate=pyqtSignal("PyQt_PyObject")
 	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
-#		self.app=QApplication(["N4d credentials"])
+		self.dbg=True
 		self.username=username
 		self.password=password
 		self.server=server
@@ -90,7 +90,12 @@ class appConfigN4d():
 		self.n4dParms=n4dparms
 		self.result={}
 		self.retval=0
+		self.n4dAuth=None
 	#def __init__
+
+	def _debug(self,msg):
+		if self.dbg:
+			print("Debug: %s"%msg)
 
 	def error(self,error):
 		print("Error: %s"%error)
@@ -103,7 +108,6 @@ class appConfigN4d():
 		if p.returncode==0:
 			self.n4dAuth=n4dGui()
 			self.n4dAuth.validate.connect(self._validate)
-#			self.app.exec_()
 		else:
 			user=input(_("Username: "))
 			password=input(_("Password: "))
@@ -115,10 +119,12 @@ class appConfigN4d():
 		self.username=username
 		self.password=password
 		self.server=server
+		self._debug("Credentials %s %s"%(username,server))
 	#def setCredentials
 
 	def _validate(self,*args):
 		ret=[False]
+		data={}
 		validate=False
 		(user,pwd,srv)=args
 		self.setCredentials(user,pwd,srv)
@@ -140,6 +146,7 @@ class appConfigN4d():
 			self._on_validate(False)
 		else:
 			data=self._on_validate(True,n4dClient)
+		return(data)
 
 	def _on_validate(self,validate,n4dClient=None):
 		data={}
@@ -149,9 +156,11 @@ class appConfigN4d():
 			else:
 				self.query="n4dClient.%s([self.username,self.password],\"%s\",%s)"%(self.n4dMethod,self.n4dClass,self.n4dParms)
 			data=self._execQuery(n4dClient)
-			self.n4dAuth.close()
+			if self.n4dAuth:
+				self.n4dAuth.close()
 		else:
-			self.n4dAuth.showMessage(_("Validation error"))
+			if self.n4dAuth:
+				self.n4dAuth.showMessage(_("Validation error"))
 		self.result=data
 	#def _on_validate
 
