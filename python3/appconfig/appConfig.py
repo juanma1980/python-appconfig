@@ -3,6 +3,7 @@ import sys
 import os
 import json
 import tempfile
+import base64
 import subprocess
 from appconfig.appConfigN4d import appConfigN4d
 
@@ -17,10 +18,7 @@ class appConfig():
 		self.config={'user':{},'system':{},'n4d':{}}
 		self.n4dcredentials=[]
 		self.server="172.20.9.174"
-		self.n4d=None
-		self.n4dclass=None
-		self.n4dmethod=None
-		self.n4dparms={}
+		self.n4d=appConfigN4d()
 	#def __init__
 
 	def _debug(self,msg):
@@ -181,12 +179,14 @@ class appConfig():
 	#def _write_config_to_system
 
 	def _write_config_to_n4d(self,conf):
-		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="send_file_to_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
-		n4d.execAction(auth=True)
+		conf64=base64.b64encode(json.dumps(conf).encode('utf-8'))
+		ret=self.n4d.writeConfig(n4dparms="%s,%s/%s"%(conf64,self.baseDirs['n4d'],self.confFile))
+#		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="send_file_to_server",)
+#		ret=n4d.execAction(auth=True)
+		return(ret)
 	
 	def _read_config_from_n4d(self):
-		n4d=appConfigN4d(n4dclass="ScpManager",n4dmethod="get_file",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile),username='anonymous',server='localhost')
-		data=n4d.execAction(auth=False)
-		print("****************")
-		print(data)
-		print("****************")
+		ret=self.n4d.readConfig(n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
+#		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="get_file_from_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
+#		ret=n4d.execAction(auth=False)
+		return(ret)
