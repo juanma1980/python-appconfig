@@ -36,7 +36,7 @@ class appConfig():
 	def set_configFile(self,confFile):
 		self.confFile=confFile
 		self.localConf=self.confFile
-		self.n4dConf="n4d-%s"%self.confFile
+		self.n4dConf=self.confFile.split('.')[0]
 		self._debug("ConfFile: %s"%self.confFile)
 	#def set_confFile
 
@@ -179,14 +179,13 @@ class appConfig():
 	#def _write_config_to_system
 
 	def _write_config_to_n4d(self,conf):
-		conf64=base64.b64encode(json.dumps(conf).encode('utf-8'))
-		ret=self.n4d.writeConfig(n4dparms="%s,%s/%s"%(conf64,self.baseDirs['n4d'],self.confFile))
+		ret=self.n4d.writeConfig(n4dparms="\'%s\',\'%s\'"%(self.confFile,conf))
 #		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="send_file_to_server",)
 #		ret=n4d.execAction(auth=True)
 		return(ret)
 	
 	def _read_config_from_n4d(self):
-		ret=self.n4d.readConfig(n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
+		ret=self.n4d.readConfig(n4dparms="\"%s\""%self.confFile)
 #		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="get_file_from_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
 #		ret=n4d.execAction(auth=False)
 		return(ret)

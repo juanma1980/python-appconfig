@@ -86,12 +86,13 @@ class appConfigN4d():
 		self.password=password
 		self.server=server
 		self.query=''
-		self.n4dClass="FileOperations"
+		self.n4dClass="VariablesManager"
 		self.n4dMethod=''
 		self.n4dParms=''
 		self.result={}
 		self.retval=0
 		self.n4dAuth=None
+		self.n4dClient=None
 	#def __init__
 
 	def _debug(self,msg):
@@ -103,9 +104,14 @@ class appConfigN4d():
 	#def error
 
 	def getCredentials(self):
+		validate=False
 		@pyqtSlot(str,str,str)
 		def _qt_validate(user,pwd,srv):
-			self._validate(user,pwd,srv)
+			nonlocal validate
+			if self._validate(user,pwd,srv)==False:
+				self.n4dAuth.showMessage(_("Validation error"))
+			else:
+				validate=True
 
 		#Check X
 		p=Popen(["xset","-q"],stdout=PIPE,stderr=PIPE)
@@ -118,7 +124,8 @@ class appConfigN4d():
 			user=input(_("Username: "))
 			password=input(_("Password: "))
 			server=input(_("Server: "))
-			self._validate(user,password,server)
+			validate=self._validate(user,password,server)
+		return validate
 	#def getCredentials
 
 	def setCredentials(self,username,password,server):
@@ -128,58 +135,66 @@ class appConfigN4d():
 		self._debug("Credentials %s %s"%(username,server))
 	#def setCredentials
 
+	def _execAction(self,auth):
+		if self.n4dClient==None:
+			self._n4d_connect()
+		validate=False
+		self.result={}
+		if not self.username and auth:
+			validate=self.getCredentials()
+		elif self.username:
+			validate=self._validate(self.username,self.password,self.server)
+		else:
+			self.username="anonymous"
+			self.password=''
+			validate=True
+		if validate:
+			self._on_validate()
+		self._debug(self.result)
+		return(self.result)
+	#def setClassMethod
+	
 	def _validate(self,user,pwd,srv):
 		ret=[False]
-		data={}
+		validate=False
 		self.setCredentials(user,pwd,srv)
-		n4dClient=self._n4d_connect()
-		if n4dClient:
-			try:
-				ret=n4dClient.validate_user(user,pwd)
-			except Exception as e:
-				self.error(e)
-				self.n4dAuth.showMessage(_("Validation error"))
+		if self.n4dClient==None:
+			self._n4d_connect()
+		try:
+			ret=self.n4dClient.validate_user(user,pwd)
+		except Exception as e:
+			self.error(e)
 
 		if (isinstance(ret,bool)):
 			#Error Login 
 			self.setCredentials('','','')
-			self.n4dAuth.showMessage(_("Validation error"))
 		elif not ret[0]:
 			#Error Login 
 			self.setCredentials('','','')
-			self.n4dAuth.showMessage(_("Validation error"))
 		else:
-			data=self._on_validate(n4dClient)
-		return(data)
-
-	def _on_validate(self,n4dClient=None):
+			validate=True
+#			data=self._on_validate(n4dClient)
+		return(validate)
+	
+	def _on_validate(self,):
 		if not self.n4dParms:
-			self.query="n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
+			self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
 		else:
-			parms=self.n4dParms.split(',')
-			self.n4dParms=""
-			for parm in parms:
-				sep=","
-				if self.n4dParms=="":
-					sep=""
-				self.n4dParms=self.n4dParms+"%s\"%s\""%(sep,parm)
+#			parms=self.n4dParms.split(',')
+#			self.n4dParms=""
+#			for parm in parms:
+#				sep=","
+#				if self.n4dParms=="":
+#					sep=""
+#				self.n4dParms=self.n4dParms+"%s\"%s\""%(sep,parm)
+			self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",%s)"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.n4dParms)
 
-			self.query="n4dClient.%s([\"%s\",\"%s\"],\"%s\",%s)"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.n4dParms)
-		self.result=self._execQuery(n4dClient)
+		self.result=self._execQuery()
 		if self.n4dAuth:
 			self.n4dAuth.close()
 	#def _on_validate
 
-	def _execAction(self,auth):
-		if not self.username and auth:
-			self.getCredentials()
-		elif self.username:
-			self._validate(self.username,self.password,self.server)
-		self._debug(self.result)
-		return(self.result)
-	#def setClassMethod
-
-	def _execQuery(self,n4dClient):
+	def _execQuery(self):
 		data={}
 		try:
 			data=eval('%s'%self.query)
@@ -198,16 +213,26 @@ class appConfigN4d():
 
 	def writeConfig(self,n4dparms):
 		self.n4dParms=n4dparms
-		self.n4dMethod="send_file_to_server"
-		return(self._execAction(auth=True))
+		self.n4dMethod="set_variable"
+		self._execAction(auth=True)
+		if self.retval!=0:
+			self._debug("Adding non existent variable")
+			tmp=[]
+			tmp=n4dparms.split(",")
+			tmp.insert(1,"'%s configuration'"%tmp[0])
+			tmp.insert(2,"'stores %s configuration'"%tmp[0])
+			self.n4dParms='","'.join(tmp).replace("'","")[1:]
+			self.n4dMethod="add_variable"
+			self._execAction(auth=True)
 	
 	def readConfig(self,n4dparms):
 		self.n4dParms=n4dparms
-		self.n4dMethod="get_file_from_server"
-		return(self._execAction(auth=True))
+		self.n4dMethod="get_variable"
+		return(self._execAction(auth=False))
 
 	def _n4d_connect(self):
-		n4dClient=None
+		self.n4dClient=None
+		self._debug("Connecting to n4d")
 		context=ssl._create_unverified_context()
 		try:
 			socket.gethostbyname(self.server)
@@ -219,12 +244,12 @@ class appConfigN4d():
 				print(e)
 				self.error("Error creating SSL context")
 				self.retval=1
+		self._debug("Retval: %s"%self.retval)
 		if self.retval==0:
 			try:
-				n4dClient = n4d.ServerProxy("https://"+self.server+":9779",context=context,allow_none=True)
+				self.n4dClient = n4d.ServerProxy("https://"+self.server+":9779",context=context,allow_none=True)
 			except:
 				self.error("Error accesing N4d at %s"%self.server)
 				self.retval=2
-		return n4dClient
 	#def _n4d_connect
 

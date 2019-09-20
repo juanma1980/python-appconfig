@@ -279,6 +279,7 @@ class appConfigScreen(QWidget):
 				else:
 					self.stacks[self.last_index]['module'].setChanged("",False)
 			if self.stacks[self.last_index]['module'].refresh:
+				self._debug("Refresh config")
 				self.getConfig()
 		except Exception as e:
 			print(e)
