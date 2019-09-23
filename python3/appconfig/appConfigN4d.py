@@ -145,7 +145,7 @@ class appConfigN4d():
 		elif self.username:
 			validate=self._validate(self.username,self.password,self.server)
 		else:
-			self.username="anonymous"
+			self.username=''
 			self.password=''
 			validate=True
 		if validate:
@@ -178,7 +178,10 @@ class appConfigN4d():
 	
 	def _on_validate(self,):
 		if not self.n4dParms:
-			self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
+			if self.username:
+				self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
+			else:
+				self.query="self.n4dClient.%s(\"\",\"%s\")"%(self.n4dMethod,self.n4dClass)
 		else:
 #			parms=self.n4dParms.split(',')
 #			self.n4dParms=""
@@ -187,8 +190,16 @@ class appConfigN4d():
 #				if self.n4dParms=="":
 #					sep=""
 #				self.n4dParms=self.n4dParms+"%s\"%s\""%(sep,parm)
-			self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",%s)"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.n4dParms)
-
+			if self.username:
+				if self.varName:
+					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName)
+					if self.varData:
+						self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName,self.varData,self.varDepends)
+			else:
+				if self.varName:
+					self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName)
+					if self.varData:
+						self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName,self.varData,self.varDepends)
 		self.result=self._execQuery()
 		if self.n4dAuth:
 			self.n4dAuth.close()
@@ -212,8 +223,14 @@ class appConfigN4d():
 	#def execQuery
 
 	def writeConfig(self,n4dparms):
-		self.n4dParms=n4dparms
 		self.n4dMethod="set_variable"
+#		self.n4dParms=self.n4dParms+",[]"
+		tmp=n4dparms.split(",")
+		parms=tmp[1:]
+		self.varName=tmp[0]
+		self.varData=",".join(tmp[1:])
+		self.varDepends=[]
+#		self.n4dParms="%s"%tmp[0]+",%s"%",".join(parms)+",[]"
 		self._execAction(auth=True)
 		if self.retval!=0:
 			self._debug("Adding non existent variable")
@@ -221,11 +238,15 @@ class appConfigN4d():
 			tmp=n4dparms.split(",")
 			tmp.insert(1,"'%s configuration'"%tmp[0])
 			tmp.insert(2,"'stores %s configuration'"%tmp[0])
-			self.n4dParms='","'.join(tmp).replace("'","")[1:]
+			self.n4dParms='","'.join(tmp).replace("'","")[0:]
 			self.n4dMethod="add_variable"
 			self._execAction(auth=True)
 	
 	def readConfig(self,n4dparms):
+		tmp=n4dparms.split(",")
+		self.varName=tmp[0]
+		self.varData=""
+		self.varDepends=[]
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
 		return(self._execAction(auth=False))

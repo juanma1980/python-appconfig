@@ -26,7 +26,7 @@ class appConfigStack(QWidget):
 		self.add_events=False
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
-		self.refresh=True
+		self.refresh=False
 		self.__init_stack__()
 	#def __init__
 
@@ -36,7 +36,7 @@ class appConfigStack(QWidget):
 	
 	def _debug(self,msg):
 		if self.dbg:
-			print("confStack: %s"%msg)
+			print("%s: %s"%(self.description,msg))
 	#def _debug
 
 	def setAppConfig(self,appconfig):
@@ -56,6 +56,8 @@ class appConfigStack(QWidget):
 		self._debug("Getting CONFIG")
 		data={}
 		if self.refresh or self.changes:
+			self._debug("Refresh: %s"%self.refresh)
+			self._debug("Changes: %s"%self.changes)
 			data=self.appConfig.getConfig('system')
 			self._debug("Data: %s"%data)
 			self.level=data['system'].get('config','user')
@@ -66,7 +68,7 @@ class appConfigStack(QWidget):
 					data[self.level]['config']=self.level
 		else:
 			self._debug("NO REFRESH")
-			data=self.config[self.level].copy()
+			data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
 		self.refresh=False
 		return (data)
@@ -76,9 +78,13 @@ class appConfigStack(QWidget):
 		if self.config and self.config==config:
 			self.refresh=False
 		else:
+			if self.config:
+				self.refresh=True
 			self.config=config.copy()
-			self.refresh=True
 	#def setConfig
+
+	def setLevel(self,level):
+		self.level=level
 	
 	def saveChanges(self,key,data,level=None):
 		retval=False

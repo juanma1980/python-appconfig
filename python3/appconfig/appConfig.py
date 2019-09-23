@@ -126,6 +126,7 @@ class appConfig():
 				retval=False
 		else:
 			oldConf=self.getConfig(level)
+#			oldConf=self.config.copy()
 			self._debug("Old: %s"%oldConf)
 			newConf=oldConf.copy()
 			if key:
@@ -179,13 +180,20 @@ class appConfig():
 	#def _write_config_to_system
 
 	def _write_config_to_n4d(self,conf):
-		ret=self.n4d.writeConfig(n4dparms="\'%s\',\'%s\'"%(self.confFile,conf))
+		ret=self.n4d.writeConfig(n4dparms="%s,%s"%(self.confFile,conf['n4d']))
 #		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="send_file_to_server",)
 #		ret=n4d.execAction(auth=True)
 		return(ret)
 	
 	def _read_config_from_n4d(self):
-		ret=self.n4d.readConfig(n4dparms="\"%s\""%self.confFile)
+		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile)
+		tmpStr=ret.replace("'","\"")
+		if "False" in tmpStr:
+			tmpStr=tmpStr.replace("False","\"False\"")
+		if "True" in tmpStr:
+			tmpStr=tmpStr.replace("True","\"True\"")
+		data=json.loads(tmpStr)
 #		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="get_file_from_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
 #		ret=n4d.execAction(auth=False)
-		return(ret)
+		self.config.update({'n4d':data})
+		return(data)

@@ -165,6 +165,7 @@ class appConfigScreen(QWidget):
 		return(False)
 	
 	def _render_gui(self):
+		self.getConfig()
 		box=QGridLayout()
 		img_banner=QLabel()
 		if os.path.isfile(self.banner):
@@ -246,6 +247,8 @@ class appConfigScreen(QWidget):
 		for idx,data in self.stacks.items():
 			stack=self.stacks[idx].get('module',None)
 			if stack:
+				stack.setLevel(self.level)
+				stack.setConfig(self.config)
 				stack._load_screen()
 				text.append(" * %s"%stack.menu_description)
 				try:
