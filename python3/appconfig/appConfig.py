@@ -188,10 +188,10 @@ class appConfig():
 	def _read_config_from_n4d(self):
 		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile)
 		tmpStr=ret.replace("'","\"")
-		if "False" in tmpStr:
-			tmpStr=tmpStr.replace("False","\"False\"")
-		if "True" in tmpStr:
-			tmpStr=tmpStr.replace("True","\"True\"")
+		if "False," in tmpStr:
+			tmpStr=tmpStr.replace("False","\"False\",")
+		if "True," in tmpStr:
+			tmpStr=tmpStr.replace("True","\"True\",")
 		data=json.loads(tmpStr)
 #		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="get_file_from_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
 #		ret=n4d.execAction(auth=False)
