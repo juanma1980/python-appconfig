@@ -112,6 +112,7 @@ class appConfigN4d():
 				self.n4dAuth.showMessage(_("Validation error"))
 			else:
 				validate=True
+				self.n4dAuth.close()
 
 		#Check X
 		p=Popen(["xset","-q"],stdout=PIPE,stderr=PIPE)
@@ -193,6 +194,9 @@ class appConfigN4d():
 					if self.varData:
 						self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName,self.varData,self.varDepends)
 		self.result=self._execQuery()
+		print("*^^^^^^^^^")
+		print(self.n4dAuth)
+		print("*^^^^^^^^^")
 		if self.n4dAuth:
 			self.n4dAuth.close()
 	#def _on_validate
