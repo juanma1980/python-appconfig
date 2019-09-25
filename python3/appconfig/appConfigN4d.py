@@ -173,7 +173,6 @@ class appConfigN4d():
 			self.setCredentials('','','')
 		else:
 			validate=True
-#			data=self._on_validate(n4dClient)
 		return(validate)
 	
 	def _on_validate(self,):
@@ -183,13 +182,6 @@ class appConfigN4d():
 			else:
 				self.query="self.n4dClient.%s(\"\",\"%s\")"%(self.n4dMethod,self.n4dClass)
 		else:
-#			parms=self.n4dParms.split(',')
-#			self.n4dParms=""
-#			for parm in parms:
-#				sep=","
-#				if self.n4dParms=="":
-#					sep=""
-#				self.n4dParms=self.n4dParms+"%s\"%s\""%(sep,parm)
 			if self.username:
 				if self.varName:
 					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName)
@@ -213,16 +205,21 @@ class appConfigN4d():
 			print("Syntax error on query %s"%self.query)
 			self.retval=3
 		if self.retval==0:
-			if type(data)==type({}):
+			if type(data)==type({}) or type(data)==type([]):
+				if type(data)==type([]):
+					tmp=data
+					data={'status':tmp[0],'data':tmp[1:]}
 				if 'status' in data.keys():
 					retval=data['status']
 					if data['status']!=True:
 						print("Query %s failed,"%(self.query))
-					self.retval=4
+						self.retval=4
 		return(data)
 	#def execQuery
 
 	def writeConfig(self,n4dparms):
+		retval=False
+		self.retval=0
 		self.n4dMethod="set_variable"
 #		self.n4dParms=self.n4dParms+",[]"
 		tmp=n4dparms.split(",")
@@ -233,16 +230,20 @@ class appConfigN4d():
 #		self.n4dParms="%s"%tmp[0]+",%s"%",".join(parms)+",[]"
 		self._execAction(auth=True)
 		if self.retval!=0:
+			print("Ret: %s"%self.retval)
 			self._debug("Adding non existent variable")
 			tmp=[]
 			tmp=n4dparms.split(",")
-			tmp.insert(1,"'%s configuration'"%tmp[0])
-			tmp.insert(2,"'stores %s configuration'"%tmp[0])
-			self.n4dParms='","'.join(tmp).replace("'","")[0:]
+			self.varData=self.varData+"\",\"%s configuration\","%self.varName
+			self.varData=self.varData+"\"stores %s configuration"%self.varName
 			self.n4dMethod="add_variable"
 			self._execAction(auth=True)
+		if self.retval==0:
+			retval=True
+		return(retval)
 	
 	def readConfig(self,n4dparms):
+		self.retval=0
 		tmp=n4dparms.split(",")
 		self.varName=tmp[0]
 		self.varData=""

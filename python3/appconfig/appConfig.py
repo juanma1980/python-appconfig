@@ -186,13 +186,27 @@ class appConfig():
 		return(ret)
 	
 	def _read_config_from_n4d(self):
+		tmpStr="{}"
 		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile)
-		tmpStr=ret.replace("'","\"")
-		if "False," in tmpStr:
-			tmpStr=tmpStr.replace("False","\"False\",")
-		if "True," in tmpStr:
-			tmpStr=tmpStr.replace("True","\"True\",")
-		data=json.loads(tmpStr)
+		tmpStr=ret
+		if isinstance(ret,str):
+			tmpStr=ret.replace("'","\"")
+		if "False" in tmpStr:
+			if "False," in tmpStr:
+				tmpStr=tmpStr.replace("False,","\"False\",")
+			elif "False}" in tmpStr:
+				tmpStr=tmpStr.replace("False}","\"False\"}")
+		if "True" in tmpStr:
+			if "True," in tmpStr:
+				tmpStr=tmpStr.replace("True,","\"True\",")
+			elif "True}" in tmpStr:
+				tmpStr=tmpStr.replace("True}","\"True\"}")
+		try:
+			data=json.loads(tmpStr)
+		except:
+			print("Error reading n4d values")
+			print("Dump: %s"%tmpStr)
+			data={}
 #		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="get_file_from_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
 #		ret=n4d.execAction(auth=False)
 		self.config.update({'n4d':data})
