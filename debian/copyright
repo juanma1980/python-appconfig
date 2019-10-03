@@ -4,9 +4,9 @@ Upstream-Source: http://lliurex.net/
 
 Files: *
 Copyright: Copyright 2019 Juanma1980 <juanma1980@gmail.com>
-License: GPL-3+
+License: GPL-3.0-only
  
-License: GPL-3+
+License: GPL-3.0-only
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
