@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
+from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,\
 				QDialog,QGridLayout,QHBoxLayout,QFormLayout,QLineEdit,QComboBox,\
 				QStatusBar,QFileDialog,QDialogButtonBox,QScrollBar,QScrollArea,QListWidget,\
@@ -26,11 +27,16 @@ class appConfigScreen(QWidget):
 		super().__init__()
 		self.dbg=True
 		self.level='user'
-		self.rsrc="../rsrc"
+		exePath=sys.argv[0]
+		if os.path.islink(sys.argv[0]):
+			exePath=os.path.realpath(sys.argv[0])
+		baseDir=os.path.abspath(os.path.dirname(exePath))
+		os.chdir(baseDir)
+		self.rsrc="%s/rsrc"%baseDir
 		self.parms=parms
 		self.modules=[]
 		self.appName=appName
-		self.background="../rsrc/background.png"
+		self.background="%s/background.png"%self.rsrc
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
 		gettext.textdomain(self.appName.lower().replace(" ","_"))
 		self.last_index=0
