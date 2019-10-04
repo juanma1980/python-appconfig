@@ -191,6 +191,8 @@ class appConfig():
 		tmpStr=ret
 		if isinstance(ret,str):
 			tmpStr=ret.replace("'","\"")
+		if ret==None:
+			tmpStr=""
 		if "False" in tmpStr:
 			if "False," in tmpStr:
 				tmpStr=tmpStr.replace("False,","\"False\",")
