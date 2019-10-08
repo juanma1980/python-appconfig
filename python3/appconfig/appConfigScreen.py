@@ -94,9 +94,15 @@ class appConfigScreen(QWidget):
 	def _get_default_config(self):
 		data={}
 		data=self.appConfig.getConfig('system')
-		if 'config' not in data['system'].keys():
-			data['system']['config']='user'
-		self.level=data['system']['config']
+		self.level=data['system'].get('config','user')
+		if self.level!='system':
+			data=self.appConfig.getConfig(self.level)
+			level=data[self.level].get('config','n4d')
+			if level!=self.level:
+				self.level=level
+				data=self.appConfig.getConfig(level)
+				data[self.level]['config']=self.level
+				
 		self._debug("Read level from config: %s"%self.level)
 		return (data)
 	#def _get_default_config(self,level):
