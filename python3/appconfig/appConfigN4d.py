@@ -25,6 +25,7 @@ import ssl
 class n4dGui(QDialog):
 	validateSignal=pyqtSignal('QString','QString','QString',name='validate')
 	def __init__(self):
+		import getpass
 		super().__init__()
 		self.setWindowIcon(QtGui.QIcon("/usr/share/icons/hicolor/48x48/apps/x-appimage.png"))
 		self.setModal(True)
@@ -47,10 +48,14 @@ class n4dGui(QDialog):
 		box.addWidget(lbl_info,1,1,1,1)
 		txt_username=QLineEdit()
 		txt_username.setPlaceholderText(_("Username"))
+		txt_username.setText(getpass.getuser())
 		txt_password=QLineEdit()
 		txt_password.setPlaceholderText(_("Password"))
 		txt_server=QLineEdit()
-		txt_server.setPlaceholderText(_("Server"))
+		server=self._get_default_server()
+		txt_server.setPlaceholderText(server)
+		if server=='localhost':
+			txt_server.hide()
 		box.addWidget(txt_username,2,0,1,2)
 		box.addWidget(txt_password,3,0,1,2)
 		box.addWidget(txt_server,4,0,1,2)
@@ -62,12 +67,28 @@ class n4dGui(QDialog):
 		box_btn.addWidget(btn_ok)
 		box_btn.addWidget(btn_ko)
 		box.addLayout(box_btn,5,1,1,1,Qt.Alignment(2))
+		txt_password.setFocus()
 		self.setLayout(box)
 	#def __init__
 
+	def _get_default_server(self):
+		import socket
+		server='server'
+		try:
+			server_ip=socket.gethostbyname(server)
+		except:
+			server='localhost'
+		return(server)
+	#def _set_default_server(self):
+
 	def acepted(self,*args):
 		(txt_username,txt_password,txt_server)=args
-		self.validateSignal.emit(txt_username.text(),txt_password.text(),txt_server.text())
+		user=txt_username.text()
+		pwd=txt_password.text()
+		server=txt_server.text()
+		if not server:
+			server=self._get_default_server()
+		self.validateSignal.emit(user,pwd,server)
 	#def acepted
 
 	def showMessage(self,msg,status="error"):
@@ -80,7 +101,7 @@ class n4dGui(QDialog):
 #class n4dGui
 
 class appConfigN4d():
-	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
+	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='server'):
 		self.dbg=True
 		self.username=username
 		self.password=password
@@ -194,9 +215,6 @@ class appConfigN4d():
 					if self.varData:
 						self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName,self.varData,self.varDepends)
 		self.result=self._execQuery()
-		print("*^^^^^^^^^")
-		print(self.n4dAuth)
-		print("*^^^^^^^^^")
 		if self.n4dAuth:
 			self.n4dAuth.close()
 	#def _on_validate
@@ -206,7 +224,7 @@ class appConfigN4d():
 		try:
 			data=eval('%s'%self.query)
 		except Exception as e:
-			print("Syntax error on query %s"%self.query)
+			self.error("Syntax error on query %s"%self.query)
 			self.retval=3
 		if self.retval==0:
 			if type(data)==type({}) or type(data)==type([]):
@@ -216,7 +234,7 @@ class appConfigN4d():
 				if 'status' in data.keys():
 					retval=data['status']
 					if data['status']!=True:
-						print("Query %s failed,"%(self.query))
+						self.error("Query %s failed,"%(self.query))
 						self.retval=4
 		return(data)
 	#def execQuery
@@ -225,22 +243,26 @@ class appConfigN4d():
 		retval=False
 		self.retval=0
 		self.n4dMethod="set_variable"
-#		self.n4dParms=self.n4dParms+",[]"
 		tmp=n4dparms.split(",")
 		parms=tmp[1:]
+		#Empty the variable data
 		self.varName=tmp[0]
-		self.varData=",".join(tmp[1:])
-		self.varDepends=[]
-#		self.n4dParms="%s"%tmp[0]+",%s"%",".join(parms)+",[]"
+		self.varData="{}"
 		self._execAction(auth=True)
+		#On error create cariable
 		if self.retval!=0:
-			print("Ret: %s"%self.retval)
+			self.error("Ret: %s"%self.retval)
 			self._debug("Adding non existent variable")
 			tmp=[]
 			tmp=n4dparms.split(",")
 			self.varData=self.varData+"\",\"%s configuration\","%self.varName
 			self.varData=self.varData+"\"stores %s configuration"%self.varName
 			self.n4dMethod="add_variable"
+			self._execAction(auth=True)
+		#Else put the value
+		else:
+			self.varData=",".join(tmp[1:])
+			self.varDepends=[]
 			self._execAction(auth=True)
 		if self.retval==0:
 			retval=True
@@ -267,7 +289,7 @@ class appConfigN4d():
 			try:
 				socket.inet_aton(self.server)
 			except Exception as e:
-				print(e)
+				self.error(e)
 				self.error("Error creating SSL context")
 				self.retval=1
 		self._debug("Retval: %s"%self.retval)
