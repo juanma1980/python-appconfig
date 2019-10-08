@@ -147,20 +147,21 @@ class appConfigStack(QWidget):
 		if self.add_events==False:
 			self.add_events=True
 			layout=self.layout()
-			recursive_add_events(layout)
-			box_btns=QHBoxLayout()
-			self.btn_ok=QPushButton(_("Apply"))
-			self.btn_ok.clicked.connect(self.writeConfig)
-			self.btn_ok.setFixedWidth(100)
-			self.btn_cancel=QPushButton(_("Cancel"))
-			self.btn_cancel.clicked.connect(self._reset_screen)
-			self.btn_cancel.setFixedWidth(100)
-			box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
-			box_btns.addWidget(self.btn_cancel,Qt.AlignRight)
-			try:
-				layout.addLayout(box_btns,Qt.Alignment(0))
-			except:
-				layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
+			if layout:
+				recursive_add_events(layout)
+				box_btns=QHBoxLayout()
+				self.btn_ok=QPushButton(_("Apply"))
+				self.btn_ok.clicked.connect(self.writeConfig)
+				self.btn_ok.setFixedWidth(100)
+				self.btn_cancel=QPushButton(_("Cancel"))
+				self.btn_cancel.clicked.connect(self._reset_screen)
+				self.btn_cancel.setFixedWidth(100)
+				box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
+				box_btns.addWidget(self.btn_cancel,Qt.AlignRight)
+				try:
+					layout.addLayout(box_btns,Qt.Alignment(0))
+				except:
+					layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
 		try:
 			self.btn_ok.setEnabled(False)
 			self.updateScreen()
