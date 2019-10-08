@@ -1,3 +1,9 @@
+python3-appconfig (0.5.1) bionic; urgency=medium
+
+  * Fix no layout in screen
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Tue, 08 Oct 2019 11:28:43 +0200
+
 python3-appconfig (0.5) bionic; urgency=medium
 
   * Fix no config fouund for n4d
