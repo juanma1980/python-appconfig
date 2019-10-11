@@ -56,6 +56,7 @@ class appConfigScreen(QWidget):
 		else:
 			self._debug("%s doesn't exists")
 		self._debug("RSRC: %s"%self.rsrc)
+	#def setRsrcPath
 
 	def setIcon(self,icon):
 		if not os.path.isfile(icon):
