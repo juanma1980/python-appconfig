@@ -48,7 +48,6 @@ class n4dGui(QDialog):
 		box.addWidget(lbl_info,1,1,1,1)
 		txt_username=QLineEdit()
 		txt_username.setPlaceholderText(_("Username"))
-		txt_username.setText(getpass.getuser())
 		txt_password=QLineEdit()
 		txt_password.setPlaceholderText(_("Password"))
 		txt_server=QLineEdit()
@@ -56,8 +55,8 @@ class n4dGui(QDialog):
 		txt_server.setPlaceholderText(server)
 		if server=='localhost':
 			txt_server.hide()
-		box.addWidget(txt_username,2,0,1,2)
 		box.addWidget(txt_password,3,0,1,2)
+		box.addWidget(txt_username,2,0,1,2)
 		box.addWidget(txt_server,4,0,1,2)
 		btn_ok=QPushButton(_("Accept"))
 		btn_ok.clicked.connect(lambda x:self.acepted(txt_username,txt_password,txt_server))
@@ -67,7 +66,7 @@ class n4dGui(QDialog):
 		box_btn.addWidget(btn_ok)
 		box_btn.addWidget(btn_ko)
 		box.addLayout(box_btn,5,1,1,1,Qt.Alignment(2))
-		txt_password.setFocus()
+		txt_username.setText(getpass.getuser())
 		self.setLayout(box)
 	#def __init__
 
