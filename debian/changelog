@@ -1,3 +1,9 @@
+python3-appconfig (0.5.2) bionic; urgency=medium
+
+  * Fix config key not present in config file
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 11 Oct 2019 10:17:12 +0200
+
 python3-appconfig (0.5.1) bionic; urgency=medium
 
   * Fix no layout in screen
