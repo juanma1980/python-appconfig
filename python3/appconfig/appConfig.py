@@ -11,7 +11,7 @@ class appConfig():
 	def __init__(self):
 		self.dbg=True
 		self.confFile="appconfig.conf"
-		self.home=os.environ.get('HOME','/usr/share/%s"%self.confFile.split('.')[0]')
+		self.home=os.environ.get('HOME',"/usr/share/%s"%self.confFile.split('.')[0])
 		self.localConf=self.confFile
 		self.n4dConf="n4d-%s"%self.confFile
 		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share/%s"%self.confFile.split('.')[0]}
