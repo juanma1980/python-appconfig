@@ -83,6 +83,8 @@ class appConfig():
 			self.confFile=self.localConf
 			self._read_config_from_system(level)
 
+		if self.config[level]={}:
+			self.config[level].update({'config':level})
 		config=self.config.copy()
 		self._debug("Data -> %s"%(self.config))
 		return (config)
