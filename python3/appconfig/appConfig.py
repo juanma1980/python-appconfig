@@ -99,6 +99,8 @@ class appConfig():
 					self._debug("Error opening %s: %s"%(confFile,e))
 					
 			if data:
+				if not 'config' in data.keys():
+					data['config']=level
 				self._debug("Updating %s -> %s"%(confFile,level))
 				self.config.update({level:data})
 		#def _read_file
