@@ -183,8 +183,6 @@ class appConfig():
 
 	def _write_config_to_n4d(self,conf):
 		ret=self.n4d.writeConfig(n4dparms="%s,%s"%(self.confFile,conf['n4d']))
-#		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="send_file_to_server",)
-#		ret=n4d.execAction(auth=True)
 		return(ret)
 	
 	def _read_config_from_n4d(self):
@@ -211,7 +209,5 @@ class appConfig():
 			print("Error reading n4d values")
 			print("Dump: %s"%tmpStr)
 			data={}
-#		n4d=appConfigN4d(n4dclass="FileOperations",n4dmethod="get_file_from_server",n4dparms="%s/%s"%(self.baseDirs['n4d'],self.confFile))
-#		ret=n4d.execAction(auth=False)
 		self.config.update({'n4d':data})
 		return(data)
