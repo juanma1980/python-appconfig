@@ -1,3 +1,9 @@
+python3-appconfig (0.6) bionic; urgency=medium
+
+  * AppConfigStack method getConfig accepts level as parameter
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 14 Oct 2019 11:32:14 +0200
+
 python3-appconfig (0.5.3) bionic; urgency=medium
 
   * Fix config key when configuration file is empty
