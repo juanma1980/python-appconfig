@@ -52,25 +52,28 @@ class appConfigStack(QWidget):
 		self.app=app
 	#def apply_parms(self,app):
 
-	def getConfig(self):
+	def getConfig(self,level=None):
 		self._debug("Getting CONFIG")
 		data={}
-		if self.refresh or self.changes:
-			self._debug("Refresh: %s"%self.refresh)
-			self._debug("Changes: %s"%self.changes)
-			data=self.appConfig.getConfig('system')
-			self._debug("Data: %s"%data)
-			self.level=data['system'].get('config','user')
-			if self.level!='system':
-				data=self.appConfig.getConfig(self.level)
-				level=data[self.level].get('config','n4d')
-				if level!=self.level:
-					self.level=level
-					data=self.appConfig.getConfig(level)
-					data[self.level]['config']=self.level
+		if level:
+			data=self.appConfig.getConfig(level)
 		else:
-			self._debug("NO REFRESH")
-			data[self.level]=self.config[self.level].copy()
+			if self.refresh or self.changes:
+				self._debug("Refresh: %s"%self.refresh)
+				self._debug("Changes: %s"%self.changes)
+				data=self.appConfig.getConfig('system')
+				self._debug("Data: %s"%data)
+				self.level=data['system'].get('config','user')
+				if self.level!='system':
+					data=self.appConfig.getConfig(self.level)
+					level=data[self.level].get('config','n4d')
+					if level!=self.level:
+						self.level=level
+						data=self.appConfig.getConfig(level)
+						data[self.level]['config']=self.level
+			else:
+				self._debug("NO REFRESH")
+				data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
 		self.refresh=False
 		return (data)
@@ -97,6 +100,7 @@ class appConfigStack(QWidget):
 		self._debug("Saving to level %s"%level)
 		if self.appConfig.write_config(data,level=level,key=key):
 			self.btn_ok.setEnabled(False)
+			self.btn_cancel.setEnabled(False)
 			self.refresh=True
 			retval=True
 		else:
@@ -153,7 +157,7 @@ class appConfigStack(QWidget):
 				self.btn_ok=QPushButton(_("Apply"))
 				self.btn_ok.clicked.connect(self.writeConfig)
 				self.btn_ok.setFixedWidth(100)
-				self.btn_cancel=QPushButton(_("Cancel"))
+				self.btn_cancel=QPushButton(_("Undo"))
 				self.btn_cancel.clicked.connect(self._reset_screen)
 				self.btn_cancel.setFixedWidth(100)
 				box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
@@ -164,6 +168,7 @@ class appConfigStack(QWidget):
 					layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
 		try:
 			self.btn_ok.setEnabled(False)
+			self.btn_cancel.setEnabled(False)
 			self.updateScreen()
 			self.setChanged("",False)
 		except:
@@ -173,6 +178,7 @@ class appConfigStack(QWidget):
 	def setChanged(self,widget,state=True):
 		self._debug("State: %s"%state)
 		self.btn_ok.setEnabled(state)
+		self.btn_cancel.setEnabled(state)
 		self.changes=state
 	#def setChanged
 
