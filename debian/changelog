@@ -1,3 +1,9 @@
+python3-appconfig (0.7.1) bionic; urgency=medium
+
+  * Add busy cursors when needed
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 18 Nov 2019 14:57:12 +0100
+
 python3-appconfig (0.7) bionic; urgency=medium
 
   * Add initScreen method for initialize screen values
