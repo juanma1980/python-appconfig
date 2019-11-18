@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from PyQt5.QtWidgets import QWidget,QHBoxLayout,QPushButton
 from PyQt5.QtCore import pyqtSignal,Qt
+from PyQt5 import QtGui
 from edupals.ui import QAnimatedStatusBar
 import gettext
 _ = gettext.gettext
@@ -58,6 +59,8 @@ class appConfigStack(QWidget):
 
 	def getConfig(self,level=None):
 		self._debug("Getting CONFIG")
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		self.setCursor(cursor)
 		data={}
 		if level:
 			data=self.appConfig.getConfig(level)
@@ -80,6 +83,8 @@ class appConfigStack(QWidget):
 				data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
 		self.refresh=False
+		cursor=QtGui.QCursor(Qt.PointingHandCursor)
+		self.setCursor(cursor)
 		return (data)
 	#def get_default_config
 
@@ -96,6 +101,8 @@ class appConfigStack(QWidget):
 		self.level=level
 	
 	def saveChanges(self,key,data,level=None):
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		self.setCursor(cursor)
 		retval=False
 		if not level:
 			self.getConfig()
@@ -109,6 +116,8 @@ class appConfigStack(QWidget):
 			retval=True
 		else:
 			self.showMsg("Failed to write config")
+		cursor=QtGui.QCursor(Qt.PointingHandCursor)
+		self.setCursor(cursor)
 		return retval
 	#def saveChanges
 
