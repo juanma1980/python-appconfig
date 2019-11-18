@@ -138,7 +138,7 @@ class appConfigScreen(QWidget):
 		idx=1
 		for mod_name in self.modules:
 			try:
-				mod=eval("%s()"%mod_name)
+				mod=eval("%s(self)"%mod_name)
 			except Exception as e:
 				self._debug("Import failed for %s: %s"%(mod_name,e))
 				continue
@@ -232,17 +232,17 @@ class appConfigScreen(QWidget):
 				indexes.insert(index,index)
 			self.stacks[index]['widget' ]=lst_widget
 
-		new_dict={}
-		new_dict[0]=self.stacks[0]
-		self.lst_options.addItem(new_dict[0]['widget'])
+		orderedStacks={}
+		orderedStacks[0]=self.stacks[0]
+		self.lst_options.addItem(orderedStacks[0]['widget'])
 		cont=1
 		for index in indexes:
 			if index:
-				new_dict[cont]=self.stacks[index]
-				self.lst_options.addItem(new_dict[cont]['widget'])
+				orderedStacks[cont]=self.stacks[index]
+				self.lst_options.addItem(orderedStacks[cont]['widget'])
 				cont+=1
 
-		self.stacks=new_dict.copy()
+		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
 		self.lst_options.itemClicked.connect(self._show_stack)
 		panel.setLayout(box)
@@ -283,10 +283,14 @@ class appConfigScreen(QWidget):
 		panel.setLayout(box)
 		return(panel)
 	#def _right_panel
-	
-	def _show_stack(self):
-		if self.last_index==self.lst_options.currentRow():
+
+	def gotoStack(self,idx,parms):
+		self._show_stack(idx=idx,parms=parms)
+
+	def _show_stack(self,item=None,idx=None,parms=None):
+		if ((self.last_index==self.lst_options.currentRow()) and (idx==self.last_index or idx==None)):
 			return
+
 		try:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
@@ -294,18 +298,22 @@ class appConfigScreen(QWidget):
 					return
 				else:
 					self.stacks[self.last_index]['module'].setChanged("",False)
+			self.stacks[self.last_index]['module'].initScreen()
 			if self.stacks[self.last_index]['module'].refresh:
 				self._debug("Refresh config")
 				self.getConfig()
 		except Exception as e:
 			print(e)
-		self.last_index=self.lst_options.currentRow()
+		if idx==None:
+			idx=self.lst_options.currentRow()
+		self.last_index=idx
 		try:
-			self.stacks[self.last_index]['module'].setConfig(self.config)
+			self.stacks[idx]['module'].setConfig(self.config)
 		except:
 			pass
-		self.stk_widget.setCurrentIndex(self.lst_options.currentRow())
-
+		self.stk_widget.setCurrentIndex(idx)
+		if parms:
+			self.stacks[idx]['module'].setParms(parms)
 	#def _show_stack
 
 	def _show_message(self,msg,status="error"):
