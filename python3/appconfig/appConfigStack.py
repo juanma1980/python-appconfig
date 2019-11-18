@@ -8,7 +8,7 @@ QString=type("")
 
 class appConfigStack(QWidget):
 	message=pyqtSignal("PyQt_PyObject")
-	def __init__(self):
+	def __init__(self,stack):
 		super().__init__()
 		self.dbg=True
 		self.default_icon='shell'
@@ -27,6 +27,7 @@ class appConfigStack(QWidget):
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
 		self.refresh=False
+		self.stack=stack
 		self.__init_stack__()
 	#def __init__
 
@@ -38,6 +39,9 @@ class appConfigStack(QWidget):
 		if self.dbg:
 			print("%s: %s"%(self.description,msg))
 	#def _debug
+
+	def initScreen(self):
+		self._debug("No init values")
 
 	def setAppConfig(self,appconfig):
 		self.appConfig=appconfig
@@ -185,6 +189,9 @@ class appConfigStack(QWidget):
 	def getChanges(self):
 		return self.changes
 	#def getChanges
+
+	def setParms(self,parms):
+		return
 
 	def showMsg(self,msg):
 		self.message.emit(msg)
