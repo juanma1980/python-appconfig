@@ -1,3 +1,9 @@
+python3-appconfig (0.7) bionic; urgency=medium
+
+  * Add initScreen method for initialize screen values
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 18 Nov 2019 12:03:11 +0100
+
 python3-appconfig (0.6) bionic; urgency=medium
 
   * AppConfigStack method getConfig accepts level as parameter
