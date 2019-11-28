@@ -16,7 +16,7 @@ msgstr ""
 
 #: ../python3/appconfig/appConfigN4d.py:32
 msgid "Authentication is required"
-msgstr ""
+msgstr "Es requereix autenticació"
 
 #: ../python3/appconfig/appConfigN4d.py:43
 msgid ""
