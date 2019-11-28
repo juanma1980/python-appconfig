@@ -40,7 +40,7 @@ class appConfigScreen(QWidget):
 		self.background="%s/background.png"%self.rsrc
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
 		self.last_index=0
-		self.stacks={0:{'name':"Options",'icon':'icon'}}
+		self.stacks={0:{'name':_("Options"),'icon':'icon'}}
 		self.appConfig=appConfig()
 		self.config={}
 	#def init
