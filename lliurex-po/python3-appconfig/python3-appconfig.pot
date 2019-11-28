@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-28 12:29+0100\n"
+"POT-Creation-Date: 2019-11-28 14:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,8 +70,7 @@ msgid "Options"
 msgstr ""
 
 #: ../python3/appconfig/appConfigScreen.py:258
-#, python-format
-msgid "Welcome to %s config."
+msgid "Welcome to the configuration of "
 msgstr ""
 
 #: ../python3/appconfig/appConfigScreen.py:259
@@ -88,22 +87,22 @@ msgid ""
 "Ignore them and continue?"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:16
+#: ../python3/appconfig/appConfigStack.py:17
 msgid "Configure stack"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:17
+#: ../python3/appconfig/appConfigStack.py:18
 msgid "Configure custom stack"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:19
+#: ../python3/appconfig/appConfigStack.py:20
 msgid "From here you can configure something"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:170
+#: ../python3/appconfig/appConfigStack.py:180
 msgid "Apply"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:173
+#: ../python3/appconfig/appConfigStack.py:183
 msgid "Undo"
 msgstr ""

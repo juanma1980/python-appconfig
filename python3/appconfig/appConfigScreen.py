@@ -255,7 +255,7 @@ class appConfigScreen(QWidget):
 		box=QVBoxLayout()
 		idx=0
 		text=[
-			_("Welcome to %s config."%self.appName),
+			_("Welcome to the configuration of ")+self.appName,
 			_("From here you can:")]
 		for idx,data in self.stacks.items():
 			stack=self.stacks[idx].get('module',None)
