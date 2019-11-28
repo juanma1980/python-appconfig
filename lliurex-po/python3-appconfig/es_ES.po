@@ -1,0 +1,116 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-11-28 12:29+0100\n"
+"PO-Revision-Date: 2019-11-28 12:33+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es_ES\n"
+
+#: ../python3/appconfig/appConfigN4d.py:32
+msgid "Authentication is required"
+msgstr "Se necesita autenticación"
+
+#: ../python3/appconfig/appConfigN4d.py:43
+msgid ""
+"This action needs authentication against\n"
+"the N4d Server"
+msgstr ""
+"Para realizar esta acción debe\n"
+"autenticarse en el servidor N4d"
+
+#: ../python3/appconfig/appConfigN4d.py:45
+msgid ""
+"An application is trying to do an action\n"
+"that requires N4d authentication"
+msgstr ""
+"Una aplicación quiere realizar una operación\n"
+"que requiere autenticanción en el servidor N4d"
+
+#: ../python3/appconfig/appConfigN4d.py:50
+msgid "Username"
+msgstr "Usuario"
+
+#: ../python3/appconfig/appConfigN4d.py:52
+msgid "Password"
+msgstr "Contraseña"
+
+#: ../python3/appconfig/appConfigN4d.py:61
+msgid "Accept"
+msgstr "Aceptar"
+
+#: ../python3/appconfig/appConfigN4d.py:63
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: ../python3/appconfig/appConfigN4d.py:132
+msgid "Validation error"
+msgstr "Error de validación"
+
+#: ../python3/appconfig/appConfigN4d.py:145
+msgid "Username: "
+msgstr "Usuario:"
+
+#: ../python3/appconfig/appConfigN4d.py:146
+msgid "Password: "
+msgstr "Contraseña:"
+
+#: ../python3/appconfig/appConfigN4d.py:147
+msgid "Server: "
+msgstr "Servidor:"
+
+#: ../python3/appconfig/appConfigScreen.py:213
+msgid "Options"
+msgstr "Opciones"
+
+#: ../python3/appconfig/appConfigScreen.py:258
+#, python-format
+msgid "Welcome to %s config."
+msgstr "Bienvenido a la configuración de %s"
+
+#: ../python3/appconfig/appConfigScreen.py:259
+msgid "From here you can:"
+msgstr "Desde aquí se puede:"
+
+#: ../python3/appconfig/appConfigScreen.py:328
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: ../python3/appconfig/appConfigScreen.py:328
+msgid ""
+"There're changes not saved.\n"
+"Ignore them and continue?"
+msgstr ""
+"Hay cambios sin guardar.\n"
+"¿Ignorarlos y continurar?"
+
+#: ../python3/appconfig/appConfigStack.py:16
+msgid "Configure stack"
+msgstr "Configurar stack"
+
+#: ../python3/appconfig/appConfigStack.py:17
+msgid "Configure custom stack"
+msgstr "Configurar stack personalizado"
+
+#: ../python3/appconfig/appConfigStack.py:19
+msgid "From here you can configure something"
+msgstr "Desde aquí puedes configurar cosas"
+
+#: ../python3/appconfig/appConfigStack.py:170
+msgid "Apply"
+msgstr "Aplicar"
+
+#: ../python3/appconfig/appConfigStack.py:173
+msgid "Undo"
+msgstr "Deshacer"
