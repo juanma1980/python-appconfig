@@ -13,7 +13,8 @@ from edupals.ui import QAnimatedStatusBar
 from appconfig.appConfig import appConfig 
 
 import gettext
-_ = gettext.gettext
+confText=gettext.translation("python3-appconfig")
+_ = confText.gettext
 
 QString=type("")
 QInt=type(0)
@@ -38,7 +39,6 @@ class appConfigScreen(QWidget):
 		self.appName=appName
 		self.background="%s/background.png"%self.rsrc
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
-		gettext.textdomain("python3-appconfig")
 		self.last_index=0
 		self.stacks={0:{'name':"Options",'icon':'icon'}}
 		self.appConfig=appConfig()
