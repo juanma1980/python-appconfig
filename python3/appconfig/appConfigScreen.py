@@ -38,7 +38,7 @@ class appConfigScreen(QWidget):
 		self.appName=appName
 		self.background="%s/background.png"%self.rsrc
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
-		gettext.textdomain(self.appName.lower().replace(" ","_"))
+		gettext.textdomain("python3-appconfig")
 		self.last_index=0
 		self.stacks={0:{'name':"Options",'icon':'icon'}}
 		self.appConfig=appConfig()
