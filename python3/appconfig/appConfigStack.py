@@ -4,7 +4,8 @@ from PyQt5.QtCore import pyqtSignal,Qt
 from PyQt5 import QtGui
 from edupals.ui import QAnimatedStatusBar
 import gettext
-_ = gettext.gettext
+#_ = nullTrans.gettext
+_=gettext.gettext
 QString=type("")
 
 class appConfigStack(QWidget):
@@ -29,6 +30,7 @@ class appConfigStack(QWidget):
 		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
 		self.refresh=False
 		self.stack=stack
+		self.textdomain=''
 		self.__init_stack__()
 	#def __init__
 
@@ -48,8 +50,16 @@ class appConfigStack(QWidget):
 		self.appConfig=appconfig
 	#def setAppConfig
 
+	def translate(self,msg=""):
+		print("*")
+		return(gettext.dgettext(self.textdomain,msg))
+
 	def setTextDomain(self,textDomain):
+#		a.textdomain(textDomain)
 		gettext.textdomain(textDomain)
+#		a=gettext.translation(textDomain)
+##		self._debug("TextDomain: %s"%textDomain)
+#		_=a.gettext
 	#def set_textDomain(self,textDomain):
 	
 	def applyParms(self,app):
