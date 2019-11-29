@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QDialog,QApplication,QGridLayout,QWidget,QLineEdit,Q
 from PyQt5.QtCore import QSize,Qt,pyqtSignal,pyqtSlot
 from subprocess import Popen, PIPE
 import base64
+import os
 
 from edupals.ui import QAnimatedStatusBar
 
@@ -201,7 +202,7 @@ class appConfigN4d():
 		auth=True
 		if os.path.isfile("/etc/n4d/conf.d/%s"%n4dclass):
 			with open("/etc/n4d/conf.d/%s"%n4dclass,'r') as f:
-				for line in f.readlines()
+				for line in f.readlines():
 					if line.startswith(n4dmethod):
 						if 'anonymous' in line or '*' in line:
 							auth=False
@@ -209,7 +210,7 @@ class appConfigN4d():
 		self.n4dClass=n4dclass
 		self.n4dMethod=n4dmethod
 		self.username=''
-		return(self.execAction(auth))
+		return(self._execAction(auth))
 
 	def _execAction(self,auth):
 		if self.n4dClient==None:
