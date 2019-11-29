@@ -186,6 +186,7 @@ class appConfig():
 	def _write_config_to_n4d(self,conf):
 		ret=self.n4d.writeConfig(n4dparms="%s,%s"%(self.confFile,conf['n4d']))
 		return(ret)
+	#def _write_config_to_n4d
 	
 	def _read_config_from_n4d(self):
 		tmpStr="{}"
@@ -213,3 +214,8 @@ class appConfig():
 			data={}
 		self.config.update({'n4d':data})
 		return(data)
+	#def _read_config_from_n4d
+
+	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+		ret=self.n4d.n4dQuery(n4dclass,n4dmethod,n4dparms)
+		return(ret)

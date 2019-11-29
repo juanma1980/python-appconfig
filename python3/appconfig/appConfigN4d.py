@@ -156,6 +156,61 @@ class appConfigN4d():
 		self._debug("Credentials %s %s"%(username,server))
 	#def setCredentials
 
+	def writeConfig(self,n4dparms):
+		retval=False
+		self.retval=0
+		self.n4dMethod="set_variable"
+		tmp=n4dparms.split(",")
+		parms=tmp[1:]
+		#Empty the variable data
+		self.varName=tmp[0]
+		self.varData="{}"
+		self._execAction(auth=True)
+		#On error create cariable
+		if self.retval!=0:
+			self.error("Ret: %s"%self.retval)
+			self._debug("Adding non existent variable")
+			tmp=[]
+			tmp=n4dparms.split(",")
+			self.varData=self.varData+"\",\"%s configuration\","%self.varName
+			self.varData=self.varData+"\"stores %s configuration"%self.varName
+			self.n4dMethod="add_variable"
+			self._execAction(auth=True)
+		#Else put the value
+		else:
+			self.varData=",".join(tmp[1:])
+			self.varDepends=[]
+			self._execAction(auth=True)
+		if self.retval==0:
+			retval=True
+		return(retval)
+	#def writeConfig
+	
+	def readConfig(self,n4dparms):
+		self.retval=0
+		tmp=n4dparms.split(",")
+		self.varName=tmp[0]
+		self.varData=""
+		self.varDepends=[]
+		self.n4dParms=n4dparms
+		self.n4dMethod="get_variable"
+		return(self._execAction(auth=False))
+	#def readConfig(self,n4dparms):
+
+	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+		auth=True
+		if os.path.isfile("/etc/n4d/conf.d/%s"%n4dclass):
+			with open("/etc/n4d/conf.d/%s"%n4dclass,'r') as f:
+				for line in f.readlines()
+					if line.startswith(n4dmethod):
+						if 'anonymous' in line or '*' in line:
+							auth=False
+		self.n4dParms=n4dparms
+		self.n4dClass=n4dclass
+		self.n4dMethod=n4dmethod
+		self.username=''
+		return(self.execAction(auth))
+
 	def _execAction(self,auth):
 		if self.n4dClient==None:
 			self._n4d_connect()
@@ -173,7 +228,7 @@ class appConfigN4d():
 			self._on_validate()
 		self._debug(self.result)
 		return(self.result)
-	#def setClassMethod
+	#def _execAction
 	
 	def _validate(self,user,pwd,srv):
 		ret=[False]
@@ -195,7 +250,8 @@ class appConfigN4d():
 		else:
 			validate=True
 		return(validate)
-	
+	#def _validate
+
 	def _on_validate(self,):
 		if not self.n4dParms:
 			if self.username:
@@ -237,45 +293,6 @@ class appConfigN4d():
 						self.retval=4
 		return(data)
 	#def execQuery
-
-	def writeConfig(self,n4dparms):
-		retval=False
-		self.retval=0
-		self.n4dMethod="set_variable"
-		tmp=n4dparms.split(",")
-		parms=tmp[1:]
-		#Empty the variable data
-		self.varName=tmp[0]
-		self.varData="{}"
-		self._execAction(auth=True)
-		#On error create cariable
-		if self.retval!=0:
-			self.error("Ret: %s"%self.retval)
-			self._debug("Adding non existent variable")
-			tmp=[]
-			tmp=n4dparms.split(",")
-			self.varData=self.varData+"\",\"%s configuration\","%self.varName
-			self.varData=self.varData+"\"stores %s configuration"%self.varName
-			self.n4dMethod="add_variable"
-			self._execAction(auth=True)
-		#Else put the value
-		else:
-			self.varData=",".join(tmp[1:])
-			self.varDepends=[]
-			self._execAction(auth=True)
-		if self.retval==0:
-			retval=True
-		return(retval)
-	
-	def readConfig(self,n4dparms):
-		self.retval=0
-		tmp=n4dparms.split(",")
-		self.varName=tmp[0]
-		self.varData=""
-		self.varDepends=[]
-		self.n4dParms=n4dparms
-		self.n4dMethod="get_variable"
-		return(self._execAction(auth=False))
 
 	def _n4d_connect(self):
 		self.n4dClient=None
