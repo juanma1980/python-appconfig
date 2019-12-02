@@ -55,11 +55,7 @@ class appConfigStack(QWidget):
 		return(gettext.dgettext(self.textdomain,msg))
 
 	def setTextDomain(self,textDomain):
-#		a.textdomain(textDomain)
 		gettext.textdomain(textDomain)
-#		a=gettext.translation(textDomain)
-##		self._debug("TextDomain: %s"%textDomain)
-#		_=a.gettext
 	#def set_textDomain(self,textDomain):
 	
 	def applyParms(self,app):
@@ -130,6 +126,9 @@ class appConfigStack(QWidget):
 		self.setCursor(cursor)
 		return retval
 	#def saveChanges
+	
+	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+		return(self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms))
 
 	def _reset_screen(self):
 		self.updateScreen()
