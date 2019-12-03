@@ -114,6 +114,7 @@ class appConfigN4d():
 		self.retval=0
 		self.n4dAuth=None
 		self.n4dClient=None
+		self.varName=''
 	#def __init__
 
 	def _debug(self,msg):
@@ -209,7 +210,6 @@ class appConfigN4d():
 		self.n4dParms=n4dparms
 		self.n4dClass=n4dclass
 		self.n4dMethod=n4dmethod
-		self.username=''
 		return(self._execAction(auth))
 
 	def _execAction(self,auth):
@@ -265,11 +265,15 @@ class appConfigN4d():
 					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName)
 					if self.varData:
 						self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName,self.varData,self.varDepends)
+				else:
+					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",%s)"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.n4dParms)
 			else:
 				if self.varName:
 					self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName)
 					if self.varData:
 						self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName,self.varData,self.varDepends)
+				else:
+					self.query="self.n4dClient.%s(\"%s\",%s)"%(self.n4dMethod,self.n4dClass,self.n4dParms)
 		self.result=self._execQuery()
 		if self.n4dAuth:
 			self.n4dAuth.close()

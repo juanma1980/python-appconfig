@@ -31,6 +31,8 @@ class appConfigStack(QWidget):
 		self.refresh=False
 		self.stack=stack
 		self.textdomain=''
+		self.btn_ok=QPushButton(_("Apply"))
+		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
 	#def __init__
 
@@ -147,9 +149,8 @@ class appConfigStack(QWidget):
 
 	def showEvent(self,event):
 		def recursive_add_events(layout):
-			for idx in range(0,layout.count()):
-				widget=layout.itemAt(idx).widget()
-				if widget:
+
+			def recursive_explore_widgets(widget):
 					if "QCheckBox" in str(widget):
 						widget.stateChanged.connect(lambda x:self.setChanged(widget))
 					elif "QComboBox" in str(widget):
@@ -159,13 +160,20 @@ class appConfigStack(QWidget):
 					elif "QPushButton" in str(widget):
 						if widget.menu():
 							widget.menu().triggered.connect(lambda x:self.setChanged(widget))
-					elif "dropTable" in str(widget):
-						widget.drop.connect(lambda x:self.setChanged(widget))
+					elif 'dropButton' in str(widget):
+							widget.drop.connect(lambda x:self.setChanged(widget))
+					elif "Table" in str(widget):
 						for x in range (0,widget.rowCount()):
 							for y in range (0,widget.columnCount()):
 								tableWidget=widget.cellWidget(x,y)
-								if 'dropButton' in str(tableWidget):
-									tableWidget.drop.connect(lambda x:self.setChanged(tableWidget))
+								recursive_explore_widgets(tableWidget)
+					elif widget.layout():
+						recursive_add_events(widget.layout())
+
+			for idx in range(0,layout.count()):
+				widget=layout.itemAt(idx).widget()
+				if widget:
+					recursive_explore_widgets(widget)
 
 				elif layout.itemAt(idx).layout():
 					recursive_add_events(layout.itemAt(idx).layout())
@@ -176,10 +184,8 @@ class appConfigStack(QWidget):
 			if layout:
 				recursive_add_events(layout)
 				box_btns=QHBoxLayout()
-				self.btn_ok=QPushButton(_("Apply"))
 				self.btn_ok.clicked.connect(self.writeConfig)
 				self.btn_ok.setFixedWidth(100)
-				self.btn_cancel=QPushButton(_("Undo"))
 				self.btn_cancel.clicked.connect(self._reset_screen)
 				self.btn_cancel.setFixedWidth(100)
 				box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
@@ -188,9 +194,9 @@ class appConfigStack(QWidget):
 					layout.addLayout(box_btns,Qt.Alignment(0))
 				except:
 					layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
+		self.btn_ok.setEnabled(False)
+		self.btn_cancel.setEnabled(False)
 		try:
-			self.btn_ok.setEnabled(False)
-			self.btn_cancel.setEnabled(False)
 			self.updateScreen()
 			self.setChanged("",False)
 		except:
