@@ -43,12 +43,17 @@ class appConfigScreen(QWidget):
 		self.stacks={0:{'name':_("Options"),'icon':'icon'}}
 		self.appConfig=appConfig()
 		self.config={}
+		self.textDomain=self.appName.lower().replace(" ","_")
 	#def init
 	
 	def _debug(self,msg):
 		if self.dbg:
 			print("%s"%msg)
 	#def _debug
+
+	def setTextDomain(self,textDomain):
+		self.textDomain=textDomain
+	#def setTextDomain
 
 	def setRsrcPath(self,rsrc):
 		if os.path.isdir(rsrc):
@@ -162,7 +167,7 @@ class appConfigScreen(QWidget):
 				except Exception as e:
 					self._debug("Failed to pass parm %s to %s: %s"%(mod.parm,mod_name,e))
 			try:
-				mod.setTextDomain(self.appName.lower().replace(" ","_"))
+				mod.setTextDomain(self.textDomain)
 			except Exception as e:
 				print("Can't set textdomain for %s: %s"%(mod_name,e))
 			try:
@@ -325,7 +330,7 @@ class appConfigScreen(QWidget):
 	#def _show_message
 
 	def _save_changes(self,module):
-		dia=QMessageBox(QMessageBox.Question,_("Confirm"),_("There're changes not saved.\nIgnore them and continue?"),QMessageBox.Ignore|QMessageBox.Cancel,self)
+		dia=QMessageBox(QMessageBox.Question,_("Apply changes"),_("There're changes not saved at current screen.\nDiscard them and continue?"),QMessageBox.Discard|QMessageBox.Cancel,self)
 		return(dia.exec_())
 
 	def _define_css(self):
