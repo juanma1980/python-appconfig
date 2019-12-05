@@ -34,6 +34,7 @@ class appConfigStack(QWidget):
 		self.btn_ok=QPushButton(_("Apply"))
 		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
+		self.writeConfig=self.writeDecorator(self.writeConfig)
 	#def __init__
 
 	def __init_stack__(self):
@@ -107,31 +108,8 @@ class appConfigStack(QWidget):
 
 	def setLevel(self,level):
 		self.level=level
+	#def setLevel
 	
-	def saveChanges(self,key,data,level=None):
-		cursor=QtGui.QCursor(Qt.WaitCursor)
-		self.setCursor(cursor)
-		retval=False
-		if not level:
-			self.getConfig()
-			level=self.level
-		self.changes=False
-		self._debug("Saving to level %s"%level)
-		if self.appConfig.write_config(data,level=level,key=key):
-			self.btn_ok.setEnabled(False)
-			self.btn_cancel.setEnabled(False)
-			self.refresh=True
-			retval=True
-		else:
-			self.showMsg("Failed to write config")
-		cursor=QtGui.QCursor(Qt.PointingHandCursor)
-		self.setCursor(cursor)
-		return retval
-	#def saveChanges
-	
-	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
-		return(self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms))
-
 	def _reset_screen(self):
 		self.updateScreen()
 		self.setChanged('',False)
@@ -141,7 +119,37 @@ class appConfigStack(QWidget):
 		print("updateScreen method not implemented in this stack")
 		raise NotImplementedError()
 	#def updateScreen
+
+	def saveChanges(self,key,data,level=None):
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		self.setCursor(cursor)
+		retval=False
+		if not level:
+			self.getConfig()
+			level=self.level
+		self.changes=False
+		self._debug("Saving to level %s"%level)
+		retval=True
+		if not self.appConfig.write_config(data,level=level,key=key):
+			self.btn_ok.setEnabled(True)
+			self.btn_cancel.setEnabled(True)
+			self.refresh=False
+			retval=False
+			self.showMsg("Failed to write config")
+		cursor=QtGui.QCursor(Qt.PointingHandCursor)
+		self.setCursor(cursor)
+		return retval
+	#def saveChanges
 	
+	def writeDecorator(self,func):
+		def states():
+			func()
+			self.btn_ok.setEnabled(False)
+			self.btn_cancel.setEnabled(False)
+			self.refresh=True
+		return states
+	#def writeDecorator
+
 	def writeConfig(self):
 		print("writeConfig method not implemented in this stack")
 		raise NotImplementedError()
@@ -151,6 +159,8 @@ class appConfigStack(QWidget):
 		def recursive_add_events(layout):
 
 			def recursive_explore_widgets(widget):
+					if widget==None:
+						return
 					if "QCheckBox" in str(widget):
 						widget.stateChanged.connect(lambda x:self.setChanged(widget))
 					elif "QComboBox" in str(widget):
@@ -216,8 +226,14 @@ class appConfigStack(QWidget):
 
 	def setParms(self,parms):
 		return
+	#def setParms
 
 	def showMsg(self,msg):
 		self.message.emit(msg)
+	#def showMsg
+
+	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+		return(self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms))
+	#def n4dQuery
 
 #class appConfigStack
