@@ -293,7 +293,7 @@ class appConfigN4d():
 					data={'status':tmp[0],'data':tmp[1:]}
 				if 'status' in data.keys():
 					retval=data['status']
-					if data['status']!=True:
+					if data['status']!=True and data['status']!=0:
 						self.error("Query %s failed,"%(self.query))
 						self.retval=4
 		return(data)
