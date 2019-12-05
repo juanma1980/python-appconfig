@@ -31,7 +31,10 @@ class appConfigStack(QWidget):
 		self.refresh=False
 		self.stack=stack
 		self.textdomain=''
+		self.btn_ok=QPushButton(_("Apply"))
+		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
+		self.writeConfig=self.writeDecorator(self.writeConfig)
 	#def __init__
 
 	def __init_stack__(self):
@@ -55,11 +58,7 @@ class appConfigStack(QWidget):
 		return(gettext.dgettext(self.textdomain,msg))
 
 	def setTextDomain(self,textDomain):
-#		a.textdomain(textDomain)
 		gettext.textdomain(textDomain)
-#		a=gettext.translation(textDomain)
-##		self._debug("TextDomain: %s"%textDomain)
-#		_=a.gettext
 	#def set_textDomain(self,textDomain):
 	
 	def applyParms(self,app):
@@ -109,28 +108,8 @@ class appConfigStack(QWidget):
 
 	def setLevel(self,level):
 		self.level=level
+	#def setLevel
 	
-	def saveChanges(self,key,data,level=None):
-		cursor=QtGui.QCursor(Qt.WaitCursor)
-		self.setCursor(cursor)
-		retval=False
-		if not level:
-			self.getConfig()
-			level=self.level
-		self.changes=False
-		self._debug("Saving to level %s"%level)
-		if self.appConfig.write_config(data,level=level,key=key):
-			self.btn_ok.setEnabled(False)
-			self.btn_cancel.setEnabled(False)
-			self.refresh=True
-			retval=True
-		else:
-			self.showMsg("Failed to write config")
-		cursor=QtGui.QCursor(Qt.PointingHandCursor)
-		self.setCursor(cursor)
-		return retval
-	#def saveChanges
-
 	def _reset_screen(self):
 		self.updateScreen()
 		self.setChanged('',False)
@@ -140,7 +119,37 @@ class appConfigStack(QWidget):
 		print("updateScreen method not implemented in this stack")
 		raise NotImplementedError()
 	#def updateScreen
+
+	def saveChanges(self,key,data,level=None):
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		self.setCursor(cursor)
+		retval=False
+		if not level:
+			self.getConfig()
+			level=self.level
+		self.changes=False
+		self._debug("Saving to level %s"%level)
+		retval=True
+		if not self.appConfig.write_config(data,level=level,key=key):
+			self.btn_ok.setEnabled(True)
+			self.btn_cancel.setEnabled(True)
+			self.refresh=False
+			retval=False
+			self.showMsg("Failed to write config")
+		cursor=QtGui.QCursor(Qt.PointingHandCursor)
+		self.setCursor(cursor)
+		return retval
+	#def saveChanges
 	
+	def writeDecorator(self,func):
+		def states():
+			func()
+			self.btn_ok.setEnabled(False)
+			self.btn_cancel.setEnabled(False)
+			self.refresh=True
+		return states
+	#def writeDecorator
+
 	def writeConfig(self):
 		print("writeConfig method not implemented in this stack")
 		raise NotImplementedError()
@@ -148,9 +157,10 @@ class appConfigStack(QWidget):
 
 	def showEvent(self,event):
 		def recursive_add_events(layout):
-			for idx in range(0,layout.count()):
-				widget=layout.itemAt(idx).widget()
-				if widget:
+
+			def recursive_explore_widgets(widget):
+					if widget==None:
+						return
 					if "QCheckBox" in str(widget):
 						widget.stateChanged.connect(lambda x:self.setChanged(widget))
 					elif "QComboBox" in str(widget):
@@ -160,13 +170,20 @@ class appConfigStack(QWidget):
 					elif "QPushButton" in str(widget):
 						if widget.menu():
 							widget.menu().triggered.connect(lambda x:self.setChanged(widget))
-					elif "dropTable" in str(widget):
-						widget.drop.connect(lambda x:self.setChanged(widget))
+					elif 'dropButton' in str(widget):
+							widget.drop.connect(lambda x:self.setChanged(widget))
+					elif "Table" in str(widget):
 						for x in range (0,widget.rowCount()):
 							for y in range (0,widget.columnCount()):
 								tableWidget=widget.cellWidget(x,y)
-								if 'dropButton' in str(tableWidget):
-									tableWidget.drop.connect(lambda x:self.setChanged(tableWidget))
+								recursive_explore_widgets(tableWidget)
+					elif widget.layout():
+						recursive_add_events(widget.layout())
+
+			for idx in range(0,layout.count()):
+				widget=layout.itemAt(idx).widget()
+				if widget:
+					recursive_explore_widgets(widget)
 
 				elif layout.itemAt(idx).layout():
 					recursive_add_events(layout.itemAt(idx).layout())
@@ -177,10 +194,8 @@ class appConfigStack(QWidget):
 			if layout:
 				recursive_add_events(layout)
 				box_btns=QHBoxLayout()
-				self.btn_ok=QPushButton(_("Apply"))
 				self.btn_ok.clicked.connect(self.writeConfig)
 				self.btn_ok.setFixedWidth(100)
-				self.btn_cancel=QPushButton(_("Undo"))
 				self.btn_cancel.clicked.connect(self._reset_screen)
 				self.btn_cancel.setFixedWidth(100)
 				box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
@@ -189,9 +204,9 @@ class appConfigStack(QWidget):
 					layout.addLayout(box_btns,Qt.Alignment(0))
 				except:
 					layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
+		self.btn_ok.setEnabled(False)
+		self.btn_cancel.setEnabled(False)
 		try:
-			self.btn_ok.setEnabled(False)
-			self.btn_cancel.setEnabled(False)
 			self.updateScreen()
 			self.setChanged("",False)
 		except:
@@ -211,8 +226,14 @@ class appConfigStack(QWidget):
 
 	def setParms(self,parms):
 		return
+	#def setParms
 
 	def showMsg(self,msg):
 		self.message.emit(msg)
+	#def showMsg
+
+	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+		return(self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms))
+	#def n4dQuery
 
 #class appConfigStack

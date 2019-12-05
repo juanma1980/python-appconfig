@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QDialog,QApplication,QGridLayout,QWidget,QLineEdit,Q
 from PyQt5.QtCore import QSize,Qt,pyqtSignal,pyqtSlot
 from subprocess import Popen, PIPE
 import base64
+import os
 
 from edupals.ui import QAnimatedStatusBar
 
@@ -113,6 +114,7 @@ class appConfigN4d():
 		self.retval=0
 		self.n4dAuth=None
 		self.n4dClient=None
+		self.varName=''
 	#def __init__
 
 	def _debug(self,msg):
@@ -156,88 +158,6 @@ class appConfigN4d():
 		self._debug("Credentials %s %s"%(username,server))
 	#def setCredentials
 
-	def _execAction(self,auth):
-		if self.n4dClient==None:
-			self._n4d_connect()
-		validate=False
-		self.result={}
-		if not self.username and auth:
-			validate=self.getCredentials()
-		elif self.username:
-			validate=self._validate(self.username,self.password,self.server)
-		else:
-			self.username=''
-			self.password=''
-			validate=True
-		if validate:
-			self._on_validate()
-		self._debug(self.result)
-		return(self.result)
-	#def setClassMethod
-	
-	def _validate(self,user,pwd,srv):
-		ret=[False]
-		validate=False
-		self.setCredentials(user,pwd,srv)
-		if self.n4dClient==None:
-			self._n4d_connect()
-		try:
-			ret=self.n4dClient.validate_user(user,pwd)
-		except Exception as e:
-			self.error(e)
-
-		if (isinstance(ret,bool)):
-			#Error Login 
-			self.setCredentials('','','')
-		elif not ret[0]:
-			#Error Login 
-			self.setCredentials('','','')
-		else:
-			validate=True
-		return(validate)
-	
-	def _on_validate(self,):
-		if not self.n4dParms:
-			if self.username:
-				self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
-			else:
-				self.query="self.n4dClient.%s(\"\",\"%s\")"%(self.n4dMethod,self.n4dClass)
-		else:
-			if self.username:
-				if self.varName:
-					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName)
-					if self.varData:
-						self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName,self.varData,self.varDepends)
-			else:
-				if self.varName:
-					self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName)
-					if self.varData:
-						self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName,self.varData,self.varDepends)
-		self.result=self._execQuery()
-		if self.n4dAuth:
-			self.n4dAuth.close()
-	#def _on_validate
-
-	def _execQuery(self):
-		data={}
-		try:
-			data=eval('%s'%self.query)
-		except Exception as e:
-			self.error("Syntax error on query %s"%self.query)
-			self.retval=3
-		if self.retval==0:
-			if type(data)==type({}) or type(data)==type([]):
-				if type(data)==type([]):
-					tmp=data
-					data={'status':tmp[0],'data':tmp[1:]}
-				if 'status' in data.keys():
-					retval=data['status']
-					if data['status']!=True:
-						self.error("Query %s failed,"%(self.query))
-						self.retval=4
-		return(data)
-	#def execQuery
-
 	def writeConfig(self,n4dparms):
 		retval=False
 		self.retval=0
@@ -266,6 +186,7 @@ class appConfigN4d():
 		if self.retval==0:
 			retval=True
 		return(retval)
+	#def writeConfig
 	
 	def readConfig(self,n4dparms):
 		self.retval=0
@@ -276,6 +197,107 @@ class appConfigN4d():
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
 		return(self._execAction(auth=False))
+	#def readConfig(self,n4dparms):
+
+	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+		auth=True
+		if os.path.isfile("/etc/n4d/conf.d/%s"%n4dclass):
+			with open("/etc/n4d/conf.d/%s"%n4dclass,'r') as f:
+				for line in f.readlines():
+					if line.startswith(n4dmethod):
+						if 'anonymous' in line or '*' in line:
+							auth=False
+		self.n4dParms=n4dparms
+		self.n4dClass=n4dclass
+		self.n4dMethod=n4dmethod
+		return(self._execAction(auth))
+
+	def _execAction(self,auth):
+		if self.n4dClient==None:
+			self._n4d_connect()
+		validate=False
+		self.result={}
+		if not self.username and auth:
+			validate=self.getCredentials()
+		elif self.username:
+			validate=self._validate(self.username,self.password,self.server)
+		else:
+			self.username=''
+			self.password=''
+			validate=True
+		if validate:
+			self._on_validate()
+		self._debug(self.result)
+		return(self.result)
+	#def _execAction
+	
+	def _validate(self,user,pwd,srv):
+		ret=[False]
+		validate=False
+		self.setCredentials(user,pwd,srv)
+		if self.n4dClient==None:
+			self._n4d_connect()
+		try:
+			ret=self.n4dClient.validate_user(user,pwd)
+		except Exception as e:
+			self.error(e)
+
+		if (isinstance(ret,bool)):
+			#Error Login 
+			self.setCredentials('','','')
+		elif not ret[0]:
+			#Error Login 
+			self.setCredentials('','','')
+		else:
+			validate=True
+		return(validate)
+	#def _validate
+
+	def _on_validate(self,):
+		if not self.n4dParms:
+			if self.username:
+				self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
+			else:
+				self.query="self.n4dClient.%s(\"\",\"%s\")"%(self.n4dMethod,self.n4dClass)
+		else:
+			if self.username:
+				if self.varName:
+					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName)
+					if self.varData:
+						self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.varName,self.varData,self.varDepends)
+				else:
+					self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\",%s)"%(self.n4dMethod,self.username,self.password,self.n4dClass,self.n4dParms)
+			else:
+				if self.varName:
+					self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName)
+					if self.varData:
+						self.query="self.n4dClient.%s(\"\",\"%s\",\"%s\",\"%s\",\"%s\")"%(self.n4dMethod,self.n4dClass,self.varName,self.varData,self.varDepends)
+				else:
+					self.query="self.n4dClient.%s(\"%s\",%s)"%(self.n4dMethod,self.n4dClass,self.n4dParms)
+		self.result=self._execQuery()
+		if self.n4dAuth:
+			self.n4dAuth.close()
+	#def _on_validate
+
+	def _execQuery(self):
+		data={}
+		try:
+			data=eval('%s'%self.query)
+		except Exception as e:
+			self.error("Syntax error on query %s"%self.query)
+			self.retval=3
+		if self.retval==0:
+			if type(data)==type({}) or type(data)==type([]):
+				if type(data)==type([]):
+					tmp=data
+					data={'status':tmp[0],'data':tmp[1:]}
+				if 'status' in data.keys():
+					retval=data['status']
+					if data['status']!=True and data['status']!=0:
+						self.error("Query %s failed,"%(self.query))
+						self.retval=4
+		return(data)
+	#def execQuery
 
 	def _n4d_connect(self):
 		self.n4dClient=None
