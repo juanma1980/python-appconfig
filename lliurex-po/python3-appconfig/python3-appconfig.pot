@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-28 14:23+0100\n"
+"POT-Creation-Date: 2019-12-05 14:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,74 +17,75 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../python3/appconfig/appConfigN4d.py:32
+#: ../python3/appconfig/appConfigN4d.py:33
 msgid "Authentication is required"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:43
+#: ../python3/appconfig/appConfigN4d.py:44
 msgid ""
 "This action needs authentication against\n"
 "the N4d Server"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:45
+#: ../python3/appconfig/appConfigN4d.py:46
 msgid ""
 "An application is trying to do an action\n"
 "that requires N4d authentication"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:50
+#: ../python3/appconfig/appConfigN4d.py:51
 msgid "Username"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:52
+#: ../python3/appconfig/appConfigN4d.py:53
 msgid "Password"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:61
+#: ../python3/appconfig/appConfigN4d.py:62
 msgid "Accept"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:63
+#: ../python3/appconfig/appConfigN4d.py:64
 msgid "Cancel"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:132
+#: ../python3/appconfig/appConfigN4d.py:134
 msgid "Validation error"
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:145
+#: ../python3/appconfig/appConfigN4d.py:147
 msgid "Username: "
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:146
+#: ../python3/appconfig/appConfigN4d.py:148
 msgid "Password: "
 msgstr ""
 
-#: ../python3/appconfig/appConfigN4d.py:147
+#: ../python3/appconfig/appConfigN4d.py:149
 msgid "Server: "
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:213
+#: ../python3/appconfig/appConfigScreen.py:43
+#: ../python3/appconfig/appConfigScreen.py:218
 msgid "Options"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:258
+#: ../python3/appconfig/appConfigScreen.py:263
 msgid "Welcome to the configuration of "
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:259
+#: ../python3/appconfig/appConfigScreen.py:264
 msgid "From here you can:"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:328
-msgid "Confirm"
+#: ../python3/appconfig/appConfigScreen.py:333
+msgid "Apply changes"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:328
+#: ../python3/appconfig/appConfigScreen.py:333
 msgid ""
-"There're changes not saved.\n"
-"Ignore them and continue?"
+"There're changes not saved at current screen.\n"
+"Discard them and continue?"
 msgstr ""
 
 #: ../python3/appconfig/appConfigStack.py:17
@@ -99,10 +100,10 @@ msgstr ""
 msgid "From here you can configure something"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:180
+#: ../python3/appconfig/appConfigStack.py:34
 msgid "Apply"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:183
+#: ../python3/appconfig/appConfigStack.py:35
 msgid "Undo"
 msgstr ""
