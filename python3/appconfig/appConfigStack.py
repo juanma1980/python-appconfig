@@ -127,13 +127,13 @@ class appConfigStack(QWidget):
 		if not level:
 			self.getConfig()
 			level=self.level
-		self.changes=False
 		self._debug("Saving to level %s"%level)
 		retval=True
 		if not self.appConfig.write_config(data,level=level,key=key):
 			self.btn_ok.setEnabled(True)
 			self.btn_cancel.setEnabled(True)
 			self.refresh=False
+			self.changes=True
 			retval=False
 			self.showMsg("Failed to write config")
 		cursor=QtGui.QCursor(Qt.PointingHandCursor)
@@ -147,6 +147,7 @@ class appConfigStack(QWidget):
 			self.btn_ok.setEnabled(False)
 			self.btn_cancel.setEnabled(False)
 			self.refresh=True
+			self.changes=False
 		return states
 	#def writeDecorator
 
