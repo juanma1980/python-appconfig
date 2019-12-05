@@ -1,3 +1,10 @@
+python3-appconfig (0.9) bionic; urgency=medium
+
+  * Add decorator for writeConfig function
+  * Accept 0 as True from N4d
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 05 Dec 2019 13:04:55 +0100
+
 python3-appconfig (0.8) bionic; urgency=medium
 
   * Add translations support
