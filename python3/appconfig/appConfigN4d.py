@@ -50,6 +50,7 @@ class n4dGui(QDialog):
 		txt_username=QLineEdit()
 		txt_username.setPlaceholderText(_("Username"))
 		txt_password=QLineEdit()
+		txt_password.setEchoMode(QLineEdit.Password)
 		txt_password.setPlaceholderText(_("Password"))
 		txt_server=QLineEdit()
 		server=self._get_default_server()
