@@ -83,6 +83,9 @@ class n4dGui(QDialog):
 	#def _set_default_server(self):
 
 	def acepted(self,*args):
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		self.setCursor(cursor)
+		self.grabMouse()
 		(txt_username,txt_password,txt_server)=args
 		user=txt_username.text()
 		pwd=txt_password.text()
@@ -136,6 +139,9 @@ class appConfigN4d():
 			else:
 				validate=True
 				self.n4dAuth.close()
+			cursor=QtGui.QCursor(Qt.ArrowCursor)
+			self.n4dAuth.setCursor(cursor)
+			self.n4dAuth.releaseMouse()
 
 		#Check X
 		p=Popen(["xset","-q"],stdout=PIPE,stderr=PIPE)
