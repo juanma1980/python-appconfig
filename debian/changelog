@@ -1,3 +1,9 @@
+python3-appconfig (0.12) bionic; urgency=medium
+
+  * Reworkd messaging system
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 10 Dec 2019 14:20:48 +0100
+
 python3-appconfig (0.11) bionic; urgency=medium
 
   * Mask text password on n4d dialog
