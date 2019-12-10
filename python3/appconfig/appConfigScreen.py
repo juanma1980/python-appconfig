@@ -190,12 +190,11 @@ class appConfigScreen(QWidget):
 			img=QtGui.QPixmap(self.banner)
 			img_banner.setPixmap(img)
 		img_banner.setAlignment(Qt.AlignCenter)
+		img_banner.setObjectName("banner")
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
-		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
-		self.statusBar.setStateCss("error","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(255,0,0,1), stop:1 rgba(255,0,0,0.6));color:white;text-align:center;text-decoration:none;")
 		self.lst_options=QListWidget()
 		self.stk_widget=QStackedWidget()
-		box.addWidget(self.statusBar,0,0,1,1)
+		box.addWidget(self.statusBar,0,0,1,2)
 		box.addWidget(img_banner,0,0,1,2)
 		l_panel=self._left_panel()
 		box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
@@ -321,12 +320,12 @@ class appConfigScreen(QWidget):
 			self.stacks[idx]['module'].setParms(parms)
 	#def _show_stack
 
-	def _show_message(self,msg,status="error"):
+	def _show_message(self,msg,status=None):
 		self.statusBar.setText(msg)
-		if status:
-			self.statusBar.show(status)
-		else:
-			self.statusBar.show()
+#		if status:
+#			self.statusBar.show(status)
+#		else:
+		self.statusBar.show(status)
 	#def _show_message
 
 	def _save_changes(self,module):
@@ -376,6 +375,11 @@ class appConfigScreen(QWidget):
 		#desc{
 			background-color:rgba(255,255,255,0.7);
 			color:black;
+		}
+		#banner{
+			padding:1px;
+			margin:1px;
+			border:0px;
 		}
 		"""%self.background
 		return(css)

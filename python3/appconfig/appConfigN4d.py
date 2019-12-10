@@ -33,8 +33,8 @@ class n4dGui(QDialog):
 		self.setWindowTitle(_("Authentication is required"))
 		box=QGridLayout()
 		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
-		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
-		self.statusBar.setStateCss("error","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(255,0,0,1), stop:1 rgba(255,0,0,0.6));color:white;text-align:center;text-decoration:none;")
+#		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
+#		self.statusBar.setStateCss("error","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(255,0,0,1), stop:1 rgba(255,0,0,0.6));color:white;text-align:center;text-decoration:none;")
 		box.addWidget(self.statusBar,0,0,1,2)
 		icn_auth=QtGui.QIcon.fromTheme("preferences-system-user-sudo.svg")
 		lbl_icn=QLabel()
@@ -69,6 +69,9 @@ class n4dGui(QDialog):
 		box_btn.addWidget(btn_ko)
 		box.addLayout(box_btn,5,1,1,1,Qt.Alignment(2))
 		txt_username.setText(getpass.getuser())
+		txt_username.returnPressed.connect(lambda x=1:self.acepted(txt_username,txt_password,txt_server))
+		txt_password.returnPressed.connect(lambda x=1:self.acepted(txt_username,txt_password,txt_server))
+		txt_server.returnPressed.connect(lambda x=1:self.acepted(txt_username,txt_password,txt_server))
 		self.setLayout(box)
 	#def __init__
 
@@ -96,11 +99,12 @@ class n4dGui(QDialog):
 	#def acepted
 
 	def showMessage(self,msg,status="error"):
+		self._debug("Sending %s"%msg)
 		self.statusBar.setText(msg)
-		if status:
-			self.statusBar.show(status)
-		else:
-			self.statusBar.show()
+#		if status:
+#			self.statusBar.show(status)
+#		else:
+		self.statusBar.show()
 	#def _show_message
 #class n4dGui
 
@@ -119,6 +123,7 @@ class appConfigN4d():
 		self.n4dAuth=None
 		self.n4dClient=None
 		self.varName=''
+		self.uptime=0
 	#def __init__
 
 	def _debug(self,msg):
@@ -224,6 +229,12 @@ class appConfigN4d():
 			self._n4d_connect()
 		validate=False
 		self.result={}
+		#Check session
+		if self.uptime!=0:
+			if ((int(time.time())-self.uptime)>59):
+				self.username=''
+				self.password=''
+				self.uptime=0
 		if not self.username and auth:
 			validate=self.getCredentials()
 		elif self.username:
@@ -233,6 +244,8 @@ class appConfigN4d():
 			self.password=''
 			validate=True
 		if validate:
+			if (self.uptime==0):
+				self.uptime=int(time.time())
 			self._on_validate()
 		self._debug(self.result)
 		return(self.result)
