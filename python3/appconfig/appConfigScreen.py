@@ -320,6 +320,11 @@ class appConfigScreen(QWidget):
 			self.stacks[idx]['module'].setParms(parms)
 	#def _show_stack
 
+	def closeEvent(self,event):
+		if self.stacks[self.last_index]['module'].getChanges():
+			if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
+				event.ignore()
+
 	def _show_message(self,msg,status=None):
 		self.statusBar.setText(msg)
 #		if status:
