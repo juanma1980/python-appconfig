@@ -9,7 +9,7 @@ _=gettext.gettext
 QString=type("")
 
 class appConfigStack(QWidget):
-	message=pyqtSignal("PyQt_PyObject")
+	message=pyqtSignal("PyQt_PyObject","PyQt_PyObject")
 	def __init__(self,stack):
 		super().__init__()
 		self.dbg=True
@@ -26,8 +26,6 @@ class appConfigStack(QWidget):
 		self.config={}
 		self.changes=False
 		self.add_events=False
-		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
-		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
 		self.refresh=False
 		self.stack=stack
 		self.textdomain=''
@@ -229,8 +227,9 @@ class appConfigStack(QWidget):
 		return
 	#def setParms
 
-	def showMsg(self,msg):
-		self.message.emit(msg)
+	def showMsg(self,msg,state=None):
+		self._debug("Sending %s"%msg)
+		self.message.emit(msg,state)
 	#def showMsg
 
 	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
