@@ -1,3 +1,9 @@
+python3-appconfig (0.14) bionic; urgency=medium
+
+  * On login error shake the window
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 11 Dec 2019 13:56:20 +0100
+
 python3-appconfig (0.13) bionic; urgency=medium
 
   * Ask for pending changes on exit
