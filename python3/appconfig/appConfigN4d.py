@@ -4,7 +4,7 @@ import time
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QDialog,QApplication,QGridLayout,QWidget,QLineEdit,QLabel,QPushButton,QHBoxLayout
-from PyQt5.QtCore import QSize,Qt,pyqtSignal,pyqtSlot
+from PyQt5.QtCore import QSize,Qt,pyqtSignal,pyqtSlot,QThread
 from subprocess import Popen, PIPE
 import base64
 import os
@@ -22,6 +22,8 @@ except ImportError:
 	raise ImportError("xmlrpc not available. Disabling server queries")
 	N4D=False
 import ssl
+
+
 
 class n4dGui(QDialog):
 	validateSignal=pyqtSignal('QString','QString','QString',name='validate')
@@ -47,31 +49,35 @@ class n4dGui(QDialog):
 		lbl_info.setFont(QtGui.QFont("roboto",pointSize=10))
 		box.addWidget(lbl_auth,0,1,1,1)
 		box.addWidget(lbl_info,1,1,1,1)
-		txt_username=QLineEdit()
-		txt_username.setPlaceholderText(_("Username"))
-		txt_password=QLineEdit()
-		txt_password.setEchoMode(QLineEdit.Password)
-		txt_password.setPlaceholderText(_("Password"))
-		txt_server=QLineEdit()
+		self.txt_username=QLineEdit()
+		self.txt_username.returnPressed.connect(self.acepted)
+		self.txt_username.setPlaceholderText(_("Username"))
+		self.txt_username.setText(getpass.getuser())
+		self.txt_password=QLineEdit()
+		self.txt_password.returnPressed.connect(self.acepted)
+		self.txt_password.setEchoMode(QLineEdit.Password)
+		self.txt_password.setPlaceholderText(_("Password"))
+		self.txt_server=QLineEdit()
+		self.txt_server.returnPressed.connect(self.acepted)
 		server=self._get_default_server()
-		txt_server.setPlaceholderText(server)
+		self.txt_server.setPlaceholderText(server)
 		if server=='localhost':
-			txt_server.hide()
-		box.addWidget(txt_password,3,0,1,2)
-		box.addWidget(txt_username,2,0,1,2)
-		box.addWidget(txt_server,4,0,1,2)
+			self.txt_server.hide()
+		box.addWidget(self.txt_password,3,0,1,2)
+		box.addWidget(self.txt_username,2,0,1,2)
+		box.addWidget(self.txt_server,4,0,1,2)
 		btn_ok=QPushButton(_("Accept"))
-		btn_ok.clicked.connect(lambda x:self.acepted(txt_username,txt_password,txt_server))
+		btn_ok.clicked.connect(self.acepted)
+		btn_ok.setAutoDefault(False)
+		btn_ok.setDefault(False)
 		btn_ko=QPushButton(_("Cancel"))
 		btn_ko.clicked.connect(self.close)
+		btn_ko.setAutoDefault(False)
+		btn_ko.setDefault(False)
 		box_btn=QHBoxLayout()
 		box_btn.addWidget(btn_ok)
 		box_btn.addWidget(btn_ko)
 		box.addLayout(box_btn,5,1,1,1,Qt.Alignment(2))
-		txt_username.setText(getpass.getuser())
-		txt_username.returnPressed.connect(lambda x=1:self.acepted(txt_username,txt_password,txt_server))
-		txt_password.returnPressed.connect(lambda x=1:self.acepted(txt_username,txt_password,txt_server))
-		txt_server.returnPressed.connect(lambda x=1:self.acepted(txt_username,txt_password,txt_server))
 		self.setLayout(box)
 	#def __init__
 
@@ -85,26 +91,45 @@ class n4dGui(QDialog):
 		return(server)
 	#def _set_default_server(self):
 
-	def acepted(self,*args):
-		cursor=QtGui.QCursor(Qt.WaitCursor)
-		self.setCursor(cursor)
-		self.grabMouse()
-		(txt_username,txt_password,txt_server)=args
-		user=txt_username.text()
-		pwd=txt_password.text()
-		server=txt_server.text()
+	@pyqtSlot()
+	def acepted(self):
+		self.txt_username.setReadOnly(True)
+		self.txt_password.setReadOnly(True)
+		self.txt_server.setReadOnly(True)
+		user=self.txt_username.text()
+		pwd=self.txt_password.text()
+		server=self.txt_server.text()
 		if not server:
 			server=self._get_default_server()
+			self.txt_server.setPlaceholderText(server)
 		self.validateSignal.emit(user,pwd,server)
 	#def acepted
 
+	def setNewCursor(self,newCursor):
+
+		if (newCursor=="wait"):
+			cursor=QtGui.QCursor(Qt.WaitCursor)
+		else:
+			cursor=QtGui.QCursor(Qt.ArrowCursor)
+			self.txt_username.setReadOnly(False)
+			self.txt_password.setReadOnly(False)
+			self.txt_server.setReadOnly(False)
+		self.txt_username.setCursor(cursor)
+		self.txt_password.setCursor(cursor)
+		self.txt_server.setCursor(cursor)
+		self.setCursor(cursor)
+
 	def showMessage(self,msg,status="error"):
-		self._debug("Sending %s"%msg)
+		x=self.x()
+		y=self.y()
+		move=5
+		for i in range(10):
+			self.move(x+move,y)
+			move=move*(-1)
+			time.sleep(0.05)
+		self.move(x,y)
 		self.statusBar.setText(msg)
-#		if status:
-#			self.statusBar.show(status)
-#		else:
-		self.statusBar.show()
+		self.statusBar.show("error")
 	#def _show_message
 #class n4dGui
 
@@ -139,14 +164,13 @@ class appConfigN4d():
 		@pyqtSlot(str,str,str)
 		def _qt_validate(user,pwd,srv):
 			nonlocal validate
+			self.n4dAuth.setNewCursor("wait")
 			if self._validate(user,pwd,srv)==False:
 				self.n4dAuth.showMessage(_("Validation error"))
 			else:
 				validate=True
 				self.n4dAuth.close()
-			cursor=QtGui.QCursor(Qt.ArrowCursor)
-			self.n4dAuth.setCursor(cursor)
-			self.n4dAuth.releaseMouse()
+			self.n4dAuth.setNewCursor("arrow")
 
 		#Check X
 		p=Popen(["xset","-q"],stdout=PIPE,stderr=PIPE)
