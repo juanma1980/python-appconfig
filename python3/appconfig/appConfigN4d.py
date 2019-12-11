@@ -108,16 +108,18 @@ class n4dGui(QDialog):
 	def setNewCursor(self,newCursor):
 
 		if (newCursor=="wait"):
-			cursor=QtGui.QCursor(Qt.WaitCursor)
+			arr_cursor=QtGui.QCursor(Qt.WaitCursor)
+			bea_cursor=QtGui.QCursor(Qt.WaitCursor)
 		else:
-			cursor=QtGui.QCursor(Qt.ArrowCursor)
+			arr_cursor=QtGui.QCursor(Qt.ArrowCursor)
+			bea_cursor=QtGui.QCursor(Qt.IBeamCursor)
 			self.txt_username.setReadOnly(False)
 			self.txt_password.setReadOnly(False)
 			self.txt_server.setReadOnly(False)
-		self.txt_username.setCursor(cursor)
-		self.txt_password.setCursor(cursor)
-		self.txt_server.setCursor(cursor)
-		self.setCursor(cursor)
+		self.txt_username.setCursor(bea_cursor)
+		self.txt_password.setCursor(bea_cursor)
+		self.txt_server.setCursor(bea_cursor)
+		self.setCursor(arr_cursor)
 
 	def showMessage(self,msg,status="error"):
 		x=self.x()
