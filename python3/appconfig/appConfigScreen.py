@@ -174,7 +174,14 @@ class appConfigScreen(QWidget):
 				mod.setAppConfig(self.appConfig)
 			except Exception as e:
 				print("Can't set appConfig for %s: %s"%(mod_name,e))
-			self.stacks[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod}
+			try:
+				if mod.visible==False:
+					visible=False
+				else:
+					visible=True
+			except:
+				visible=True
+			self.stacks[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod,'visible':visible}
 			try:
 				mod.message.connect(self._show_message)
 			except:
@@ -243,7 +250,8 @@ class appConfigScreen(QWidget):
 		for index in indexes:
 			if index:
 				orderedStacks[cont]=self.stacks[index]
-				self.lst_options.addItem(orderedStacks[cont]['widget'])
+				if self.stacks[index].get('visible',True)==True:
+					self.lst_options.addItem(orderedStacks[cont]['widget'])
 				cont+=1
 
 		self.stacks=orderedStacks.copy()
@@ -289,6 +297,7 @@ class appConfigScreen(QWidget):
 	#def _right_panel
 
 	def gotoStack(self,idx,parms):
+		print(self.stacks)
 		self._show_stack(idx=idx,parms=parms)
 
 	def _show_stack(self,item=None,idx=None,parms=None):
@@ -316,6 +325,7 @@ class appConfigScreen(QWidget):
 		except:
 			pass
 		self.stk_widget.setCurrentIndex(idx)
+		self.statusBar.hide()
 		if parms:
 			self.stacks[idx]['module'].setParms(parms)
 	#def _show_stack
