@@ -1,3 +1,9 @@
+python3-appconfig (0.15) bionic; urgency=medium
+
+  * Implemented visible option for stacks
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 12 Dec 2019 14:15:19 +0100
+
 python3-appconfig (0.14) bionic; urgency=medium
 
   * On login error shake the window
