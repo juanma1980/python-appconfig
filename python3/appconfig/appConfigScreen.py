@@ -316,6 +316,7 @@ class appConfigScreen(QWidget):
 		except:
 			pass
 		self.stk_widget.setCurrentIndex(idx)
+		self.statusBar.hide()
 		if parms:
 			self.stacks[idx]['module'].setParms(parms)
 	#def _show_stack
