@@ -205,9 +205,12 @@ class appConfigN4d():
 		#Empty the variable data
 		self.varName=tmp[0]
 		self.varData="{}"
-		self._execAction(auth=True)
-		#On error create cariable
-		if self.retval!=0:
+		self.retval=self._execAction(auth=True).get('status',False)
+		print("***********************")
+		print(self.retval)
+		print("***********************")
+		#On error create variable
+		if self.retval!=True:
 			self.error("Ret: %s"%self.retval)
 			self._debug("Adding non existent variable")
 			tmp=[]
