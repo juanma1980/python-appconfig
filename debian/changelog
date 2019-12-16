@@ -1,3 +1,9 @@
+python3-appconfig (0.16) bionic; urgency=medium
+
+  * Fix return status when n4d call fails for any reason
+
+ -- Juanma1980 <juanma1980@gmail.com>  Mon, 16 Dec 2019 12:55:41 +0100
+
 python3-appconfig (0.15) bionic; urgency=medium
 
   * Implemented visible option for stacks
