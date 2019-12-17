@@ -197,7 +197,6 @@ class appConfigN4d():
 	#def setCredentials
 
 	def writeConfig(self,n4dparms):
-		retval=False
 		self.retval=0
 		self.n4dMethod="set_variable"
 		tmp=n4dparms.split(",")
@@ -206,9 +205,6 @@ class appConfigN4d():
 		self.varName=tmp[0]
 		self.varData="{}"
 		self.retval=self._execAction(auth=True).get('status',False)
-		print("***********************")
-		print(self.retval)
-		print("***********************")
 		#On error create variable
 		if self.retval!=True:
 			self.error("Ret: %s"%self.retval)
@@ -225,8 +221,8 @@ class appConfigN4d():
 			self.varDepends=[]
 			self._execAction(auth=True)
 		if self.retval==0:
-			retval=True
-		return(retval)
+			self.retval=True
+		return(self.retval)
 	#def writeConfig
 	
 	def readConfig(self,n4dparms):

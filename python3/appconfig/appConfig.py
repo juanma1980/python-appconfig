@@ -185,6 +185,7 @@ class appConfig():
 
 	def _write_config_to_n4d(self,conf):
 		ret=self.n4d.writeConfig(n4dparms="%s,%s"%(self.confFile,conf['n4d']))
+		self._debug("N4d returns: %s"%ret)
 		return(ret)
 	#def _write_config_to_n4d
 	
