@@ -41,7 +41,7 @@ class appConfigStack(QWidget):
 	
 	def _debug(self,msg):
 		if self.dbg:
-			print("%s: %s"%(self.description,msg))
+				print("Stackdbg: %s: %s"%(self.description,msg))
 	#def _debug
 
 	def initScreen(self):
@@ -65,10 +65,10 @@ class appConfigStack(QWidget):
 	#def apply_parms(self,app):
 
 	def getConfig(self,level=None):
-		self._debug("Getting CONFIG")
+		self._debug("Getting config for level %s"%level)
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
-		data={}
+		data={'system':{},'user':{},'n4d':{}}
 		if self.refresh or self.changes:
 			self._debug("Refresh: %s"%self.refresh)
 			self._debug("Changes: %s"%self.changes)
@@ -87,7 +87,8 @@ class appConfigStack(QWidget):
 						data[self.level]['config']=self.level
 		else:
 			self._debug("NO REFRESH")
-			data[self.level]=self.config[self.level].copy()
+			if self.config[self.level]:
+				data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
 		self.refresh=False
 		cursor=QtGui.QCursor(Qt.PointingHandCursor)
