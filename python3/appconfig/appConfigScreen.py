@@ -157,7 +157,7 @@ class appConfigScreen(QWidget):
 				pass
 			while idx in self.stacks.keys():
 				idx+=1
-				self._debug("New idx: %s"%idx)
+				self._debug("New idx for %s: %s"%(mod_name,idx))
 			if 'parm' in mod.__dict__.keys():
 				try:
 					if mod.parm:
@@ -225,31 +225,33 @@ class appConfigScreen(QWidget):
 		btn_menu.setObjectName("menuButton")
 #		box.addWidget(btn_menu,Qt.Alignment(1))
 		indexes=[]
-		for i in range (100):
-			indexes.append("")
 		for index,option in self.stacks.items():
+			idx=index
 			lst_widget=QListWidgetItem()
 			lst_widget.setText(option['name'])
 			mod=option.get('module',None)
 			if mod:
-				index=mod.index
-			if index>0:
+				try:
+					idx=mod.index
+				except:
+					pass
+			if idx>0:
 				icn=QtGui.QIcon.fromTheme(option['icon'])
 				lst_widget.setIcon(icn)
 				if 'tooltip' in option.keys():
 					lst_widget.setToolTip(option['tooltip'])
-				while index in indexes:
-					index+=1
-				indexes.insert(index,index)
-			self.stacks[index]['widget' ]=lst_widget
-
+				while idx in indexes:
+					idx+=1
+				indexes.append(index)
+			self.stacks[idx]['widget' ]=lst_widget
 		orderedStacks={}
 		orderedStacks[0]=self.stacks[0]
 		self.lst_options.addItem(orderedStacks[0]['widget'])
 		cont=1
+		indexes.sort()
 		for index in indexes:
 			if index:
-				orderedStacks[cont]=self.stacks[index]
+				orderedStacks[cont]=self.stacks[index].copy()
 				if self.stacks[index].get('visible',True)==True:
 					self.lst_options.addItem(orderedStacks[cont]['widget'])
 				cont+=1
@@ -269,8 +271,10 @@ class appConfigScreen(QWidget):
 		text=[
 			_("Welcome to the configuration of ")+self.appName,
 			_("From here you can:")]
-		for idx,data in self.stacks.items():
-			stack=self.stacks[idx].get('module',None)
+		orderIdx=list(self.stacks.keys())
+		for idx in orderIdx:
+			data=self.stacks[idx]
+			stack=data.get('module',None)
 			if stack:
 				stack.setLevel(self.level)
 				stack.setConfig(self.config)
@@ -331,9 +335,12 @@ class appConfigScreen(QWidget):
 	#def _show_stack
 
 	def closeEvent(self,event):
-		if self.stacks[self.last_index]['module'].getChanges():
-			if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
-				event.ignore()
+		try:
+			if self.stacks[self.last_index]['module'].getChanges():
+				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
+					event.ignore()
+		except:
+			pass
 
 	def _show_message(self,msg,status=None):
 		self.statusBar.setText(msg)
