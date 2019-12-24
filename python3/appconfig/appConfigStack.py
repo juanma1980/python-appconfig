@@ -169,6 +169,8 @@ class appConfigStack(QWidget):
 					elif "QPushButton" in str(widget):
 						if widget.menu():
 							widget.menu().triggered.connect(lambda x:self.setChanged(widget))
+						else:
+							widget.clicked.connect(lambda x:self.setChanged(widget))
 					elif 'dropButton' in str(widget):
 							widget.drop.connect(lambda x:self.setChanged(widget))
 					elif "Table" in str(widget):
