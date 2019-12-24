@@ -69,12 +69,12 @@ class appConfigStack(QWidget):
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
 		data={}
-		if level:
-			data=self.appConfig.getConfig(level)
-		else:
-			if self.refresh or self.changes:
-				self._debug("Refresh: %s"%self.refresh)
-				self._debug("Changes: %s"%self.changes)
+		if self.refresh or self.changes:
+			self._debug("Refresh: %s"%self.refresh)
+			self._debug("Changes: %s"%self.changes)
+			if level:
+				data=self.appConfig.getConfig(level)
+			else:
 				data=self.appConfig.getConfig('system')
 				self._debug("Data: %s"%data)
 				self.level=data['system'].get('config','user')
@@ -85,9 +85,9 @@ class appConfigStack(QWidget):
 						self.level=level
 						data=self.appConfig.getConfig(level)
 						data[self.level]['config']=self.level
-			else:
-				self._debug("NO REFRESH")
-				data[self.level]=self.config[self.level].copy()
+		else:
+			self._debug("NO REFRESH")
+			data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
 		self.refresh=False
 		cursor=QtGui.QCursor(Qt.PointingHandCursor)
