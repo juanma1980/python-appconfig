@@ -81,10 +81,13 @@ class appConfig():
 			self._read_config_from_n4d()
 		else:
 			self.confFile=self.localConf
-			self._read_config_from_system(level)
+			if self._read_config_from_system(level)==False:
+				self.confFile=self.n4dConf
+				self._read_config_from_n4d()
+				self.config['system']['config']='n4d'
 
 		if self.config[level]=={}:
-			self.config[level].update({'config':level})
+			self.config[level]['config']=level
 		config=self.config.copy()
 		self._debug("Data -> %s"%(self.config))
 		return (config)
@@ -106,9 +109,14 @@ class appConfig():
 				self._debug("Updating %s -> %s"%(confFile,level))
 				self.config.update({level:data})
 		#def _read_file
+		fileRead=False
 		confFiles=self.get_configFile(level)
 		for confLevel,confFile in confFiles.items():
-			_read_file(confFile,confLevel)
+			if os.path.isfile(confFile):
+				fileRead=True
+				_read_file(confFile,confLevel)
+		return fileRead
+
 	#def read_config_from_system
 
 	def write_config(self,data,level=None,key=None,pk=None,create=True):
