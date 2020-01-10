@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import socket
 import time
-
+import json
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QDialog,QApplication,QGridLayout,QWidget,QLineEdit,QLabel,QPushButton,QHBoxLayout
 from PyQt5.QtCore import QSize,Qt,pyqtSignal,pyqtSlot,QThread
@@ -251,8 +251,8 @@ class appConfigN4d():
 				tmpStr=tmpStr.replace("True}","\"True\"}")
 		try:
 			data=json.loads(tmpStr)
-		except:
-			print("Error reading n4d values")
+		except Exception as e:
+			print("Error reading n4d values: %s"%e)
 			print("Dump: %s"%tmpStr)
 			data={}
 		for excludeKey in exclude:
