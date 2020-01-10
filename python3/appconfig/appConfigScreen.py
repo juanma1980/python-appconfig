@@ -113,13 +113,13 @@ class appConfigScreen(QWidget):
 		return (data)
 	#def _get_default_config(self,level):
 	
-	def getConfig(self,level=None):
+	def getConfig(self,level=None,exclude=[]):
 		data=self._get_default_config()
 		if not level:
 			level=self.level
 		if level!='system':
 			data={}
-			data=self.appConfig.getConfig(level,exclude=["background64"])
+			data=self.appConfig.getConfig(level,exclude)
 		self.config=data.copy()
 		self._debug("Read level from config: %s"%level)
 		return (data)
