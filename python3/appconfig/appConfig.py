@@ -74,16 +74,16 @@ class appConfig():
 		return(level)
 	#def getLevel
 
-	def getConfig(self,level=None):
+	def getConfig(self,level=None,exclude=[]):
 		self.config={'user':{},'system':{},'n4d':{}}
 		if level=='n4d':
 			self.confFile=self.n4dConf
-			self._read_config_from_n4d()
+			self._read_config_from_n4d(exclude)
 		else:
 			self.confFile=self.localConf
-			if self._read_config_from_system(level)==False:
+			if self._read_config_from_system(level,exclude)==False:
 				self.confFile=self.n4dConf
-				self._read_config_from_n4d()
+				self._read_config_from_n4d(exclude)
 				self.config['system']['config']='n4d'
 
 		if self.config[level]=={}:
@@ -93,7 +93,7 @@ class appConfig():
 		return (config)
 	#def getConfig
 
-	def _read_config_from_system(self,level=None):
+	def _read_config_from_system(self,level=None,exclude=[]):
 		def _read_file(confFile,level):
 			data={}
 			self._debug("Reading %s -> %s"%(confFile,level))
@@ -106,6 +106,9 @@ class appConfig():
 			if data:
 				if not 'config' in data.keys():
 					data['config']=level
+				for excludeKey in exclude:
+					if exclude in data.keys():
+						del data[exclude]
 				self._debug("Updating %s -> %s"%(confFile,level))
 				self.config.update({level:data})
 		#def _read_file
@@ -197,32 +200,11 @@ class appConfig():
 		return(ret)
 	#def _write_config_to_n4d
 	
-	def _read_config_from_n4d(self):
+	def _read_config_from_n4d(self,exclude=[]):
 		tmpStr="{}"
-		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile)
-		tmpStr=ret
-		if isinstance(ret,str):
-			tmpStr=ret.replace("'","\"")
-		if ret==None:
-			tmpStr=""
-		if "False" in tmpStr:
-			if "False," in tmpStr:
-				tmpStr=tmpStr.replace("False,","\"False\",")
-			elif "False}" in tmpStr:
-				tmpStr=tmpStr.replace("False}","\"False\"}")
-		if "True" in tmpStr:
-			if "True," in tmpStr:
-				tmpStr=tmpStr.replace("True,","\"True\",")
-			elif "True}" in tmpStr:
-				tmpStr=tmpStr.replace("True}","\"True\"}")
-		try:
-			data=json.loads(tmpStr)
-		except:
-			print("Error reading n4d values")
-			print("Dump: %s"%tmpStr)
-			data={}
-		self.config.update({'n4d':data})
-		return(data)
+		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile,exclude=exclude)
+		self.config.update({'n4d':ret})
+		return(ret)
 	#def _read_config_from_n4d
 
 	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):

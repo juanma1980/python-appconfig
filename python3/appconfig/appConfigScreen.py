@@ -119,7 +119,7 @@ class appConfigScreen(QWidget):
 			level=self.level
 		if level!='system':
 			data={}
-			data=self.appConfig.getConfig(level)
+			data=self.appConfig.getConfig(level,exclude=["background64"])
 		self.config=data.copy()
 		self._debug("Read level from config: %s"%level)
 		return (data)

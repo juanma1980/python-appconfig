@@ -64,8 +64,9 @@ class appConfigStack(QWidget):
 		self.app=app
 	#def apply_parms(self,app):
 
-	def getConfig(self,level=None):
+	def getConfig(self,level=None,exclude=[]):
 		self._debug("Getting config for level %s"%level)
+		self._debug("Exclude keys: %s"%exclude)
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
 		data={'system':{},'user':{},'n4d':{}}
@@ -73,17 +74,17 @@ class appConfigStack(QWidget):
 			self._debug("Refresh: %s"%self.refresh)
 			self._debug("Changes: %s"%self.changes)
 			if level:
-				data=self.appConfig.getConfig(level)
+				data=self.appConfig.getConfig(level,exclude)
 			else:
-				data=self.appConfig.getConfig('system')
+				data=self.appConfig.getConfig('system',exclude)
 				self._debug("Data: %s"%data)
 				self.level=data['system'].get('config','user')
 				if self.level!='system':
-					data=self.appConfig.getConfig(self.level)
+					data=self.appConfig.getConfig(self.level,exclude)
 					level=data[self.level].get('config','n4d')
 					if level!=self.level:
 						self.level=level
-						data=self.appConfig.getConfig(level)
+						data=self.appConfig.getConfig(level,exclude)
 						data[self.level]['config']=self.level
 		else:
 			self._debug("NO REFRESH")

@@ -202,7 +202,7 @@ class appConfigN4d():
 		tmp=n4dparms.split(",")
 		parms=tmp[1:]
 		#Empty the variable data
-		self.varName=tmp[0]
+		self.varName=tmp[0].upper()
 		self.varData="{}"
 		self.retval=self._execAction(auth=True).get('status',False)
 		#On error create variable
@@ -225,15 +225,41 @@ class appConfigN4d():
 		return(self.retval)
 	#def writeConfig
 	
-	def readConfig(self,n4dparms):
+	def readConfig(self,n4dparms,exclude=[]):
 		self.retval=0
 		tmp=n4dparms.split(",")
-		self.varName=tmp[0]
+		self.varName=tmp[0].upper()
 		self.varData=""
 		self.varDepends=[]
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
-		return(self._execAction(auth=False))
+		ret=self._execAction(auth=False)
+		tmpStr=ret
+		if isinstance(ret,str):
+			tmpStr=ret.replace("'","\"")
+		if ret==None:
+			tmpStr=""
+		if "False" in tmpStr:
+			if "False," in tmpStr:
+				tmpStr=tmpStr.replace("False,","\"False\",")
+			elif "False}" in tmpStr:
+				tmpStr=tmpStr.replace("False}","\"False\"}")
+		if "True" in tmpStr:
+			if "True," in tmpStr:
+				tmpStr=tmpStr.replace("True,","\"True\",")
+			elif "True}" in tmpStr:
+				tmpStr=tmpStr.replace("True}","\"True\"}")
+		try:
+			data=json.loads(tmpStr)
+		except:
+			print("Error reading n4d values")
+			print("Dump: %s"%tmpStr)
+			data={}
+		for excludeKey in exclude:
+			print("Search exclude %s in %s"%(excludeKey,data.keys()))
+			if exclude in list(data.keys()):
+				del data[exclude]
+		return(data)
 	#def readConfig(self,n4dparms):
 
 	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
@@ -326,6 +352,7 @@ class appConfigN4d():
 
 	def _execQuery(self):
 		data={}
+		print("Execute\n%s\n\n"%self.query)
 		try:
 			data=eval('%s'%self.query)
 		except Exception as e:
