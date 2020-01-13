@@ -257,8 +257,8 @@ class appConfigN4d():
 			data={}
 		for excludeKey in exclude:
 			print("Search exclude %s in %s"%(excludeKey,data.keys()))
-			if exclude in list(data.keys()):
-				del data[exclude]
+			if excludeKey in list(data.keys()):
+				del data[excludeKey]
 		return(data)
 	#def readConfig(self,n4dparms):
 

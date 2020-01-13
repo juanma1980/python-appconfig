@@ -107,8 +107,8 @@ class appConfig():
 				if not 'config' in data.keys():
 					data['config']=level
 				for excludeKey in exclude:
-					if exclude in data.keys():
-						del data[exclude]
+					if excludeKey in list(data.keys()):
+						del data[excludeKey]
 				self._debug("Updating %s -> %s"%(confFile,level))
 				self.config.update({level:data})
 		#def _read_file
