@@ -89,7 +89,7 @@ class appConfig():
 		if self.config[level]=={}:
 			self.config[level]['config']=level
 		config=self.config.copy()
-		self._debug("Data -> %s"%(self.config))
+#		self._debug("Data -> %s"%(self.config))
 		return (config)
 	#def getConfig
 
@@ -142,7 +142,7 @@ class appConfig():
 		else:
 			oldConf=self.getConfig(level)
 #			oldConf=self.config.copy()
-			self._debug("Old: %s"%oldConf)
+#			self._debug("Old: %s"%oldConf)
 			newConf=oldConf.copy()
 			if key:
 				if not level in newConf.keys():
@@ -170,7 +170,7 @@ class appConfig():
 		retval=True
 		if not level in self.config.keys():
 			self.config[level]={}
-		self._debug("Writing info %s"%self.config[level])
+#		self._debug("Writing info %s"%self.config[level])
 		if level and level in self.baseDirs.keys():
 			confDir=self.baseDirs[level]
 		else:
@@ -184,7 +184,7 @@ class appConfig():
 		if retval:
 			confFile=("%s/%s"%(confDir,self.confFile))
 			self.config[level]=conf[level]
-			self._debug("New: %s"%self.config[level])
+#			self._debug("New: %s"%self.config[level])
 			try:
 				with open(confFile,'w') as f:
 					json.dump(self.config[level],f,indent=4,sort_keys=True)
