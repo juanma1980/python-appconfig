@@ -56,7 +56,7 @@ class appConfig():
 
 	def set_defaultConfig(self,config):
 		self.config.update({'default':config})
-		self._debug(self.config)
+#		self._debug(self.config)
 	#def set_defaultConfig
 
 	def set_level(self,level):

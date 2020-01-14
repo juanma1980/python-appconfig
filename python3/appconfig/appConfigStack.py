@@ -77,7 +77,7 @@ class appConfigStack(QWidget):
 				data=self.appConfig.getConfig(level,exclude)
 			else:
 				data=self.appConfig.getConfig('system',exclude)
-				self._debug("Data: %s"%data)
+#				self._debug("Data: %s"%data)
 				self.level=data['system'].get('config','user')
 				if self.level!='system':
 					data=self.appConfig.getConfig(self.level,exclude)
