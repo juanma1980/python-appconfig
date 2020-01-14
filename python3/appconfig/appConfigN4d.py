@@ -298,7 +298,7 @@ class appConfigN4d():
 			if (self.uptime==0):
 				self.uptime=int(time.time())
 			self._on_validate()
-		self._debug(self.result)
+#		self._debug(self.result)
 		return(self.result)
 	#def _execAction
 	
