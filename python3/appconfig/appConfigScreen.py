@@ -270,7 +270,7 @@ class appConfigScreen(QWidget):
 		idx=0
 		text=[
 			_("Welcome to the configuration of ")+self.appName,
-			_("From here you can:")]
+			_("From here you can:<br>")]
 		orderIdx=list(self.stacks.keys())
 		for idx in orderIdx:
 			data=self.stacks[idx]
@@ -279,7 +279,7 @@ class appConfigScreen(QWidget):
 				stack.setLevel(self.level)
 				stack.setConfig(self.config)
 				stack._load_screen()
-				text.append(" * %s"%stack.menu_description)
+				text.append("&nbsp;*&nbsp;<a href=\"appconf://%s\"><span style=\"font-weight:bold;text-decoration:none\">%s</span></a>"%(idx,stack.menu_description))
 				try:
 					self.stk_widget.insertWidget(idx,stack)
 				except:
@@ -287,9 +287,13 @@ class appConfigScreen(QWidget):
 		stack=QWidget()
 		stack.setObjectName("panel")
 		s_box=QVBoxLayout()
-		lbl_txt=QLabel("\n".join(text))
+		lbl_txt=QLabel()
+		lbl_txt.setTextFormat(Qt.RichText)
+		lbl_txt.setText("<br>".join(text))
+		lbl_txt.linkActivated.connect(self._linkStack)
 		lbl_txt.setObjectName("desc")
 		lbl_txt.setAlignment(Qt.AlignTop)
+		lbl_txt.setTextInteractionFlags(Qt.TextBrowserInteraction)
 		s_box.addWidget(lbl_txt,Qt.Alignment(1))
 		stack.setLayout(s_box)
 		self.stk_widget.insertWidget(0,stack)
@@ -299,6 +303,11 @@ class appConfigScreen(QWidget):
 		panel.setLayout(box)
 		return(panel)
 	#def _right_panel
+
+	def _linkStack(self,*args):
+		stack=args[0].split('/')[-1]
+		self.gotoStack(int(stack),'')
+
 
 	def gotoStack(self,idx,parms):
 		print(self.stacks)
