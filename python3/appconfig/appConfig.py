@@ -56,7 +56,7 @@ class appConfig():
 
 	def set_defaultConfig(self,config):
 		self.config.update({'default':config})
-		self._debug(self.config)
+#		self._debug(self.config)
 	#def set_defaultConfig
 
 	def set_level(self,level):
@@ -74,23 +74,26 @@ class appConfig():
 		return(level)
 	#def getLevel
 
-	def getConfig(self,level=None):
+	def getConfig(self,level=None,exclude=[]):
 		self.config={'user':{},'system':{},'n4d':{}}
 		if level=='n4d':
 			self.confFile=self.n4dConf
-			self._read_config_from_n4d()
+			self._read_config_from_n4d(exclude)
 		else:
 			self.confFile=self.localConf
-			self._read_config_from_system(level)
+			if self._read_config_from_system(level,exclude)==False:
+				self.confFile=self.n4dConf
+				self._read_config_from_n4d(exclude)
+				self.config['system']['config']='n4d'
 
 		if self.config[level]=={}:
-			self.config[level].update({'config':level})
+			self.config[level]['config']=level
 		config=self.config.copy()
-		self._debug("Data -> %s"%(self.config))
+#		self._debug("Data -> %s"%(self.config))
 		return (config)
 	#def getConfig
 
-	def _read_config_from_system(self,level=None):
+	def _read_config_from_system(self,level=None,exclude=[]):
 		def _read_file(confFile,level):
 			data={}
 			self._debug("Reading %s -> %s"%(confFile,level))
@@ -103,12 +106,20 @@ class appConfig():
 			if data:
 				if not 'config' in data.keys():
 					data['config']=level
+				for excludeKey in exclude:
+					if excludeKey in list(data.keys()):
+						del data[excludeKey]
 				self._debug("Updating %s -> %s"%(confFile,level))
 				self.config.update({level:data})
 		#def _read_file
+		fileRead=False
 		confFiles=self.get_configFile(level)
 		for confLevel,confFile in confFiles.items():
-			_read_file(confFile,confLevel)
+			if os.path.isfile(confFile):
+				fileRead=True
+				_read_file(confFile,confLevel)
+		return fileRead
+
 	#def read_config_from_system
 
 	def write_config(self,data,level=None,key=None,pk=None,create=True):
@@ -131,7 +142,7 @@ class appConfig():
 		else:
 			oldConf=self.getConfig(level)
 #			oldConf=self.config.copy()
-			self._debug("Old: %s"%oldConf)
+#			self._debug("Old: %s"%oldConf)
 			newConf=oldConf.copy()
 			if key:
 				if not level in newConf.keys():
@@ -159,7 +170,7 @@ class appConfig():
 		retval=True
 		if not level in self.config.keys():
 			self.config[level]={}
-		self._debug("Writing info %s"%self.config[level])
+#		self._debug("Writing info %s"%self.config[level])
 		if level and level in self.baseDirs.keys():
 			confDir=self.baseDirs[level]
 		else:
@@ -173,7 +184,7 @@ class appConfig():
 		if retval:
 			confFile=("%s/%s"%(confDir,self.confFile))
 			self.config[level]=conf[level]
-			self._debug("New: %s"%self.config[level])
+#			self._debug("New: %s"%self.config[level])
 			try:
 				with open(confFile,'w') as f:
 					json.dump(self.config[level],f,indent=4,sort_keys=True)
@@ -189,32 +200,11 @@ class appConfig():
 		return(ret)
 	#def _write_config_to_n4d
 	
-	def _read_config_from_n4d(self):
+	def _read_config_from_n4d(self,exclude=[]):
 		tmpStr="{}"
-		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile)
-		tmpStr=ret
-		if isinstance(ret,str):
-			tmpStr=ret.replace("'","\"")
-		if ret==None:
-			tmpStr=""
-		if "False" in tmpStr:
-			if "False," in tmpStr:
-				tmpStr=tmpStr.replace("False,","\"False\",")
-			elif "False}" in tmpStr:
-				tmpStr=tmpStr.replace("False}","\"False\"}")
-		if "True" in tmpStr:
-			if "True," in tmpStr:
-				tmpStr=tmpStr.replace("True,","\"True\",")
-			elif "True}" in tmpStr:
-				tmpStr=tmpStr.replace("True}","\"True\"}")
-		try:
-			data=json.loads(tmpStr)
-		except:
-			print("Error reading n4d values")
-			print("Dump: %s"%tmpStr)
-			data={}
-		self.config.update({'n4d':data})
-		return(data)
+		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile,exclude=exclude)
+		self.config.update({'n4d':ret})
+		return(ret)
 	#def _read_config_from_n4d
 
 	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import socket
 import time
-
+import json
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QDialog,QApplication,QGridLayout,QWidget,QLineEdit,QLabel,QPushButton,QHBoxLayout
 from PyQt5.QtCore import QSize,Qt,pyqtSignal,pyqtSlot,QThread
@@ -202,7 +202,7 @@ class appConfigN4d():
 		tmp=n4dparms.split(",")
 		parms=tmp[1:]
 		#Empty the variable data
-		self.varName=tmp[0]
+		self.varName=tmp[0].upper()
 		self.varData="{}"
 		self.retval=self._execAction(auth=True).get('status',False)
 		#On error create variable
@@ -225,15 +225,41 @@ class appConfigN4d():
 		return(self.retval)
 	#def writeConfig
 	
-	def readConfig(self,n4dparms):
+	def readConfig(self,n4dparms,exclude=[]):
 		self.retval=0
 		tmp=n4dparms.split(",")
-		self.varName=tmp[0]
+		self.varName=tmp[0].upper()
 		self.varData=""
 		self.varDepends=[]
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
-		return(self._execAction(auth=False))
+		ret=self._execAction(auth=False)
+		tmpStr=ret
+		if isinstance(ret,str):
+			tmpStr=ret.replace("'","\"")
+		if ret==None:
+			tmpStr=""
+		if "False" in tmpStr:
+			if "False," in tmpStr:
+				tmpStr=tmpStr.replace("False,","\"False\",")
+			elif "False}" in tmpStr:
+				tmpStr=tmpStr.replace("False}","\"False\"}")
+		if "True" in tmpStr:
+			if "True," in tmpStr:
+				tmpStr=tmpStr.replace("True,","\"True\",")
+			elif "True}" in tmpStr:
+				tmpStr=tmpStr.replace("True}","\"True\"}")
+		try:
+			data=json.loads(tmpStr)
+		except Exception as e:
+			print("Error reading n4d values: %s"%e)
+			print("Dump: %s"%tmpStr)
+			data={}
+		for excludeKey in exclude:
+			print("Search exclude %s in %s"%(excludeKey,data.keys()))
+			if excludeKey in list(data.keys()):
+				del data[excludeKey]
+		return(data)
 	#def readConfig(self,n4dparms):
 
 	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
@@ -272,7 +298,7 @@ class appConfigN4d():
 			if (self.uptime==0):
 				self.uptime=int(time.time())
 			self._on_validate()
-		self._debug(self.result)
+#		self._debug(self.result)
 		return(self.result)
 	#def _execAction
 	
@@ -326,6 +352,7 @@ class appConfigN4d():
 
 	def _execQuery(self):
 		data={}
+		print("Execute\n%s\n\n"%self.query)
 		try:
 			data=eval('%s'%self.query)
 		except Exception as e:
