@@ -316,14 +316,14 @@ class appConfigScreen(QWidget):
 		lbl_txt.setObjectName("desc")
 		lbl_txt.setAlignment(Qt.AlignTop)
 		lbl_txt.setTextInteractionFlags(Qt.TextBrowserInteraction)
-		s_box.addWidget(lbl_txt)#,Qt.Alignment(1))
+		s_box.addWidget(lbl_txt,1)
 		#Get wiki page
 		url=self._searchWiki()
 		if url:
 			desc=_("Wiki help")
 			lbl_wiki=QLabel("<a href=\"%s\"><span style=\"text-align: right;\">%s</span></a>"%(url,desc))
 			lbl_wiki.setOpenExternalLinks(True)
-			s_box.addWidget(lbl_wiki,1,Qt.AlignRight)
+			s_box.addWidget(lbl_wiki,0,Qt.AlignRight)
 		stack.setLayout(s_box)
 		self.stk_widget.insertWidget(0,stack)
 		self.stacks[0]['module']=stack
