@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
+from urllib.request import Request,urlopen,urlretrieve
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,\
 				QDialog,QGridLayout,QHBoxLayout,QFormLayout,QLineEdit,QComboBox,\
@@ -37,6 +38,7 @@ class appConfigScreen(QWidget):
 		self.parms=parms
 		self.modules=[]
 		self.appName=appName
+		self.wikiPage=appName
 		self.background="%s/background.png"%self.rsrc
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
 		self.last_index=0
@@ -50,6 +52,10 @@ class appConfigScreen(QWidget):
 		if self.dbg:
 			print("%s"%msg)
 	#def _debug
+
+	def setWiki(self,url):
+		self.wikiPage=url
+	#def setWiki
 
 	def setTextDomain(self,textDomain):
 		self.textDomain=textDomain
@@ -97,6 +103,22 @@ class appConfigScreen(QWidget):
 		self.appConfig.set_configFile(confFile)
 	#def setConfig(self,confDirs,confFile):
 	
+	def _searchWiki(self):
+		url=""
+		baseUrl="https://wiki.edu.gva.es/lliurex/tiki-index.php?page="
+		if self.wikiPage.startswith("http"):
+			url=self.wikiPage
+		else:
+			url="%s%s"%(baseUrl,self.wikiPage)
+		try:
+			req=Request(url)
+			content=urlopen(req).read()
+		except:
+			self._debug("Wiki not found at %s"%url)
+			url=""
+		return(url)
+	#def _searchWiki
+
 	def _get_default_config(self):
 		data={}
 		data=self.appConfig.getConfig('system')
@@ -294,7 +316,14 @@ class appConfigScreen(QWidget):
 		lbl_txt.setObjectName("desc")
 		lbl_txt.setAlignment(Qt.AlignTop)
 		lbl_txt.setTextInteractionFlags(Qt.TextBrowserInteraction)
-		s_box.addWidget(lbl_txt,Qt.Alignment(1))
+		s_box.addWidget(lbl_txt)#,Qt.Alignment(1))
+		#Get wiki page
+		url=self._searchWiki()
+		if url:
+			desc=_("Wiki help")
+			lbl_wiki=QLabel("<a href=\"%s\"><span style=\"text-align: right;\">%s</span></a>"%(url,desc))
+			lbl_wiki.setOpenExternalLinks(True)
+			s_box.addWidget(lbl_wiki,1,Qt.AlignRight)
 		stack.setLayout(s_box)
 		self.stk_widget.insertWidget(0,stack)
 		self.stacks[0]['module']=stack

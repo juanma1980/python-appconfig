@@ -222,6 +222,7 @@ class appConfigN4d():
 			self._execAction(auth=True)
 		if self.retval==0:
 			self.retval=True
+		self.varName=''
 		return(self.retval)
 	#def writeConfig
 	
@@ -259,6 +260,7 @@ class appConfigN4d():
 			print("Search exclude %s in %s"%(excludeKey,data.keys()))
 			if excludeKey in list(data.keys()):
 				del data[excludeKey]
+		self.varName=''
 		return(data)
 	#def readConfig(self,n4dparms):
 
@@ -352,7 +354,6 @@ class appConfigN4d():
 
 	def _execQuery(self):
 		data={}
-		print("Execute\n%s\n\n"%self.query)
 		try:
 			data=eval('%s'%self.query)
 		except Exception as e:

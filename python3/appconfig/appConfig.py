@@ -141,7 +141,6 @@ class appConfig():
 				retval=False
 		else:
 			oldConf=self.getConfig(level)
-#			oldConf=self.config.copy()
 #			self._debug("Old: %s"%oldConf)
 			newConf=oldConf.copy()
 			if key:
