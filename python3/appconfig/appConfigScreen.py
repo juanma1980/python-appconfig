@@ -27,7 +27,7 @@ class appConfigScreen(QWidget):
 	update_signal=pyqtSignal("PyQt_PyObject")
 	def __init__(self,appName,parms={}):
 		super().__init__()
-		self.dbg=True
+		self.dbg=False
 		self.level='user'
 		exePath=sys.argv[0]
 		if os.path.islink(sys.argv[0]):
@@ -339,7 +339,6 @@ class appConfigScreen(QWidget):
 
 
 	def gotoStack(self,idx,parms):
-		print(self.stacks)
 		self._show_stack(idx=idx,parms=parms)
 
 	def _show_stack(self,item=None,idx=None,parms=None):
