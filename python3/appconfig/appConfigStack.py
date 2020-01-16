@@ -143,11 +143,15 @@ class appConfigStack(QWidget):
 	
 	def writeDecorator(self,func):
 		def states():
+			cursor=QtGui.QCursor(Qt.WaitCursor)
+			self.setCursor(cursor)
 			func()
 			self.btn_ok.setEnabled(False)
 			self.btn_cancel.setEnabled(False)
 			self.refresh=True
 			self.changes=False
+			cursor=QtGui.QCursor(Qt.PointingHandCursor)
+			self.setCursor(cursor)
 		return states
 	#def writeDecorator
 
