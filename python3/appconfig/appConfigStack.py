@@ -225,8 +225,11 @@ class appConfigStack(QWidget):
 
 	def setChanged(self,widget,state=True):
 		self._debug("State: %s"%state)
-		self.btn_ok.setEnabled(state)
-		self.btn_cancel.setEnabled(state)
+		if self.btn_ok.isHidden()==False:
+			self.btn_ok.setEnabled(state)
+			self.btn_cancel.setEnabled(state)
+		else:
+			state=False
 		self.changes=state
 	#def setChanged
 
