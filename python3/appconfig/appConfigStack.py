@@ -70,9 +70,9 @@ class appConfigStack(QWidget):
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
 		data={'system':{},'user':{},'n4d':{}}
+		self._debug("Refresh: %s"%self.refresh)
+		self._debug("Changes: %s"%self.changes)
 		if self.refresh or self.changes:
-			self._debug("Refresh: %s"%self.refresh)
-			self._debug("Changes: %s"%self.changes)
 			if level:
 				data=self.appConfig.getConfig(level,exclude)
 			else:
@@ -87,7 +87,6 @@ class appConfigStack(QWidget):
 						data=self.appConfig.getConfig(level,exclude)
 						data[self.level]['config']=self.level
 		else:
-			self._debug("NO REFRESH")
 			if self.config[self.level]:
 				data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: %s"%self.level)
@@ -219,6 +218,11 @@ class appConfigStack(QWidget):
 		except:
 			print("updateScreen method is not implemented in this stack")
 	#def showEvent
+
+	def hideControlButtons(self):
+		self.btn_ok.hide()
+		self.btn_cancel.hide()
+	#def hideControlButtons(self):
 
 	def setChanged(self,widget,state=True):
 		self._debug("State: %s"%state)
