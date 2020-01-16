@@ -1,4 +1,4 @@
-python3-appconfig (0.22) bionic; urgency=medium
+python3-appconfig (0.23) bionic; urgency=medium
   
   * Disable debug
   * Add method for hide control buttons
