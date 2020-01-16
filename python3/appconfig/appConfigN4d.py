@@ -257,7 +257,7 @@ class appConfigN4d():
 			self._debug("Dump: %s"%tmpStr)
 			data={}
 		for excludeKey in exclude:
-			self,_debug("Search exclude %s in %s"%(excludeKey,data.keys()))
+			self._debug("Search exclude %s in %s"%(excludeKey,data.keys()))
 			if excludeKey in list(data.keys()):
 				del data[excludeKey]
 		self.varName=''
