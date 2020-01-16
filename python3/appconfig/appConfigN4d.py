@@ -137,7 +137,7 @@ class n4dGui(QDialog):
 
 class appConfigN4d():
 	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='server'):
-		self.dbg=True
+		self.dbg=False
 		self.username=username
 		self.password=password
 		self.server=server
@@ -253,11 +253,11 @@ class appConfigN4d():
 		try:
 			data=json.loads(tmpStr)
 		except Exception as e:
-			print("Error reading n4d values: %s"%e)
-			print("Dump: %s"%tmpStr)
+			self._debug("Error reading n4d values: %s"%e)
+			self._debug("Dump: %s"%tmpStr)
 			data={}
 		for excludeKey in exclude:
-			print("Search exclude %s in %s"%(excludeKey,data.keys()))
+			self,_debug("Search exclude %s in %s"%(excludeKey,data.keys()))
 			if excludeKey in list(data.keys()):
 				del data[excludeKey]
 		self.varName=''

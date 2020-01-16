@@ -9,7 +9,7 @@ from appconfig.appConfigN4d import appConfigN4d
 
 class appConfig():
 	def __init__(self):
-		self.dbg=True
+		self.dbg=False
 		self.confFile="appconfig.conf"
 		self.home=os.environ.get('HOME',"/usr/share/%s"%self.confFile.split('.')[0])
 		self.localConf=self.confFile

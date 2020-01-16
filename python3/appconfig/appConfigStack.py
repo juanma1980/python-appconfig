@@ -12,7 +12,7 @@ class appConfigStack(QWidget):
 	message=pyqtSignal("PyQt_PyObject","PyQt_PyObject")
 	def __init__(self,stack):
 		super().__init__()
-		self.dbg=True
+		self.dbg=False
 		self.default_icon='shell'
 		self.menu_description=(_("Configure stack"))
 		self.description=(_("Configure custom stack"))
@@ -52,7 +52,6 @@ class appConfigStack(QWidget):
 	#def setAppConfig
 
 	def translate(self,msg=""):
-		print("*")
 		return(gettext.dgettext(self.textdomain,msg))
 
 	def setTextDomain(self,textDomain):
