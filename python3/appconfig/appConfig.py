@@ -61,10 +61,10 @@ class appConfig():
 
 	def set_level(self,level):
 		self.level=level
-		if level=='n4d':
-			self.confFile=self.n4dConf
-		else:
-			self.confFile=self.localConf
+#		if level=='n4d':
+#			self.confFile=self.n4dConf
+#		else:
+#			self.confFile=self.localConf
 	#def set_level
 
 	def getLevel(self):
@@ -77,12 +77,12 @@ class appConfig():
 	def getConfig(self,level=None,exclude=[]):
 		self.config={'user':{},'system':{},'n4d':{}}
 		if level=='n4d':
-			self.confFile=self.n4dConf
+#			self.confFile=self.n4dConf
 			self._read_config_from_n4d(exclude)
 		else:
 			self.confFile=self.localConf
 			if self._read_config_from_system(level,exclude)==False:
-				self.confFile=self.n4dConf
+#				self.confFile=self.n4dConf
 				self._read_config_from_n4d(exclude)
 				self.config['system']['config']='n4d'
 
@@ -127,10 +127,10 @@ class appConfig():
 		retval=True
 		if level==None:
 			level=self.getLevel()
-		if level=='n4d':
-			self.confFile=self.n4dConf
-		else:
-			self.confFile=self.localConf
+#		if level=='n4d':
+#			self.confFile=self.n4dConf
+#		else:
+#			self.confFile=self.localConf
 		if level=='system' and not pk:
 			self._debug("Invoking pk")
 			try:
