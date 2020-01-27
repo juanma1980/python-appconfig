@@ -1,7 +1,8 @@
-python3-appconfig (0.23) bionic; urgency=medium
+python3-appconfig (0.24) bionic; urgency=medium
   
   * Disable debug
   * Add method for hide control buttons
+  * Remove n4d config file
 
  -- Juanma1980 <juanma1980@gmail.com>  Thu, 16 Jan 2020 12:31:36 +0100
 
