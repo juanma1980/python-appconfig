@@ -70,12 +70,30 @@ class appConfigScreen(QWidget):
 	#def setRsrcPath
 
 	def setIcon(self,icon):
+		self._debug("Icon: %s"%icon)
+		icn=icon
 		if not os.path.isfile(icon):
-			if os.path.isfile("%s/%s"%(self.rsrc,icon)):
+			sw_ko=False
+			self._debug("%s not found"%icon)
+			if QtGui.QIcon.fromTheme(icon):
+				icn=QtGui.QIcon.fromTheme(icon)
+				if icn.name()=="":
+					self._debug("%s not present at theme"%icon)
+					sw_ko=True
+				else:
+					self._debug("%s found at theme"%icon)
+					self._debug("Name: %s found at theme"%icn.name())
+			elif os.path.isfile("%s/%s"%(self.rsrc,icon)):
 				icon="%s/%s"%(self.rsrc,icon)
+				self._debug("%s found at rsrc folder"%icon)
+				icn=QtGui.QIcon(icon)
 			else:
+				icn=QtGui.QIcon.fromTheme("application-menu")
 				self._debug("Icon not found at %s"%self.rsrc)
-		self.setWindowIcon(QtGui.QIcon(icon))
+			if sw_ko:
+				icn=QtGui.QIcon.fromTheme("application-menu")
+				self._debug("Icon %s not found at theme"%icon)
+		self.setWindowIcon(icn)
 	#def setIcon
 
 	def setBanner(self,banner):
@@ -161,13 +179,15 @@ class appConfigScreen(QWidget):
 						self.modules.append(mod_name)
 						self._debug("Load stack %s"%mod_name)
 					except Exception as e:
-						self._debug("Unable to load %s: %s"%(mod_name,e))
+#						self._debug("Unable to load %s: %s"%(mod_name,e))
+						print("Unable to load %s: %s"%(mod_name,e))
 		idx=1
 		for mod_name in self.modules:
 			try:
 				mod=eval("%s(self)"%mod_name)
 			except Exception as e:
-				self._debug("Import failed for %s: %s"%(mod_name,e))
+#				self._debug("Import failed for %s: %s"%(mod_name,e))
+				print("Import failed for %s: %s"%(mod_name,e))
 				continue
 			if type(mod.index)==type(0):
 				if mod.index>0:
