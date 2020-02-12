@@ -1,3 +1,9 @@
+python3-appconfig (0.25) bionic; urgency=medium
+
+  * Improved setIcon method
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 12 Feb 2020 11:51:53 +0100
+
 python3-appconfig (0.24) bionic; urgency=medium
   
   * Disable debug
