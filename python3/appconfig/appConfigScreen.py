@@ -14,8 +14,12 @@ from edupals.ui import QAnimatedStatusBar
 from appconfig.appConfig import appConfig 
 
 import gettext
-confText=gettext.translation("python3-appconfig")
-_ = confText.gettext
+try:
+	confText=gettext.translation("python3-appconfig")
+	_ = confText.gettext
+except:
+	gettext.textdomain('python3-appconfig')
+	_ = gettext.gettext
 
 QString=type("")
 QInt=type(0)
