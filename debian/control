@@ -10,8 +10,8 @@ Homepage: http://lliurex.net
 
 Package: python3-appconfig
 Architecture: all
-Depends: ${python3:Depends}, appconfig-polkit-helper
-Description: Lib for generate desktop files
+Depends: ${python3:Depends}, appconfig-polkit-helper, python3-qanimatedstatusbar
+Description: Modular app configuration
 
 Package: appconfig-polkit-helper
 Architecture: all

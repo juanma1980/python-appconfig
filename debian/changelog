@@ -1,3 +1,9 @@
+python3-appconfig (0.27) bionic; urgency=medium
+
+  * Fix depends
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Wed, 10 Jun 2020 10:18:04 +0200
+
 python3-appconfig (0.26) bionic; urgency=medium
 
   * Error control for gettext
