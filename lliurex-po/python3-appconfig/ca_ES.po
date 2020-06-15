@@ -73,7 +73,7 @@ msgstr "Opcions"
 
 #: ../python3/appconfig/appConfigScreen.py:318
 msgid "Welcome to the configuration of "
-msgstr "Benvingut a la configuració del %s"
+msgstr "Benvingut a la configuració del "
 
 #: ../python3/appconfig/appConfigScreen.py:319
 msgid "From here you can:<br>"
