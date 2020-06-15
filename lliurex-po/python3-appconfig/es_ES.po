@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-27 13:19+0100\n"
-"PO-Revision-Date: 2020-01-27 13:21+0100\n"
+"POT-Creation-Date: 2020-06-15 08:41+0200\n"
+"PO-Revision-Date: 2020-06-15 08:44+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -70,28 +70,28 @@ msgstr "Contraseña: "
 msgid "Server: "
 msgstr "Servidor: "
 
-#: ../python3/appconfig/appConfigScreen.py:45
-#: ../python3/appconfig/appConfigScreen.py:246
+#: ../python3/appconfig/appConfigScreen.py:49
+#: ../python3/appconfig/appConfigScreen.py:270
 msgid "Options"
 msgstr "Opciones"
 
-#: ../python3/appconfig/appConfigScreen.py:294
+#: ../python3/appconfig/appConfigScreen.py:318
 msgid "Welcome to the configuration of "
 msgstr "Bienvenido a "
 
-#: ../python3/appconfig/appConfigScreen.py:295
+#: ../python3/appconfig/appConfigScreen.py:319
 msgid "From here you can:<br>"
 msgstr "Desde aquí se puede:<br>"
 
-#: ../python3/appconfig/appConfigScreen.py:323
+#: ../python3/appconfig/appConfigScreen.py:347
 msgid "Wiki help"
 msgstr "Wiki"
 
-#: ../python3/appconfig/appConfigScreen.py:391
+#: ../python3/appconfig/appConfigScreen.py:415
 msgid "Apply changes"
 msgstr "Aplicar"
 
-#: ../python3/appconfig/appConfigScreen.py:391
+#: ../python3/appconfig/appConfigScreen.py:415
 msgid ""
 "There're changes not saved at current screen.\n"
 "Discard them and continue?"
