@@ -384,8 +384,8 @@ class appConfigN4d():
 				socket.inet_aton(self.server)
 			except Exception as e:
 				self.error(e)
-				self.error("Error creating SSL context")
-				self.retval=1
+				self.error("No server found. Reverting to localhost")
+				self.server='localhost'
 		self._debug("Retval: %s"%self.retval)
 		if self.retval==0:
 			try:
