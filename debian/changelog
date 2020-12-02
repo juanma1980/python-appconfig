@@ -1,3 +1,9 @@
+python3-appconfig (0.28) bionic; urgency=medium
+
+  * Add forceserver directive to n4d config
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 02 Dec 2020 09:19:33 +0100
+
 python3-appconfig (0.27.3) bionic; urgency=medium
 
   * When using n4d set localhost as server when there's no other known machine
