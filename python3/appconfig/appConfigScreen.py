@@ -132,12 +132,12 @@ class appConfigScreen(QWidget):
 			url=self.wikiPage
 		else:
 			url="%s%s"%(baseUrl,self.wikiPage)
-		try:
-			req=Request(url)
-			content=urlopen(req).read()
-		except:
-			self._debug("Wiki not found at %s"%url)
-			url=""
+		#try:
+		#	req=Request(url)
+		#	content=urlopen(req).read()
+		#except:
+		#	self._debug("Wiki not found at %s"%url)
+		#	url=""
 		return(url)
 	#def _searchWiki
 
