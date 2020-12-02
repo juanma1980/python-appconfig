@@ -27,7 +27,7 @@ import ssl
 
 class n4dGui(QDialog):
 	validateSignal=pyqtSignal('QString','QString','QString',name='validate')
-	def __init__(self):
+	def __init__(self,forceServer=None):
 		import getpass
 		super().__init__()
 		self.setWindowIcon(QtGui.QIcon("/usr/share/icons/hicolor/48x48/apps/x-appimage.png"))
@@ -59,10 +59,11 @@ class n4dGui(QDialog):
 		self.txt_password.setPlaceholderText(_("Password"))
 		self.txt_server=QLineEdit()
 		self.txt_server.returnPressed.connect(self.acepted)
+		self.forceServer=forceServer
 		server=self._get_default_server()
 		self.txt_server.setPlaceholderText(server)
-		if server=='localhost':
-			self.txt_server.hide()
+#		if server=='localhost':
+#			self.txt_server.hide()
 		box.addWidget(self.txt_password,3,0,1,2)
 		box.addWidget(self.txt_username,2,0,1,2)
 		box.addWidget(self.txt_server,4,0,1,2)
@@ -82,6 +83,8 @@ class n4dGui(QDialog):
 	#def __init__
 
 	def _get_default_server(self):
+		if self.forceServer:
+			return(self.forceServer)
 		import socket
 		server='server'
 		try:
@@ -178,7 +181,7 @@ class appConfigN4d():
 		p=Popen(["xset","-q"],stdout=PIPE,stderr=PIPE)
 		p.communicate()
 		if p.returncode==0:
-			self.n4dAuth=n4dGui()
+			self.n4dAuth=n4dGui(self.server)
 			self.n4dAuth.validateSignal.connect(_qt_validate)
 			self.n4dAuth.exec_()
 		else:
