@@ -237,7 +237,12 @@ class appConfigN4d():
 		self.varDepends=[]
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
-		ret=self._execAction(auth=False)
+		#ret=self._execAction(auth=False)
+		if self.n4dClient==None:
+			self._n4d_connect()
+		ret=self.n4dClient.get_variable("REPOMAN")
+		if ret['status']!=0:
+			return{}
 		tmpStr=ret
 		if isinstance(ret,str):
 			tmpStr=ret.replace("'","\"")
@@ -275,9 +280,18 @@ class appConfigN4d():
 					if line.startswith(n4dmethod):
 						if 'anonymous' in line or '*' in line:
 							auth=False
+		elif os.path.isfile("/etc/n4d/conf.d/%s.json"%n4dclass):
+			f=open("/etc/n4d/conf.d/%s.json"%n4dclass,"r")
+			jsonF=json.load(f)
+			f.close()
+			data=jsonF['METHODS'][n4dmethod].get("allowed_groups",[])
+			if 'anonymous' in data or '*' in data:
+				auth=False
+
 		self.n4dParms=n4dparms
 		self.n4dClass=n4dclass
 		self.n4dMethod=n4dmethod
+		self.varName=''
 		return(self._execAction(auth))
 
 	def _execAction(self,auth):
@@ -303,7 +317,7 @@ class appConfigN4d():
 			if (self.uptime==0):
 				self.uptime=int(time.time())
 			self._on_validate()
-#		self._debug(self.result)
+		self._debug(self.result)
 		return(self.result)
 	#def _execAction
 	
@@ -321,7 +335,7 @@ class appConfigN4d():
 		if (isinstance(ret,bool)):
 			#Error Login 
 			self.setCredentials('','','')
-		elif not ret[0]:
+		elif ret['status']:
 			#Error Login 
 			self.setCredentials('','','')
 		else:
@@ -370,7 +384,7 @@ class appConfigN4d():
 				if 'status' in data.keys():
 					retval=data['status']
 					if data['status']!=True and data['status']!=0:
-						self.error("Query %s failed,"%(self.query))
+						self.error("2222Query %s failed,"%(self.query))
 						self.retval=4
 		return(data)
 	#def execQuery
