@@ -16,28 +16,29 @@ _ = gettext.gettext
 
 QString=type("")
 N4D=True
-try:
-	import xmlrpc.client as n4d
-except ImportError:
-	raise ImportError("xmlrpc not available. Disabling server queries")
-	N4D=False
-import ssl
-
-
+import n4d.client as n4dclient
+import n4d.responses
+#try:
+#	import xmlrpc.client as n4d
+#except ImportError:
+#	raise ImportError("xmlrpc not available. Disabling server queries")
+#	N4D=False
+#import ssl
 
 class n4dGui(QDialog):
 	validateSignal=pyqtSignal('QString','QString','QString',name='validate')
 	def __init__(self,forceServer=None):
 		import getpass
+		self.app=QApplication([])
 		super().__init__()
 		self.setWindowIcon(QtGui.QIcon("/usr/share/icons/hicolor/48x48/apps/x-appimage.png"))
 		self.setModal(True)
 		self.setWindowTitle(_("Authentication is required"))
 		box=QGridLayout()
-		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
+#		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 #		self.statusBar.setStateCss("success","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(0,0,255,1), stop:1 rgba(0,0,255,0.6));color:white;")
 #		self.statusBar.setStateCss("error","background-color:qlineargradient(x1:0 y1:0,x2:0 y2:1,stop:0 rgba(255,0,0,1), stop:1 rgba(255,0,0,0.6));color:white;text-align:center;text-decoration:none;")
-		box.addWidget(self.statusBar,0,0,1,2)
+#		box.addWidget(self.statusBar,0,0,1,2)
 		icn_auth=QtGui.QIcon.fromTheme("preferences-system-user-sudo.svg")
 		lbl_icn=QLabel()
 		img=QtGui.QPixmap(icn_auth.pixmap(QSize(64,64)))
@@ -50,15 +51,15 @@ class n4dGui(QDialog):
 		box.addWidget(lbl_auth,0,1,1,1)
 		box.addWidget(lbl_info,1,1,1,1)
 		self.txt_username=QLineEdit()
-		self.txt_username.returnPressed.connect(self.acepted)
+		self.txt_username.returnPressed.connect(self.accepted)
 		self.txt_username.setPlaceholderText(_("Username"))
 		self.txt_username.setText(getpass.getuser())
 		self.txt_password=QLineEdit()
-		self.txt_password.returnPressed.connect(self.acepted)
+		self.txt_password.returnPressed.connect(self.accepted)
 		self.txt_password.setEchoMode(QLineEdit.Password)
 		self.txt_password.setPlaceholderText(_("Password"))
 		self.txt_server=QLineEdit()
-		self.txt_server.returnPressed.connect(self.acepted)
+		self.txt_server.returnPressed.connect(self.accepted)
 		self.forceServer=forceServer
 		server=self._get_default_server()
 		self.txt_server.setPlaceholderText(server)
@@ -68,7 +69,7 @@ class n4dGui(QDialog):
 		box.addWidget(self.txt_username,2,0,1,2)
 		box.addWidget(self.txt_server,4,0,1,2)
 		btn_ok=QPushButton(_("Accept"))
-		btn_ok.clicked.connect(self.acepted)
+		btn_ok.clicked.connect(self.accepted)
 		btn_ok.setAutoDefault(False)
 		btn_ok.setDefault(False)
 		btn_ko=QPushButton(_("Cancel"))
@@ -95,7 +96,7 @@ class n4dGui(QDialog):
 	#def _set_default_server(self):
 
 	@pyqtSlot()
-	def acepted(self):
+	def accepted(self):
 		self.txt_username.setReadOnly(True)
 		self.txt_password.setReadOnly(True)
 		self.txt_server.setReadOnly(True)
@@ -106,6 +107,7 @@ class n4dGui(QDialog):
 			server=self._get_default_server()
 			self.txt_server.setPlaceholderText(server)
 		self.validateSignal.emit(user,pwd,server)
+		self.accept()
 	#def acepted
 
 	def setNewCursor(self,newCursor):
@@ -125,16 +127,17 @@ class n4dGui(QDialog):
 		self.setCursor(arr_cursor)
 
 	def showMessage(self,msg,status="error"):
-		x=self.x()
-		y=self.y()
-		move=5
-		for i in range(10):
-			self.move(x+move,y)
-			move=move*(-1)
-			time.sleep(0.05)
-		self.move(x,y)
-		self.statusBar.setText(msg)
-		self.statusBar.show("error")
+		return
+####	x=self.x()
+####	y=self.y()
+####	move=5
+####	for i in range(10):
+####		self.move(x+move,y)
+####		move=move*(-1)
+####		time.sleep(0.05)
+####	self.move(x,y)
+####	self.statusBar.setText(msg)
+####	self.statusBar.show("error")
 	#def _show_message
 #class n4dGui
 
@@ -148,7 +151,6 @@ class appConfigN4d():
 		self.n4dClass="VariablesManager"
 		self.n4dMethod=''
 		self.n4dParms=''
-		self.result={}
 		self.retval=0
 		self.n4dAuth=None
 		self.n4dClient=None
@@ -168,13 +170,14 @@ class appConfigN4d():
 		validate=False
 		@pyqtSlot(str,str,str)
 		def _qt_validate(user,pwd,srv):
+			print("USER: {} PWD: {} S: {}".format(user,pwd,srv))
 			nonlocal validate
 			self.n4dAuth.setNewCursor("wait")
 			if self._validate(user,pwd,srv)==False:
 				self.n4dAuth.showMessage(_("Validation error"))
 			else:
+				print("OK")
 				validate=True
-				self.n4dAuth.close()
 			self.n4dAuth.setNewCursor("arrow")
 
 		#Check X
@@ -272,7 +275,7 @@ class appConfigN4d():
 		return(data)
 	#def readConfig(self,n4dparms):
 
-	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
+	def n4dQuery(self,n4dclass,n4dmethod,*args):
 		auth=True
 		if os.path.isfile("/etc/n4d/conf.d/%s"%n4dclass):
 			with open("/etc/n4d/conf.d/%s"%n4dclass,'r') as f:
@@ -287,18 +290,20 @@ class appConfigN4d():
 			data=jsonF['METHODS'][n4dmethod].get("allowed_groups",[])
 			if 'anonymous' in data or '*' in data:
 				auth=False
-
-		self.n4dParms=n4dparms
+		if isinstance(args,list):
+			self.n4dParms=",".join(args)
+		else:
+			self.n4dParms=args
 		self.n4dClass=n4dclass
 		self.n4dMethod=n4dmethod
 		self.varName=''
-		return(self._execAction(auth))
+		self.n4dClient=None
+		return(self._execAction(auth,*args))
 
-	def _execAction(self,auth):
+	def _execAction(self,auth,*args):
 		if self.n4dClient==None:
-			self._n4d_connect()
+			self.n4dClient=self._n4d_connect()
 		validate=False
-		self.result={}
 		#Check session
 		if self.uptime!=0:
 			if ((int(time.time())-self.uptime)>59):
@@ -306,36 +311,42 @@ class appConfigN4d():
 				self.password=''
 				self.uptime=0
 		if not self.username and auth:
+			print("******")
 			validate=self.getCredentials()
+			print("******")
+			print("Launching {}".format(validate))
 		elif self.username:
 			validate=self._validate(self.username,self.password,self.server)
 		else:
 			self.username=''
 			self.password=''
 			validate=True
+		result={}
 		if validate:
 			if (self.uptime==0):
 				self.uptime=int(time.time())
-			self._on_validate()
-		self._debug(self.result)
-		return(self.result)
+			result=self._on_validate(*args)
+		self._debug(result)
+		return(result)
 	#def _execAction
 	
 	def _validate(self,user,pwd,srv):
 		ret=[False]
 		validate=False
 		self.setCredentials(user,pwd,srv)
-		if self.n4dClient==None:
-			self._n4d_connect()
+		#if self.n4dClient==None:
+		self.n4dClient=self._n4d_connect()
 		try:
-			ret=self.n4dClient.validate_user(user,pwd)
+			print("U: {} P: {} S: {}".format(self.username,self.password,self.server))
+			ret=self.n4dClient.validate_user()
 		except Exception as e:
 			self.error(e)
 
+		print(ret)
 		if (isinstance(ret,bool)):
 			#Error Login 
 			self.setCredentials('','','')
-		elif ret['status']:
+		elif not ret[0]:
 			#Error Login 
 			self.setCredentials('','','')
 		else:
@@ -343,7 +354,16 @@ class appConfigN4d():
 		return(validate)
 	#def _validate
 
-	def _on_validate(self,):
+	def _on_validate(self,*args):
+		result={}
+		print("PROXY {}".format(self.n4dClient))
+		proxy=n4dclient.Proxy(self.n4dClient,self.n4dClass,self.n4dMethod)
+		try:
+			result=proxy.call(*args)
+		except Exception as e:
+			print(e)
+			result['status']=-1
+		'''
 		if not self.n4dParms:
 			if self.username:
 				self.query="self.n4dClient.%s([\"%s\",\"%s\"],\"%s\")"%(self.n4dMethod,self.username,self.password,self.n4dClass)
@@ -365,8 +385,11 @@ class appConfigN4d():
 				else:
 					self.query="self.n4dClient.%s(\"%s\",%s)"%(self.n4dMethod,self.n4dClass,self.n4dParms)
 		self.result=self._execQuery()
+		'''
 		if self.n4dAuth:
 			self.n4dAuth.close()
+		print(result)
+		return(result)
 	#def _on_validate
 
 	def _execQuery(self):
@@ -390,6 +413,30 @@ class appConfigN4d():
 	#def execQuery
 
 	def _n4d_connect(self):
+		n4dClient=None
+		self._debug("Connecting to n4d")
+		try:
+			socket.gethostbyname(self.server)
+		except:
+			#It could be an ip
+			try:
+				socket.inet_aton(self.server)
+			except Exception as e:
+				self.error(e)
+				self.error("No server found. Reverting to localhost")
+				self.server='https://localhost:9779'
+		if not self.server.startswith("http"):
+			self.server="https://{}".format(self.server)
+		if len(self.server.split(":")) < 3:
+				self.server="{}:9779".format(self.server)
+			
+		if self.username:
+			n4d=n4dclient.Client(self.server,self.username,self.password)
+		else:
+			n4d=n4dclient.Client(self.server)
+		print("OOOO: {}".format(n4d))
+		return(n4d)
+		'''
 		self.n4dClient=None
 		self._debug("Connecting to n4d")
 		context=ssl._create_unverified_context()
@@ -410,5 +457,6 @@ class appConfigN4d():
 			except:
 				self.error("Error accesing N4d at %s"%self.server)
 				self.retval=2
+		'''
 	#def _n4d_connect
 
