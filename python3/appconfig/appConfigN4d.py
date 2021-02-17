@@ -233,6 +233,8 @@ class appConfigN4d():
 	#def writeConfig
 	
 	def readConfig(self,n4dparms,exclude=[]):
+		if self.n4dClient==None:
+			self.n4dClient=self._n4d_connect()
 		self.retval=0
 		tmp=n4dparms.split(",")
 		self.varName=tmp[0].upper()
@@ -241,9 +243,10 @@ class appConfigN4d():
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
 		#ret=self._execAction(auth=False)
-		if self.n4dClient==None:
-			self._n4d_connect()
-		ret=self.n4dClient.get_variable("REPOMAN")
+		try:
+			ret=self.n4dClient.get_variable(self.varName)
+		except:
+			return({})
 		if ret['status']!=0:
 			return{}
 		tmpStr=ret
@@ -357,9 +360,14 @@ class appConfigN4d():
 	def _on_validate(self,*args):
 		result={}
 		print("PROXY {}".format(self.n4dClient))
+		if  not args[0]:
+			args=None
 		proxy=n4dclient.Proxy(self.n4dClient,self.n4dClass,self.n4dMethod)
 		try:
-			result=proxy.call(*args)
+			if args:
+				result=proxy.call(*args)
+			else:
+				result=proxy.call()
 		except Exception as e:
 			print(e)
 			result['status']=-1
@@ -388,7 +396,6 @@ class appConfigN4d():
 		'''
 		if self.n4dAuth:
 			self.n4dAuth.close()
-		print(result)
 		return(result)
 	#def _on_validate
 
