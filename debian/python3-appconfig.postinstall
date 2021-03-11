@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+chmod 755 /usr/lib/python3/dist-packages/appconfig/n4dCredentialsBox.py
+exit 0
+
