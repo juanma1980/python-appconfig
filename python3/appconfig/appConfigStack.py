@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-from PyQt5.QtWidgets import QWidget,QHBoxLayout,QPushButton
-from PyQt5.QtCore import pyqtSignal,Qt
-from PyQt5 import QtGui
-from edupals.ui import QAnimatedStatusBar
+from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit
+from PySide2.QtCore import Signal,Qt
+from PySide2 import QtGui
+#from PySide2.QtWidgets import QApplication
+from PySide2.QtQuick import QQuickView
+from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread,QSize
+from PySide2.QtQuick import QQuickView
 import gettext
 #_ = nullTrans.gettext
 _=gettext.gettext
 QString=type("")
 
 class appConfigStack(QWidget):
-	message=pyqtSignal("PyQt_PyObject","PyQt_PyObject")
+	message=Signal("QObject","QObject")
 	def __init__(self,stack):
 		super().__init__()
 		self.dbg=False
@@ -247,7 +250,8 @@ class appConfigStack(QWidget):
 	#def showMsg
 
 	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
-		return(self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms))
+		ret=self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms)
+		return(ret)
 	#def n4dQuery
 
 #class appConfigStack

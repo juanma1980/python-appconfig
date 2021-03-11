@@ -3,14 +3,13 @@ import sys
 import os
 from urllib.request import Request,urlopen,urlretrieve
 from pathlib import Path
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,\
+from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,\
 				QDialog,QGridLayout,QHBoxLayout,QFormLayout,QLineEdit,QComboBox,\
 				QStatusBar,QFileDialog,QDialogButtonBox,QScrollBar,QScrollArea,QListWidget,\
 				QListWidgetItem,QStackedWidget,QButtonGroup,QComboBox,QTableWidget,QTableWidgetItem,\
 				QHeaderView,QMessageBox
-from PyQt5 import QtGui
-from PyQt5.QtCore import QSize,pyqtSlot,Qt, QPropertyAnimation,QThread,QRect,QTimer,pyqtSignal,QSignalMapper,QProcess,QEvent
-from edupals.ui import QAnimatedStatusBar
+from PySide2 import QtGui
+from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent
 from appconfig.appConfig import appConfig 
 
 import gettext
@@ -27,8 +26,8 @@ QInt=type(0)
 BTN_MENU_SIZE=24
 
 class appConfigScreen(QWidget):
-	keybind_signal=pyqtSignal("PyQt_PyObject")
-	update_signal=pyqtSignal("PyQt_PyObject")
+	keybind_signal=Signal("QObject")
+	update_signal=Signal("QObject")
 	def __init__(self,appName,parms={}):
 		super().__init__()
 		self.dbg=False
@@ -244,10 +243,10 @@ class appConfigScreen(QWidget):
 			img_banner.setPixmap(img)
 		img_banner.setAlignment(Qt.AlignCenter)
 		img_banner.setObjectName("banner")
-		self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
+		#self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
 		self.lst_options=QListWidget()
 		self.stk_widget=QStackedWidget()
-		box.addWidget(self.statusBar,0,0,1,2)
+		#box.addWidget(self.statusBar,0,0,1,2)
 		box.addWidget(img_banner,0,0,1,2)
 		l_panel=self._left_panel()
 		box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
@@ -390,7 +389,7 @@ class appConfigScreen(QWidget):
 		except:
 			pass
 		self.stk_widget.setCurrentIndex(idx)
-		self.statusBar.hide()
+#		self.statusBar.hide()
 		if parms:
 			self.stacks[idx]['module'].setParms(parms)
 	#def _show_stack
@@ -404,11 +403,12 @@ class appConfigScreen(QWidget):
 			pass
 
 	def _show_message(self,msg,status=None):
-		self.statusBar.setText(msg)
+		return
+#		self.statusBar.setText(msg)
 #		if status:
 #			self.statusBar.show(status)
 #		else:
-		self.statusBar.show(status)
+#		self.statusBar.show(status)
 	#def _show_message
 
 	def _save_changes(self,module):
