@@ -11,6 +11,7 @@ class Tunnel(QObject):
 	@Slot(str)
 	def on_ticket(self, ticket):
 		ticket=ticket.replace(' ','##U+0020##').rstrip()
+		print(ticket)
 		app.quit()
 	#def on_ticket
 
