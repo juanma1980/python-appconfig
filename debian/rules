@@ -14,4 +14,5 @@ export PYBUILD_NAME=appconfig
 	dh $@ --with python3 --buildsystem pybuild
 #	dh $@ --with zero
 
-	
+override_dh_fixperms:
+	chmod 755 /home/lliurex/git/python3-appconfig/python3/appconfig/n4dCredentialsBox.py
