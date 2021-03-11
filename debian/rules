@@ -15,4 +15,4 @@ export PYBUILD_NAME=appconfig
 #	dh $@ --with zero
 
 override_dh_fixperms:
-	chmod 755 /home/lliurex/git/python3-appconfig/python3/appconfig/n4dCredentialsBox.py
+	chmod a+x python3/appconfig/n4dCredentialsBox.py
