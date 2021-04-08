@@ -5,6 +5,14 @@ from PySide2.QtCore import QUrl, QObject, Slot, Signal,Property
 import os
 import subprocess
 import sys
+import gettext
+try:
+	confText=gettext.translation("python3-appconfig")
+	_ = confText.gettext
+except:
+	gettext.textdomain('python3-appconfig')
+	_ = gettext.gettext
+
 
 class Tunnel(QObject):
 
@@ -17,7 +25,7 @@ class Tunnel(QObject):
 
 #class Tunnel
 
-app = QApplication([])
+app = QApplication([_("Authentication required")])
 tunnel = Tunnel()
 view = QQuickView()
 view.rootContext().setContextProperty("tunnel", tunnel)
