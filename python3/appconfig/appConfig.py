@@ -135,7 +135,7 @@ class appConfig():
 			self._debug("Invoking pk")
 			try:
 				data=json.dumps(data)
-				subprocess.check_call(["pkexec","/usr/share/appconfig/bin/appconfig-polkit-helper.py",data,level,key,self.confFile,self.baseDirs[level]])
+				subprocess.check_call(["pkexec","/usr/share/appconfig/auth/appconfig-polkit-helper.py",data,level,key,self.confFile,self.baseDirs[level]])
 			except Exception as e:
 				self._debug("Invoking pk failed: %s"%e)
 				retval=False
