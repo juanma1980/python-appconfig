@@ -21,7 +21,7 @@ app = QApplication([])
 tunnel = Tunnel()
 view = QQuickView()
 view.rootContext().setContextProperty("tunnel", tunnel)
-url = QUrl("/usr/lib/python3/dist-packages/bellscheduler/rsrc/login.qml")
+url = QUrl("/usr/share/appconfig/auth/login.qml")
 view.setSource(url)
 view.show()
 
