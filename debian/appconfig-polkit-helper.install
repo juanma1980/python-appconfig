@@ -1,1 +1,1 @@
-appconfig-polkit-helper.py /usr/share/appconfig/bin
+auth-helpers/* /usr/share/appconfig/auth
