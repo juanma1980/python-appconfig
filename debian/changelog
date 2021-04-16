@@ -1,3 +1,9 @@
+python3-appconfig (0.29) bionic; urgency=medium
+
+  * Bug: server overrides localhost when server is a known machine and library is invoked for first time
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 16 Apr 2021 13:38:09 +0200
+
 python3-appconfig (0.28) bionic; urgency=medium
 
   * Add forceserver directive to n4d config
