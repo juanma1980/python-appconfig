@@ -85,12 +85,21 @@ class n4dGui(QDialog):
 	def _get_default_server(self):
 		if self.forceServer:
 			return(self.forceServer)
-		import socket
-		server='server'
-		try:
-			server_ip=socket.gethostbyname(server)
-		except:
-			server='localhost'
+		#If desktop force localhost
+		p=Popen(["/usr/bin/lliurex-version","-a"],stdout=PIPE,stderr=PIPE)
+		version=p.communicate()
+		if "desktop" in version[0].decode():
+			print("Desktop Detected. Reverting to localhost")		
+			server="localhost"
+			self.forceserver="localhost"
+		else:
+
+			import socket
+			server='server'
+			try:
+				server_ip=socket.gethostbyname(server)
+			except:
+				server='localhost'
 		return(server)
 	#def _set_default_server(self):
 
@@ -379,19 +388,28 @@ class appConfigN4d():
 		self.n4dClient=None
 		self._debug("Connecting to n4d")
 		context=ssl._create_unverified_context()
-		try:
-			socket.gethostbyname(self.server)
-		except:
-			#It could be an ip
+		#If desktop force localhost
+		p=Popen(["/usr/bin/lliurex-version","-a"],stdout=PIPE,stderr=PIPE)
+		version=p.communicate()
+		if "desktop" in version[0].decode():
+			print("Desktop Detected. Reverting to localhost")		
+			self.server="localhost"
+		else:
 			try:
-				socket.inet_aton(self.server)
-			except Exception as e:
-				self.error(e)
-				self.error("No server found. Reverting to localhost")
-				self.server='localhost'
+				socket.gethostbyname(self.server)
+			except:
+				#It could be an ip
+				try:
+					socket.inet_aton(self.server)
+				except Exception as e:
+					self.error(e)
+					self.error("No server found. Reverting to localhost")
+					self.server='localhost'
+					self.forceserver='localhost'
 		self._debug("Retval: %s"%self.retval)
 		if self.retval==0:
 			try:
+				print("Connecting to %s"%self.server)
 				self.n4dClient = n4d.ServerProxy("https://"+self.server+":9779",context=context,allow_none=True)
 			except:
 				self.error("Error accesing N4d at %s"%self.server)
