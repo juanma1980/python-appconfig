@@ -7,6 +7,7 @@ from PySide2.QtQuick import QQuickView
 from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread,QSize
 from PySide2.QtQuick import QQuickView
 import gettext
+import notify2
 #_ = nullTrans.gettext
 _=gettext.gettext
 QString=type("")
@@ -244,9 +245,15 @@ class appConfigStack(QWidget):
 		return
 	#def setParms
 
-	def showMsg(self,msg,state=None):
+	def showMsg(self,msg,title='',state=None):
 		self._debug("Sending %s"%msg)
-		self.message.emit(msg,state)
+		if title=='':
+			title=self.description
+		notify2.init(title)
+		notice = notify2.Notification(msg)
+		notice.show()
+		return
+#self.message.emit(msg,state)
 	#def showMsg
 
 	def n4dGetVar(self,client=None,var=''):
