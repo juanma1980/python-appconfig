@@ -248,12 +248,15 @@ class appConfigScreen(QWidget):
 		self.stk_widget=QStackedWidget()
 		#box.addWidget(self.statusBar,0,0,1,2)
 		box.addWidget(img_banner,0,0,1,2)
-		l_panel=self._left_panel()
-		box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
+		self.stk_widget.setCurrentIndex(0)
+		if len(self.stacks)>2:
+		    l_panel=self._left_panel()
+		    box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
+		else:
+			self.stk_widget.setCurrentIndex(1)
 		r_panel=self._right_panel()
 		box.addWidget(r_panel,1,1,1,1)
 		self.setLayout(box)
-		self.stk_widget.setCurrentIndex(0)
 		self.show()
 	#def _render_gui
 
