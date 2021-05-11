@@ -172,10 +172,10 @@ class appConfigN4d():
 	def _launch(self,n4dClient,n4dClass,n4dMethod,*args):
 		proxy=n4d.client.Proxy(n4dClient,n4dClass,n4dMethod)
 		try:
-			if args[0]:
-				self._debug("Call client: {}".format(n4dClient))
-				self._debug("Call class: {}".format(n4dClass))
-				self._debug("Call method: {}".format(n4dMethod))
+			self._debug("Call client: {}".format(n4dClient))
+			self._debug("Call class: {}".format(n4dClass))
+			self._debug("Call method: {}".format(n4dMethod))
+			if len(args):
 				self._debug("Call Args: {}".format(*args))
 				result=proxy.call(*args)
 			else:
