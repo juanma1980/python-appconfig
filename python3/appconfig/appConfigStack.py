@@ -249,8 +249,13 @@ class appConfigStack(QWidget):
 		self.message.emit(msg,state)
 	#def showMsg
 
-	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
-		ret=self.appConfig.n4dQuery(n4dclass,n4dmethod,n4dparms)
+	def n4dGetVar(self,client=None,var=''):
+		ret=self.appConfig.n4dGetVar(client,var)
+		return(ret)
+	#def n4dQuery
+
+	def n4dQuery(self,n4dclass,n4dmethod,*args):
+		ret=self.appConfig.n4dQuery(n4dclass,n4dmethod,*args)
 		return(ret)
 	#def n4dQuery
 
