@@ -133,6 +133,8 @@ class appConfigN4d():
 
 	def n4dQuery(self,n4dClass,n4dMethod,*args):
 		result={'status':-1,'return':''}
+		if self.n4dClient==None:
+			self.n4dClient=self._n4d_connect()
 		#Launch and pray. If there's validation error ask for credentials
 		try:
 			result=self._launch(self.n4dClient,n4dClass,n4dMethod,*args)
@@ -140,7 +142,7 @@ class appConfigN4d():
 			#User not allowed, ask for credentials and relaunch
 			result={'status':-1,'code':USERNOTALLOWED_ERROR}
 			#Get credentials
-			loginBox=subprocess.run(["/usr/lib/python3/dist-packages/appconfig/n4dCredentialsBox.py"],text=True,capture_output=True)
+			loginBox=subprocess.run(["/usr/lib/python3/dist-packages/appconfig/n4dCredentialsBox.py",self.server],text=True,capture_output=True)
 			ticket=loginBox.stdout
 			client=self._n4d_connect(ticket)
 			result=self._launch(client,n4dClass,n4dMethod,*args)
@@ -151,10 +153,29 @@ class appConfigN4d():
 		return(result)
 	#def n4dQuery(self,n4dclass,n4dmethod,*args):
 
+	def n4dGetVar(self,client=None,var=''):
+		if not client:
+			client=self.n4dClient
+		print(client)
+		result={'status':-1,'return':''}
+		#Launch and pray. If there's validation error ask for credentials
+		try:
+			result=client.get_variable(var)
+		except n4d.client.InvalidServerResponseError as e:
+			print("Response: {}".format(e))
+		except Exception as e:
+			print(e)
+		return(result)
+	#def n4dQuery(self,n4dclass,n4dmethod,*args):
+
+
 	def _launch(self,n4dClient,n4dClass,n4dMethod,*args):
 		proxy=n4d.client.Proxy(n4dClient,n4dClass,n4dMethod)
 		try:
 			if args[0]:
+				self._debug("Call client: {}".format(n4dClient))
+				self._debug("Call class: {}".format(n4dClass))
+				self._debug("Call method: {}".format(n4dMethod))
 				self._debug("Call Args: {}".format(*args))
 				result=proxy.call(*args)
 			else:
@@ -166,7 +187,7 @@ class appConfigN4d():
 
 	def _n4d_connect(self,ticket=''):
 		self.n4dClient=None
-		self._debug("Connecting to n4d")
+		self._debug("Connecting to n4d at {}".format(self.server))
 		client=""
 		if ticket:
 			ticket=ticket.replace('##U+0020##',' ').rstrip()
