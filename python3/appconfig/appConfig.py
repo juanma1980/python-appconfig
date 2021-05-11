@@ -206,6 +206,11 @@ class appConfig():
 		return(ret)
 	#def _read_config_from_n4d
 
-	def n4dQuery(self,n4dclass,n4dmethod,n4dparms=''):
-		ret=self.n4d.n4dQuery(n4dclass,n4dmethod,n4dparms)
+	def n4dGetVar(self,client=None,var=''):
+		ret=self.n4d.n4dGetVar(client,var)
+		return(ret)
+	#def n4dQuery
+
+	def n4dQuery(self,n4dclass,n4dmethod,*args):
+		ret=self.n4d.n4dQuery(n4dclass,n4dmethod,*args)
 		return(ret)
