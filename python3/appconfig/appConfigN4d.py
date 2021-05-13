@@ -8,7 +8,9 @@ from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread
 from PySide2.QtQuick import QQuickView
 from subprocess import Popen, PIPE
 import base64
-import os,subprocess
+import os,subprocess,sys
+sys.path.insert(1, '/usr/lib/python3/dist-packages/appconfig')
+import n4dCredentialsBox as login
 
 import gettext
 _ = gettext.gettext
@@ -132,6 +134,11 @@ class appConfigN4d():
 	#def readConfig(self,n4dparms):
 
 	def n4dQuery(self,n4dClass,n4dMethod,*args):
+		client=""
+		def setCredentials(ticket):
+			client=self._n4d_connect(ticket)
+			result=self._launch(client,n4dClass,n4dMethod,*args)
+			
 		result={'status':-1,'return':''}
 		if self.n4dClient==None:
 			self.n4dClient=self._n4d_connect()
@@ -142,14 +149,14 @@ class appConfigN4d():
 			#User not allowed, ask for credentials and relaunch
 			result={'status':-1,'code':USERNOTALLOWED_ERROR}
 			#Get credentials
-			loginBox=subprocess.run(["/usr/lib/python3/dist-packages/appconfig/n4dCredentialsBox.py",self.server],text=True,capture_output=True)
-			ticket=loginBox.stdout
-			client=self._n4d_connect(ticket)
-			result=self._launch(client,n4dClass,n4dMethod,*args)
+			self.loginBox=login.n4dCredentials()
+			self.loginBox.loginBox(self.server)
+			self.loginBox.onTicket.connect(setCredentials)
 		except n4d.client.InvalidServerResponseError as e:
 			print("Response: {}".format(e))
 		except Exception as e:
 			print(e)
+		self._debug("N4d response: {}".format(result))
 		return(result)
 	#def n4dQuery(self,n4dclass,n4dmethod,*args):
 
