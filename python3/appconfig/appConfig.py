@@ -11,10 +11,10 @@ class appConfig():
 	def __init__(self):
 		self.dbg=True
 		self.confFile="appconfig.conf"
-		self.home=os.environ.get('HOME',"/usr/share/%s"%self.confFile.split('.')[0])
+		self.home=os.environ.get('HOME',"/usr/share/{}".format(self.confFile.split('.')[0]))
 		self.localConf=self.confFile
 		self.n4dConf="n4d-%s"%self.confFile
-		self.baseDirs={"user":"%s/.config"%self.home,"system":"/usr/share/%s"%self.confFile.split('.')[0],"n4d":"/usr/share/%s"%self.confFile.split('.')[0]}
+		self.baseDirs={"user":"{}/.config".format(self.home),"system":"/usr/share/{}".format(self.confFile.split('.')[0]),"n4d":"/usr/share/{}".format(self.confFile.split('.')[0])}
 		self.config={'user':{},'system':{},'n4d':{}}
 		self.n4dcredentials=[]
 		self.server="172.20.9.174"
@@ -23,7 +23,7 @@ class appConfig():
 
 	def _debug(self,msg):
 		if self.dbg:
-			print("Config: %s"%msg)
+			print("Config: {}".format(msg))
 	#def _debug
 
 	def set_baseDirs(self,dirs):
@@ -213,4 +213,5 @@ class appConfig():
 
 	def n4dQuery(self,n4dclass,n4dmethod,*args):
 		ret=self.n4d.n4dQuery(n4dclass,n4dmethod,*args)
+		print(ret)
 		return(ret)
