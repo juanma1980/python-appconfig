@@ -37,12 +37,18 @@ class n4dCredentials(QObject):
 		self.tunnel = Tunnel()
 		self.tunnel.onQmlTicket.connect(self._onTicket)
 		self.tickets=[]
+		self.dbg=False
+
+	def _debug(self,msg):
+		if self.dbg:
+			print("M4dCredentials: {}".format(msg))
 
 	def loginBox(self,server='localhost'):
 			#self.view = QQuickView()
 		self.tickets=[]
 		self.qview = QQmlApplicationEngine()
 		self.server=server
+		self._debug("Accesing server: {}".format(self.server))
 		self.qview.rootContext().setContextProperty("tunnel", self.tunnel)
 		self.qview.setInitialProperties({"address": self.server})
 		url = QUrl("/usr/share/appconfig/auth/login.qml")
@@ -52,11 +58,13 @@ class n4dCredentials(QObject):
 	@Slot(str)
 	def _onTicket(self,*args):
 		ticket=args[0]
+		self._debug("Server: {}".format(self.server))
+		self._debug("Args: {}".format(args))
 		if self.server!="localhost" and len(self.tickets)==0: 
 			self.tickets.append(ticket)
 		else:
 			self.tickets.append(ticket)
 		#self.view.close()
-			self.onTicket.emit(tickets)
+			self.onTicket.emit(self.tickets)
 		return True
 
