@@ -1,24 +1,31 @@
 import QtQuick 2.6
+import QtQuick.Dialogs 1.2
 import Edupals.N4D.Agent 1.0 as N4DAgent
 
-
-Rectangle {
+Dialog {
+    id: dialog
     width: 400
     height: 250
-    anchors.centerIn: parent
-    color: "#e9e9e9"
+	modality: Qt.ApplicationModal
+	visible: true
+	standardButtons: StandardButton.NoButton
+	property string address: "localhost"
 
     N4DAgent.Login
     {
         showAddress:false
-        address:"localhost"
-        showCancel: true
+        showCancel: false
         inGroups:["sudo","admins","teachers"]
-        
-        anchors.centerIn: parent
+        anchors.centerIn: dialog
+        address:dialog.address
         
         onLogged: {
             tunnel.on_ticket(ticket);
+			if (address != 'localhost')
+			{
+				address: "localhost"
+            	tunnel.on_ticket(ticket);
+			}
         }
     }
 }
