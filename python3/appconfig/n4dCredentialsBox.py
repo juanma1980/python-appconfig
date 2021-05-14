@@ -28,7 +28,7 @@ class Tunnel(QObject):
 #class Tunnel
 
 class n4dCredentials(QObject):
-	onTicket=Signal(str)
+	onTicket=Signal(list)
 	def __init__(self):
 		super(n4dCredentials, self).__init__()
 		if len(sys.argv)==2:
@@ -36,9 +36,11 @@ class n4dCredentials(QObject):
 
 		self.tunnel = Tunnel()
 		self.tunnel.onQmlTicket.connect(self._onTicket)
+		self.tickets=[]
 
 	def loginBox(self,server='localhost'):
 			#self.view = QQuickView()
+		self.tickets=[]
 		self.qview = QQmlApplicationEngine()
 		self.server=server
 		self.qview.rootContext().setContextProperty("tunnel", self.tunnel)
@@ -49,9 +51,12 @@ class n4dCredentials(QObject):
 
 	@Slot(str)
 	def _onTicket(self,*args):
-		print("A: {}".format(args))
 		ticket=args[0]
+		if self.server!="localhost" and len(self.tickets)==0: 
+			self.tickets.append(ticket)
+		else:
+			self.tickets.append(ticket)
 		#self.view.close()
-		self.onTicket.emit(ticket)
+			self.onTicket.emit(tickets)
 		return True
 

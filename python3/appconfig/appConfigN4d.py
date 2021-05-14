@@ -28,7 +28,7 @@ import n4d.responses
 USERNOTALLOWED_ERROR=-10
 
 class appConfigN4d():
-	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='server'):
+	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
 		self.dbg=True
 		#No more global vars for credentials or methods, etc but server
 		self.server=server
@@ -41,6 +41,7 @@ class appConfigN4d():
 		self.retval=0
 		self.n4dAuth=None
 		self.n4dClient=None
+		self.n4dMaster=None
 		self.varName=''
 		self.uptime=0
 	#def __init__
@@ -133,27 +134,66 @@ class appConfigN4d():
 		return(data)
 	#def readConfig(self,n4dparms):
 
-	def n4dQuery(self,n4dClass,n4dMethod,*args):
+	def n4dQuery(self,n4dClass,n4dMethod,*args,**kwargs):
 		client=""
-		def setCredentials(ticket):
-			client=self._n4d_connect(ticket)
-			result=self._launch(client,n4dClass,n4dMethod,*args)
+		server_ip="localhost"
+		self._debug("Kwargs: {}".format(kwargs))
+		if kwargs:
+			server_ip=kwargs.get('ip','server')
+			self._debug("Received server: {}".format(server_ip))
+			self._debug("Kwargs: {}".format(kwargs))
+		def setCredentials(tickets):
+			client=None
+			master=None
+			for ticket in tickets:
+				if client==None:
+					client=self._n4d_connect(ticket)
+					self._debug("N4d localhost: {}".format(client))
+				else:
+					master=self._n4d_connect(ticket,server_ip)
+					self._debug("N4d server: {}".format(master))
+			self.n4dClient=client
+			self.n4dMaster=master
+			if server_ip and server_ip!='localhost' and self.n4dMaster:
+				self._debug("Launching n4dMethod on master")
+				result=self._launch(master,n4dClass,n4dMethod,*args)
+			else:
+				self._debug("Launching n4dMethodd on client")
+				result=self._launch(client,n4dClass,n4dMethod,*args)
 			
 		result={'status':-1,'return':''}
-		if self.n4dClient==None:
-			self.n4dClient=self._n4d_connect()
+		if server_ip=='localhost' and self.n4dClient==None:
+			self.n4dClient=self._n4d_connect(server=server_ip)
+		elif self.n4dMaster==None:
+				#	if self.n4dMaster==None and server_ip and server_ip!='localhost':
+			self.n4dMaster=self._n4d_connect(server=server_ip)
+
 		#Launch and pray. If there's validation error ask for credentials
 		try:
-			result=self._launch(self.n4dClient,n4dClass,n4dMethod,*args)
+			if server_ip and server_ip!='localhost':
+				self._debug("Launching n4dMethod on master")
+				result=self._launch(self.n4dMaster,n4dClass,n4dMethod,*args)
+				######### REM
+				### result from n4d master dont raise exception, return a status code of -10 (user not allowed)
+				### Cath the error code and raise exception 
+				######### REM
+				if isinstance(result,dict):
+					if result.get('code',0)!=0:
+						raise n4d.client.UserNotAllowedError
+			else:
+				self._debug("Launching n4dMethod on client")
+				result=self._launch(self.n4dClient,n4dClass,n4dMethod,*args)
 		except n4d.client.UserNotAllowedError as e:
 			#User not allowed, ask for credentials and relaunch
 			result={'status':-1,'code':USERNOTALLOWED_ERROR}
 			#Get credentials
+			self._debug("Registering to server: {}".format(server_ip))
 			self.loginBox=login.n4dCredentials()
-			self.loginBox.loginBox(self.server)
+			self.loginBox.loginBox(server_ip)
+			#self.loginBox.loginBox(self.server)
 			self.loginBox.onTicket.connect(setCredentials)
 		except n4d.client.InvalidServerResponseError as e:
-			print("Response: {}".format(e))
+			self._debug("Response: {}".format(e))
 		except Exception as e:
 			print(e)
 		self._debug("N4d response: {}".format(result))
@@ -162,8 +202,9 @@ class appConfigN4d():
 
 	def n4dGetVar(self,client=None,var=''):
 		if not client:
+			if not self.n4dClient:
+				self.n4dClient=self._n4d_connect()
 			client=self.n4dClient
-		print(client)
 		result={'status':-1,'return':''}
 		#Launch and pray. If there's validation error ask for credentials
 		try:
@@ -192,9 +233,9 @@ class appConfigN4d():
 			raise e
 		return result
 
-	def _n4d_connect(self,ticket=''):
-		self.n4dClient=None
-		self._debug("Connecting to n4d at {}".format(self.server))
+	def _n4d_connect(self,ticket='',server='localhost'):
+		#self.n4dClient=None
+		self._debug("Connecting to n4d at {}".format(server))
 		client=""
 		if ticket:
 			ticket=ticket.replace('##U+0020##',' ').rstrip()
@@ -203,26 +244,26 @@ class appConfigN4d():
 			self._debug("N4d Object2: {}".format(client.credential.auth_type))
 		else:
 			try:
-				socket.gethostbyname(self.server)
+				socket.gethostbyname(server)
 			except:
 				#It could be an ip
 				try:
-					socket.inet_aton(self.server)
+					socket.inet_aton(server)
 				except Exception as e:
 					self.error(e)
 					self.error("No server found. Reverting to localhost")
 					self.server='https://localhost:9779'
-			if not self.server.startswith("http"):
-				self.server="https://{}".format(self.server)
-			if len(self.server.split(":")) < 3:
-					self.server="{}:9779".format(self.server)
+			if not server.startswith("http"):
+				server="https://{}".format(server)
+			if len(server.split(":")) < 3:
+					server="{}:9779".format(server)
 				
 			if self.username:
-				client=n4d.client.Client(self.server,self.username,self.password)
+				client=n4d.client.Client(server,self.username,self.password)
 			else:
-				client=n4d.client.Client(self.server)
-		self.n4dClient=client
-		self._debug("N4d Object2: {}".format(self.n4dClient.credential.auth_type))
+				client=n4d.client.Client(server)
+		#self.n4dClient=client
+		self._debug("N4d Object2: {}".format(client.credential.auth_type))
 		return(client)
 	#def _n4d_connect
 
