@@ -28,6 +28,7 @@ Dialog {
             	proxy.requestTicket(address,user,"lliurex",inGroups);
 				localadress:""
 			}
+			dialog.close();
         }
 
 
