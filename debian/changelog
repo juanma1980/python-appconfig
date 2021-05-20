@@ -1,7 +1,8 @@
-python3-appconfig (0.30.2) focal; urgency=medium
+python3-appconfig (0.30.3) focal; urgency=medium
 
-  * n4dCredentials as new module for n4d-agent
-  * Supports register on one n4d server and on localhost with same credentials
+  * n4dCredentials as new module implementing n4d-agent
+  * Added getVar from n4d function
+  * Register with both remote and local servers
 
  -- Juanma1980 <juanma1980@gmail.com>  Thu, 13 May 2021 19:40:45 +0200
 
