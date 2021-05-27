@@ -1,8 +1,13 @@
 #! /usr/bin/python3
-from PySide2.QtWidgets import QApplication
+#It's not pretty but works
+#This class creates an authentication dialog against a N4d server using qml n4dAgent
+#Works with both qt and non qt apps
+
+from PySide2.QtWidgets import QDialog,QApplication,QMainWindow
 from PySide2.QtQuick import QQuickView
 from PySide2.QtQml import QQmlApplicationEngine
-from PySide2.QtCore import QUrl, QObject, Slot, Signal,Property
+from PySide2.QtCore import Qt,QUrl, QObject, Slot, Signal,QEventLoop
+import time
 import os
 import subprocess
 import sys
@@ -14,7 +19,7 @@ except:
 	gettext.textdomain('python3-appconfig')
 	_ = gettext.gettext
 
-
+#Tunnel for qml
 class Tunnel(QObject):
 	onQmlTicket=Signal(str)
 
@@ -24,46 +29,85 @@ class Tunnel(QObject):
 		self.onQmlTicket.emit(ticket)
 		return True
 	#def on_ticket
-
 #class Tunnel
 
-class n4dCredentials(QObject):
+####
+#This class implements the modal dialog
+#It creates a Qt Window and a QApplication if they don't exist
+###
+class n4dDialog(QDialog):
 	onTicket=Signal(list)
-	def __init__(self):
-		super(n4dCredentials, self).__init__()
+	def __init__(self,server='localhost',app=None):
+		super(n4dDialog, self).__init__()
 		if len(sys.argv)==2:
 			server=sys.argv[1]
-
+		if app:
+			self.mw=self._createMainWindow()
+			self.setParent(self.mw)
+		self.server=server
+		self.setModal=True
 		self.tunnel = Tunnel()
 		self.tunnel.onQmlTicket.connect(self._onTicket)
 		self.tickets=[]
 		self.dbg=True
-
+		self.loginBox(app)
+		self.createWinId()
+		self._debug("Login launched on server: {}".format(self.server))
+	#def __init__
+	
 	def _debug(self,msg):
 		if self.dbg:
-			print("M4dCredentials: {}".format(msg))
+			print("N4dCredentials: {}".format(msg))
+	#def _debug(self,msg):
 
-	def loginBox(self,server='localhost'):
-			#self.view = QQuickView()
+	def _createMainWindow(self):
+		mw=QMainWindow()
+		return(mw)
+	#def _createMainWindow
+
+	def loginBox(self,app):
 		self.tickets=[]
-		self.qview = QQmlApplicationEngine()
-		self.server=server
+		self.qview = QQuickView()
 		self._debug("Accesing server: {}".format(self.server))
 		self.qview.rootContext().setContextProperty("tunnel", self.tunnel)
-		self.qview.setInitialProperties({"address": self.server})
+		self.qview.rootContext().setContextProperty("address", self.server)
+		self._debug("Values setted")
 		url = QUrl("/usr/share/appconfig/auth/login.qml")
-		#self.view.setSource(url)
-		self.qview.load(url)
-		self._debug("Login launched on server: {}".format(self.server))
+		self.qview.setSource(url)
+		self._debug("Source setted")
+		qml=self.createWindowContainer(self.qview,self,Qt.FramelessWindowHint)
+		self._debug("Container ready")
+		qml.setMinimumSize(400, 250)
+		qml.show()
+		if app:
+			self._debug("Container ready")
+			app.exec_()
+	#def loginBox
 
 	@Slot(str)
 	def _onTicket(self,*args):
 		ticket=args[0]
 		self._debug("Server: {}".format(self.server))
-		self._debug("Args: {}".format(ticket))
+		self._debug("Ticket: {}".format(ticket))
 		if ticket not in self.tickets:
 			self.tickets.append(ticket)
-			print("Emit {}".format(self.tickets))
+			self._debug("Emit {}".format(self.tickets))
 			self.onTicket.emit(self.tickets)
+		self.close()
 		return True
+	#def _onTicket
+#class n4dDialog
 
+class n4dCredentials():
+	onTicket=Signal(list)
+	def __init__(self,server='localhost'):
+		super(n4dCredentials, self).__init__()
+
+		self.sw=False
+		app=QApplication.instance()
+		if app==None:
+			app=QApplication()
+		app=None
+		self.dialog=n4dDialog(server,app)
+	#def __init__
+#class n4dCredentials
