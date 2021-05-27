@@ -11,19 +11,18 @@ Modify imports, but gettext, as you need, this is only a sample
 
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,QLineEdit,QHBoxLayout
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,QLineEdit,QHBoxLayout
+from PySide2 import QtGui
+from PySide2.QtCore import Qt
 #Probably you want that
-from appconfig.appConfig import appConfig 
+from appconfig.appConfigStack import appConfigStack as confStack
 #Don't modify this ->
 import gettext
 _ = gettext.gettext
 #Don't modify this <-
 
-class exampleStackParm(QWidget):
-	def __init__(self,parameter1=None):
-		super().__init__()
+class exampleStackParm(confStack):
+	def __init_stack__(self,parameter1=None):
 		#Debug mode
 		self.dbg=True
 		#To pass a parm to a stack you must pass it to configScreen (init dict parms {'name':value})
@@ -43,8 +42,6 @@ class exampleStackParm(QWidget):
 		self.index=6
 		#Switch that controls if there's any change
 		self.sw_changes=False
-		#Configure lib (optional)
-		self.config=appConfig()
 		#Default config level (one from "user", "system" or "n4d". Needed if you use configure lib)
 		self.level='user'
 		#Parametrized stacks initialize the screen at apply_parms
@@ -60,7 +57,7 @@ class exampleStackParm(QWidget):
 		gettext.textdomain(textDomain)
 	#def set_textDomain
 
-	def setConfigLevel(self,level):
+	def setLevel(self,level):
 		self.level=level
 	#def setConfigLevel
 	

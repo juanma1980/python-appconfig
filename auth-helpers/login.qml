@@ -1,15 +1,11 @@
 import QtQuick 2.6
-import QtQuick.Dialogs 1.2
-import Edupals.N4D.Agent 1.0 as N4DAgent
 import "Login" as N4dLogin 
+import Edupals.N4D.Agent 1.0 as N4DAgent
 
-Dialog {
+Rectangle {
     id: dialog
     width: 400
     height: 250
-	modality: Qt.ApplicationModal
-	visible: true
-	standardButtons: StandardButton.NoButton
 	property string address: "localhost"
 
     N4dLogin.Login
@@ -28,7 +24,6 @@ Dialog {
             	proxy.requestTicket(address,user,"lliurex",inGroups);
 				localadress:""
 			}
-			dialog.close();
         }
 
 

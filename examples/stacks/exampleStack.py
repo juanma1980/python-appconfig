@@ -11,22 +11,20 @@ Modify imports, but gettext, as you need, this is only a sample
 
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,QLineEdit,QHBoxLayout
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,QLineEdit,QHBoxLayout
+from PySide2 import QtGui
+from PySide2.QtCore import Qt
 #Probably you want that
-from appconfig.appConfig import appConfig 
+from appconfig.appConfigStack import appConfigStack as confStack
 #Don't modify this ->
 import gettext
 _ = gettext.gettext
 #Don't modify this <-
 
-class exampleStack(QWidget):
-	def __init__(self):
-		super().__init__()
+class exampleStack(confStack):
+	def __init_stack__(self):
 		#Debug mode
 		self.dbg=True
-		self.config=appConfig()
 		#Description shown at "From here you can..." box
 		self.menu_description=(_("See an example stack"))
 		#Description shown at config panel
