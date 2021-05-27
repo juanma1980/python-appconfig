@@ -1,3 +1,9 @@
+python3-appconfig (0.30.4) focal; urgency=medium
+
+  * Add compatibility with non-qt apps
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 27 May 2021 09:22:40 +0200
+
 python3-appconfig (0.30.3) focal; urgency=medium
 
   * n4dCredentials as new module implementing n4d-agent
