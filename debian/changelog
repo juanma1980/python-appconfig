@@ -1,6 +1,7 @@
-python3-appconfig (0.30.4) focal; urgency=medium
+python3-appconfig (0.30.5) focal; urgency=medium
 
   * Add compatibility with non-qt apps
+  * Fix register issues
 
  -- Juanma1980 <juanma1980@gmail.com>  Thu, 27 May 2021 09:22:40 +0200
 
