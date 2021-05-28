@@ -6,7 +6,7 @@ Rectangle {
     id: dialog
     width: 400
     height: 250
-	property string address: "localhost"
+	property string address: qsTr("%1").arg(server)
 
     N4dLogin.Login
     {
@@ -21,8 +21,7 @@ Rectangle {
 			{
 				dialog.address='localhost'
 			 	console.log("Address selected: " + address)
-            	proxy.requestTicket(address,user,"lliurex",inGroups);
-				localadress:""
+            	proxy.requestTicket(address,user,pwd,inGroups);
 			}
         }
 
