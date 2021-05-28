@@ -140,21 +140,25 @@ class appConfigN4d(QObject):
 		client=None
 		master=None
 		if not self.key in self.launchQueue.keys():
-			print("EXIT!!!!!")
 			return
 		for ticket in tickets:
-			n4dProxy=self._n4d_connect(ticket)
+			if not 'localhost' in str(ticket) and not self.server_ip in str(ticket):
+				self._debug("Discard ticket {} for {}".format(ticket,self.server_ip))
+				continue
+			n4dProxy=self._n4d_connect(ticket,self.server_ip)
 			self._debug("N4d client: {}".format(n4dProxy))
 			self._debug("N4d old client: {}".format(self.n4dClient))
-			if 'localhost:' in ticket:
+			if 'localhost:' in str(ticket):
 				self._debug("Relaunching n4dMethod on client")
 				oldProxy=self.n4dClient
 				self.n4dClient=n4dProxy
-			elif server_ip in ticket:
+			elif self.server_ip in str(ticket):
 				self._debug("Relaunching n4dMethod on master")
 				oldProxy=self.n4dMaster
 				self.n4dMaster=n4dProxy
-			data=self.launchQueue[self.key]
+			data=self.launchQueue.get(self.key,None)
+			if not data:
+				continue
 			del(self.launchQueue[self.key])
 			#Update all n4dcalls
 			delKeys=[]
@@ -168,7 +172,8 @@ class appConfigN4d(QObject):
 				self.launchQueue[a]['client']=n4dProxy
 			key=self.key.replace(str(oldProxy),str(n4dProxy))
 			self.launchQueue[key]={'client':n4dProxy,'n4dClass':data['n4dClass'],'n4dMethod':data['n4dMethod'],'args':data['args'],'kwargs':data.get('kwargs','')}
-		self.onCredentials.emit(self.launchQueue)
+		if self.launchQueue:
+			self.onCredentials.emit(self.launchQueue)
 	#def setCredentials
 
 	def n4dQuery(self,n4dClass,n4dMethod,*args,**kwargs):
@@ -191,27 +196,31 @@ class appConfigN4d(QObject):
 		try:
 			if server_ip and server_ip!='localhost':
 				self._debug("Launching n4dMethod on master")
+				key="{}:{}:{}".format(str(self.n4dMaster),n4dClass,n4dMethod)
 				result=self._launch(self.n4dMaster,n4dClass,n4dMethod,*args)
 			else:
 				self._debug("Launching n4dMethod on client")
+				key="{}:{}:{}".format(str(self.n4dClient),n4dClass,n4dMethod)
 				result=self._launch(self.n4dClient,n4dClass,n4dMethod,*args)
+			if key in self.launchQueue.keys():
+				del(self.launchQueue[key])
 		except n4d.client.UserNotAllowedError as e:
 			#User not allowed, ask for credentials and relaunch
 			result={'status':-1,'code':USERNOTALLOWED_ERROR}
 			if server_ip and server_ip!='localhost':
-				key="{}:{}:{}".format(str(self.n4dMaster),n4dClass,n4dMethod)
 				self.launchQueue[key]={'client':self.n4dMaster,'n4dClass':n4dClass,'n4dMethod':n4dMethod,'args':list(args),'kwargs':kwargs}
 			else:
-				key="{}:{}:{}".format(str(self.n4dClient),n4dClass,n4dMethod)
 				self.launchQueue[key]={'client':self.n4dClient,'n4dClass':n4dClass,'n4dMethod':n4dMethod,'args':list(args),'kwargs':kwargs}
 			self.key=key
 			#Get credentials
+			self.server_ip=server_ip
 			self._debug("Registering to server: {}".format(server_ip))
+			self.onCredentials.connect(self.launchN4dQueue)
 			credentials=login.n4dCredentials(server_ip)
 			self.loginBox=credentials.dialog
 			self.loginBox.onTicket.connect(self.setCredentials)
-			self.loginBox.exec()
-			self.onCredentials.connect(self.launchN4dQueue)
+			if self.loginBox.exec():
+				result={'status':0,'code':USERNOTALLOWED_ERROR}
 		except n4d.client.InvalidServerResponseError as e:
 			self._debug("Response: {}".format(e))
 		except Exception as e:
@@ -249,8 +258,8 @@ class appConfigN4d(QObject):
 
 	def _launch(self,n4dClient,n4dClass,n4dMethod,*args):
 		proxy=n4d.client.Proxy(n4dClient,n4dClass,n4dMethod)
-		if "{}:̣{}".format(n4dClass,n4dMethod) in self.launchQueue.keys():
-			del(self.launchQueue["{}:̣{}".format(n4dClass,n4dMethod)])
+		if "{}:{}:{}".format(str(n4dClient),n4dClass,n4dMethod) in self.launchQueue.keys():
+			del(self.launchQueue["{}:{}:{}".format(str(n4dClient),n4dClass,n4dMethod)])
 		try:
 			self._debug("Call client: {}".format(n4dClient))
 			self._debug("Call class: {}".format(n4dClass))
@@ -268,7 +277,7 @@ class appConfigN4d(QObject):
 	#def _launch
 
 	def _n4d_connect(self,ticket='',server='localhost'):
-		self._debug("Connecting to n4d at {}".format(server))
+		self._debug("Connecting to n4d at {} -> {}".format(server,ticket))
 		client=""
 		if ticket:
 			ticket=ticket.replace('##U+0020##',' ').rstrip()

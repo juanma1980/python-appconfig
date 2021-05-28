@@ -69,19 +69,21 @@ class n4dDialog(QDialog):
 		self.tickets=[]
 		self.qview = QQuickView()
 		self._debug("Accesing server: {}".format(self.server))
-		self.qview.rootContext().setContextProperty("tunnel", self.tunnel)
-		self.qview.rootContext().setContextProperty("address", self.server)
+		root=self.qview.rootContext()
+		root.setContextProperty("server", str(self.server))
+		root.setContextProperty("tunnel", self.tunnel)
 		self._debug("Values setted")
 		url = QUrl("/usr/share/appconfig/auth/login.qml")
 		self.qview.setSource(url)
 		self._debug("Source setted")
+		root=self.qview.rootObject()
 		qml=self.createWindowContainer(self.qview,self,Qt.FramelessWindowHint)
 		self._debug("Container ready")
 		qml.setMinimumSize(400, 250)
 		qml.show()
 		if app:
 			self._debug("Container ready")
-			app.exec_()
+			sys.exit(app.exec_())
 	#def loginBox
 
 	@Slot(str)
@@ -92,9 +94,9 @@ class n4dDialog(QDialog):
 		if ticket not in self.tickets:
 			self.tickets.append(ticket)
 			self._debug("Emit {}".format(self.tickets))
+		if self.server=='localhost' or  len(self.tickets)==2:
 			self.onTicket.emit(self.tickets)
-		self.close()
-		return True
+			self.accept()
 	#def _onTicket
 #class n4dDialog
 
