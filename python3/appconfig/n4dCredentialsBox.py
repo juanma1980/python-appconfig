@@ -49,7 +49,7 @@ class n4dDialog(QDialog):
 		self.tunnel = Tunnel()
 		self.tunnel.onQmlTicket.connect(self._onTicket)
 		self.tickets=[]
-		self.dbg=True
+		self.dbg=False
 		self.loginBox(app)
 		self.createWinId()
 		self._debug("Login launched on server: {}".format(self.server))
