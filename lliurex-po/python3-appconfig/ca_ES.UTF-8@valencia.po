@@ -1,0 +1,119 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-15 08:41+0200\n"
+"PO-Revision-Date: 2020-06-15 08:43+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ca_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../python3/appconfig/appConfigN4d.py:35
+msgid "Authentication is required"
+msgstr "Es requereix autenticació"
+
+#: ../python3/appconfig/appConfigN4d.py:46
+msgid ""
+"This action needs authentication against\n"
+"the N4d Server"
+msgstr ""
+"L'acció requereix autenticar-se\n"
+"al servidor N4d"
+
+#: ../python3/appconfig/appConfigN4d.py:48
+msgid ""
+"An application is trying to do an action\n"
+"that requires N4d authentication"
+msgstr ""
+"Una aplicació vol realitzar una acció\n"
+"que requereix autenticar-se al servidor N4d"
+
+#: ../python3/appconfig/appConfigN4d.py:54
+msgid "Username"
+msgstr "Usuari"
+
+#: ../python3/appconfig/appConfigN4d.py:59
+msgid "Password"
+msgstr "Contrasenya"
+
+#: ../python3/appconfig/appConfigN4d.py:69
+msgid "Accept"
+msgstr "Aceptar"
+
+#: ../python3/appconfig/appConfigN4d.py:73
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: ../python3/appconfig/appConfigN4d.py:171
+msgid "Validation error"
+msgstr "Error de validació"
+
+#: ../python3/appconfig/appConfigN4d.py:185
+msgid "Username: "
+msgstr "Usuari:"
+
+#: ../python3/appconfig/appConfigN4d.py:186
+msgid "Password: "
+msgstr "Contrasenya:"
+
+#: ../python3/appconfig/appConfigN4d.py:187
+msgid "Server: "
+msgstr "Servidor:"
+
+#: ../python3/appconfig/appConfigScreen.py:49
+#: ../python3/appconfig/appConfigScreen.py:270
+msgid "Options"
+msgstr "Opcions"
+
+#: ../python3/appconfig/appConfigScreen.py:318
+msgid "Welcome to the configuration of "
+msgstr "Benvingut a la configuració del "
+
+#: ../python3/appconfig/appConfigScreen.py:319
+msgid "From here you can:<br>"
+msgstr "Desde ací es pot:<br>"
+
+#: ../python3/appconfig/appConfigScreen.py:347
+msgid "Wiki help"
+msgstr "Wiki"
+
+#: ../python3/appconfig/appConfigScreen.py:415
+msgid "Apply changes"
+msgstr "Aplicar canvis"
+
+#: ../python3/appconfig/appConfigScreen.py:415
+msgid ""
+"There're changes not saved at current screen.\n"
+"Discard them and continue?"
+msgstr ""
+"Hi han canvis sense guardar.\n"
+"Ignorar-los i continuar?"
+
+#: ../python3/appconfig/appConfigStack.py:17
+msgid "Configure stack"
+msgstr "Configurar stack"
+
+#: ../python3/appconfig/appConfigStack.py:18
+msgid "Configure custom stack"
+msgstr "Configurar stack personalitzat"
+
+#: ../python3/appconfig/appConfigStack.py:20
+msgid "From here you can configure something"
+msgstr "Desde aci es poden configurar coses"
+
+#: ../python3/appconfig/appConfigStack.py:32
+msgid "Apply"
+msgstr "Aplicar"
+
+#: ../python3/appconfig/appConfigStack.py:33
+msgid "Undo"
+msgstr "Desfer"
+
+#~ msgid "Confirm"
+#~ msgstr "Confirmar"
