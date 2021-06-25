@@ -59,7 +59,9 @@ class appConfigStack(QWidget):
 		return(gettext.dgettext(self.textdomain,msg))
 
 	def setTextDomain(self,textDomain):
-		gettext.textdomain(textDomain)
+			#gettext.textdomain(textDomain)
+		gettext.textdomain('{}'.format(textDomain))
+		_ = gettext.gettext
 	#def set_textDomain(self,textDomain):
 	
 	def applyParms(self,app):

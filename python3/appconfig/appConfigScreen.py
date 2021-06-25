@@ -41,6 +41,9 @@ class appConfigScreen(QWidget):
 		self.parms=parms
 		self.modules=[]
 		self.appName=appName
+		self.textDomain=self.appName.lower().replace(" ","_")
+		gettext.textdomain('{}'.format(self.textDomain))
+		_ = gettext.gettext
 		self.wikiPage=appName
 		self.background="%s/background.png"%self.rsrc
 		self.banner="%s/%s"%(self.rsrc,"banner.png")
@@ -48,7 +51,6 @@ class appConfigScreen(QWidget):
 		self.stacks={0:{'name':_("Options"),'icon':'icon'}}
 		self.appConfig=appConfig()
 		self.config={}
-		self.textDomain=self.appName.lower().replace(" ","_")
 	#def init
 	
 	def _debug(self,msg):
