@@ -5,7 +5,7 @@ import Edupals.N4D.Agent 1.0 as N4DAgent
 Rectangle {
     id: dialog
     width: 400
-    height: 250
+    height: 320
 	property string address: qsTr("%1").arg(server)
 
     N4dLogin.Login
