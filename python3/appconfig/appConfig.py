@@ -210,6 +210,11 @@ class appConfig():
 		ret=self.n4d.n4dGetVar(client,var)
 		return(ret)
 	#def n4dQuery
+	
+	def n4dSetVar(self,client=None,var='',val={}):
+		ret=self.n4d.n4dSetVar(client,var,val)
+		return(ret)
+	#def n4dQuery
 
 	def n4dQuery(self,n4dclass,n4dmethod,*args,**kwargs):
 		ret=self.n4d.n4dQuery(n4dclass,n4dmethod,*args,**kwargs)

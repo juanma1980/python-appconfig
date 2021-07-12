@@ -241,7 +241,7 @@ class appConfigN4d(QObject):
 	#def launchN4dQueue(self,launchQueue):
 
 	def n4dGetVar(self,client=None,var=''):
-		result(self.get_variable(self,client,var))
+		return(self.get_variable(client,var))
 	#def n4dGetVar
 
 	def get_variable(self,client=None,var=''):
@@ -261,7 +261,7 @@ class appConfigN4d(QObject):
 	#def n4dGetVar
 
 	def n4dSetVar(self,client=None,var='',val={}):
-		result(self.set_variable(self,client,var,val))
+		return(self.set_variable(client,var,val))
 	#def n4dGetVar
 
 	def set_variable(self,client=None,var='',val={}):
