@@ -1,4 +1,4 @@
-python3-appconfig (0.30.9) focal; urgency=medium
+python3-appconfig (0.31.0) focal; urgency=medium
 
   * Add compatibility with non-qt apps
   * Fix register issues
@@ -6,6 +6,8 @@ python3-appconfig (0.30.9) focal; urgency=medium
   * Fix textdomain on first stack loaded
   * Added set_variable from n4d as n4dSetVar method
   * Added delete_variable from n4d as n4dDelVar method
+  * Improve look and feel
+  * i18n support
 
  -- Juanma1980 <juanma1980@gmail.com>  Thu, 27 May 2021 09:22:40 +0200
 
