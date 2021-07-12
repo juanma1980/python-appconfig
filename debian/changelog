@@ -1,9 +1,10 @@
-python3-appconfig (0.30.7) focal; urgency=medium
+python3-appconfig (0.30.8) focal; urgency=medium
 
   * Add compatibility with non-qt apps
   * Fix register issues
   * Add valencian translations
   * Fix textdomain on first stack loaded
+  * Added setVar from n4d function
 
  -- Juanma1980 <juanma1980@gmail.com>  Thu, 27 May 2021 09:22:40 +0200
 
