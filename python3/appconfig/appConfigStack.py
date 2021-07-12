@@ -262,6 +262,11 @@ class appConfigStack(QWidget):
 		ret=self.appConfig.n4dGetVar(client,var)
 		return(ret)
 	#def n4dQuery
+	
+	def n4dSetVar(self,client=None,var='',val={}):
+		ret=self.appConfig.n4dSetVar(client,var,val)
+		return(ret)
+	#def n4dQuery
 
 	def n4dQuery(self,n4dclass,n4dmethod,*args,**kwargs):
 		ret=self.appConfig.n4dQuery(n4dclass,n4dmethod,*args,**kwargs)
