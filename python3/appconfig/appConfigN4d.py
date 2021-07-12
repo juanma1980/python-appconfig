@@ -246,8 +246,8 @@ class appConfigN4d(QObject):
 
 	def get_variable(self,client=None,var=''):
 		if not client:
-			if not self.n4dClient:
-				self.n4dClient=self._n4d_connect()
+#			if not self.n4dClient:
+			self.n4dClient=self._n4d_connect()
 			client=self.n4dClient
 		result={'status':-1,'return':''}
 		#Launch and pray. If there's validation error ask for credentials
@@ -266,8 +266,8 @@ class appConfigN4d(QObject):
 
 	def set_variable(self,client=None,var='',val={}):
 		if not client:
-			if not self.n4dClient:
-				self.n4dClient=self._n4d_connect()
+#			if not self.n4dClient:
+			self.n4dClient=self._n4d_connect()
 			client=self.n4dClient
 		result={'status':-1,'return':''}
 		#Launch and pray. If there's validation error ask for credentials
@@ -301,6 +301,9 @@ class appConfigN4d(QObject):
 	#def _launch
 
 	def _n4d_connect(self,ticket='',server='localhost'):
+		if server=='localhost':
+			if self.server:
+				server=self.server
 		self._debug("Connecting to n4d at {} -> {}".format(server,ticket))
 		client=""
 		if ticket:
