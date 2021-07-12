@@ -20,7 +20,7 @@ Rectangle {
 			if (address != 'localhost')
 			{
 				dialog.address='localhost'
-			 	console.log("Address selected: " + address)
+/*			 	console.log("Address selected: " + address)*/
             	proxy.requestTicket(address,user,pwd,inGroups);
 			}
         }
