@@ -105,13 +105,13 @@ QQC2.StackView {
 
             Row {
                 Image {
-                    source:"/usr/share/icons/breeze/preferences/32/preferences-system-user-sudo.svg"
+                  source:"/usr/share/icons/breeze/preferences/32/preferences-system-user-sudo.svg"
                 }
          
                 QQC2.Label {
                     
                     id: labelCustomMessage
-                    text:i18nd("qml-agent-appconfig","This action needs authentication against<br>the N4d Server")
+                    text:i18nd("n4d-agent-appconfig","This action needs authentication against<br>the N4d Server")
                     leftPadding:6
                     font.pixelSize:16
                     font.bold:true
@@ -124,7 +124,7 @@ QQC2.StackView {
                 
                 id: labelInfoMessage
                 width:400
-                text:i18nd("qml-agent-appconfig","An application is trying to do an action<br>that requires N4d authentication")
+                text:i18nd("n4d-agent-appconfig","An application is trying to do an action<br>that requires N4d authentication")
                 leftPadding:36
                 horizontalAlignment:text.AlignHCenter
                 font.pixelSize:12
