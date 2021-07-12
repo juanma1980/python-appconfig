@@ -268,6 +268,11 @@ class appConfigStack(QWidget):
 		return(ret)
 	#def n4dQuery
 
+	def n4dDelVar(self,client=None,var=''):
+		ret=self.appConfig.n4dDelVar(client,var)
+		return(ret)
+	#def n4dQuery
+
 	def n4dQuery(self,n4dclass,n4dmethod,*args,**kwargs):
 		ret=self.appConfig.n4dQuery(n4dclass,n4dmethod,*args,**kwargs)
 		return(ret)

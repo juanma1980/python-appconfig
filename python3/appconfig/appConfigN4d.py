@@ -279,6 +279,26 @@ class appConfigN4d(QObject):
 			print(e)
 		return(result)
 	#def n4dSetVar
+	
+	def n4dDelVar(self,client=None,var=''):
+		return(self.delete_variable(client,var))
+	#def n4dGetVar
+
+	def delete_variable(self,client=None,var=''):
+		if not client:
+			if not self.n4dClient:
+				self.n4dClient=self._n4d_connect()
+			client=self.n4dClient
+		result={'status':-1,'return':''}
+		#Launch and pray. If there's validation error ask for credentials
+		try:
+			result=client.delete_variable("{}".format(var))
+		except n4d.client.InvalidServerResponseError as e:
+			print("Response: {}".format(e))
+		except Exception as e:
+			print(e)
+		return(result)
+	#def n4dSetVar
 
 	def _launch(self,n4dClient,n4dClass,n4dMethod,*args):
 		proxy=n4d.client.Proxy(n4dClient,n4dClass,n4dMethod)
