@@ -1,4 +1,4 @@
-python3-appconfig (0.31.0) focal; urgency=medium
+python3-appconfig (0.31.1) focal; urgency=medium
 
   * Add compatibility with non-qt apps
   * Fix register issues
