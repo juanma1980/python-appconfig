@@ -221,6 +221,7 @@ class appConfigN4d(QObject):
 			self.loginBox.onTicket.connect(self.setCredentials)
 			if self.loginBox.exec():
 				result={'status':0,'code':USERNOTALLOWED_ERROR}
+				result=self.result
 		except n4d.client.InvalidServerResponseError as e:
 			self._debug("Response: {}".format(e))
 		except Exception as e:
@@ -231,11 +232,12 @@ class appConfigN4d(QObject):
 	
 	def launchN4dQueue(self,launchQueue):
 		self._debug("Launch: {}".format(self.launchQueue))
+		self.result=[]
 		launch=self.launchQueue.copy()
 		for client,callData in launch.items():
 			self._debug("Exec: {}".format(callData))
 			try:
-				result=self._launch(callData['client'],callData['n4dClass'],callData['n4dMethod'],*callData['args'])
+				self.result=self._launch(callData['client'],callData['n4dClass'],callData['n4dMethod'],*callData['args'])
 			except:
 				pass
 	#def launchN4dQueue(self,launchQueue):
