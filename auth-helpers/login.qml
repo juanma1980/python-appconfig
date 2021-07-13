@@ -1,6 +1,6 @@
 import QtQuick 2.6
-import "Login" as N4dLogin 
 import Edupals.N4D.Agent 1.0 as N4DAgent
+import "LoginAuth" as N4dLogin 
 
 Rectangle {
     id: dialog
@@ -20,7 +20,7 @@ Rectangle {
 			if (address != 'localhost')
 			{
 				dialog.address='localhost'
-			 	console.log("Address selected: " + address)
+/*			 	console.log("Address selected: " + address)*/
             	proxy.requestTicket(address,user,pwd,inGroups);
 			}
         }
