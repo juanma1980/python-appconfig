@@ -11,7 +11,7 @@
 export PYBUILD_NAME=appconfig
 
 %:
-	dh $@ --with python3 --buildsystem pybuild
+	dh $@ --with python3,i18n --buildsystem pybuild
 #	dh $@ --with zero
 
 override_dh_fixperms:
