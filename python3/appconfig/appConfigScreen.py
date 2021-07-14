@@ -245,18 +245,18 @@ class appConfigScreen(QWidget):
 			img_banner.setPixmap(img)
 		img_banner.setAlignment(Qt.AlignCenter)
 		img_banner.setObjectName("banner")
-		#self.statusBar=QAnimatedStatusBar.QAnimatedStatusBar()
+		box.addWidget(img_banner,0,0,1,2)
 		self.lst_options=QListWidget()
 		self.stk_widget=QStackedWidget()
-		#box.addWidget(self.statusBar,0,0,1,2)
-		box.addWidget(img_banner,0,0,1,2)
-		self.stk_widget.setCurrentIndex(0)
+		idx=0
 		if len(self.stacks)>2:
-		    l_panel=self._left_panel()
-		    box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
+			l_panel=self._left_panel()
+			box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
 		else:
+			idx=1
 			self.stk_widget.setCurrentIndex(1)
 		r_panel=self._right_panel()
+		self.gotoStack(idx,"")
 		box.addWidget(r_panel,1,1,1,1)
 		self.setLayout(box)
 		self.show()
