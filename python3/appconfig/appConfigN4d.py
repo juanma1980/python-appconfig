@@ -180,6 +180,7 @@ class appConfigN4d(QObject):
 		client=""
 		server_ip="localhost"
 		self._debug("Kwargs: {}".format(kwargs))
+		self._debug("Query: {}.{}".format(n4dClass,n4dMethod))
 		if kwargs:
 			server_ip=kwargs.get('ip','server')
 			self._debug("Received server: {}".format(server_ip))
@@ -188,7 +189,7 @@ class appConfigN4d(QObject):
 		if server_ip=='localhost' and self.n4dClient==None:
 			self._debug("Creating client connection")
 			self.n4dClient=self._n4d_connect(server=server_ip)
-		elif self.n4dMaster==None:
+		elif self.n4dMaster==None or (self.n4dMaster!=None and server_ip not in self.n4dMaster.address):
 			self._debug("Creating server connection")
 			self.n4dMaster=self._n4d_connect(server=server_ip)
 
@@ -347,7 +348,7 @@ class appConfigN4d(QObject):
 			if not server.startswith("http"):
 				server="https://{}".format(server)
 			if len(server.split(":")) < 3:
-					server="{}:9779".format(server)
+				server="{}:9779".format(server)
 				
 			if self.username:
 				client=n4d.client.Client(server,self.username,self.password)
