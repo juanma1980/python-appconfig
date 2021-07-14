@@ -11,6 +11,7 @@ python3-appconfig (0.31.3) focal; urgency=medium
   * Return n4d retun message description to client
   * Hide navigation when menu when there's only one stack
   * BUGFIX Only go to "options" stack when there's more than one stack
+  * Create new connection with server only if server ip changes
 
  -- Juanma1980 <juanma1980@gmail.com>  Thu, 27 May 2021 09:22:40 +0200
 
