@@ -1,3 +1,9 @@
+python3-appconfig (0.31.5) focal; urgency=medium
+
+  * Merged with 7be6d6b9e8fe9b6fed2ae1892b123c129969b5a6 commit of edupals component login
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 31 Aug 2021 11:14:45 +0200
+
 python3-appconfig (0.31.4) focal; urgency=medium
 
   * Add compatibility with non-qt apps
