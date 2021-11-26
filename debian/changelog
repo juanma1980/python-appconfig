@@ -1,3 +1,9 @@
+python3-appconfig (0.32) focal-updates; urgency=medium
+
+  * Add auth by key
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 26 Nov 2021 18:53:49 +0100
+
 python3-appconfig (0.31.5) focal; urgency=medium
 
   * Merged with 7be6d6b9e8fe9b6fed2ae1892b123c129969b5a6 commit of edupals component login
