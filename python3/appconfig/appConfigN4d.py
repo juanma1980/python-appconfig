@@ -136,9 +136,13 @@ class appConfigN4d(QObject):
 		return(data)
 	#def readConfig(self,n4dparms):
 
-	def setCredentials(self,tickets):
+	def setCredentials(self,tickets=[],n4dkey=''):
 		client=None
 		master=None
+		if n4dkey:
+			self.n4dClient=self._n4d_connect(n4dkey=n4dkey)
+			return
+
 		if not self.key in self.launchQueue.keys():
 			return
 		for ticket in tickets:
@@ -323,7 +327,7 @@ class appConfigN4d(QObject):
 		return result
 	#def _launch
 
-	def _n4d_connect(self,ticket='',server='localhost'):
+	def _n4d_connect(self,ticket='',server='localhost',n4dkey=''):
 		if server=='localhost':
 			if self.server:
 				server=self.server
@@ -333,6 +337,10 @@ class appConfigN4d(QObject):
 			ticket=ticket.replace('##U+0020##',' ').rstrip()
 			tk=n4d.client.Ticket(ticket)
 			client=n4d.client.Client(ticket=tk)
+			self._debug("N4d Object2: {}".format(client.credential.auth_type))
+		elif n4dkey:
+			n4dkey=n4d.client.Key(n4dkey)
+			client=n4d.client.Client(key=n4dkey)
 			self._debug("N4d Object2: {}".format(client.credential.auth_type))
 		else:
 			try:
