@@ -12,6 +12,7 @@ sys.path.insert(1, '/usr/lib/python3/dist-packages/appconfig')
 import n4dCredentialsBox as login
 
 import gettext
+import getpass
 _ = gettext.gettext
 
 QString=type("")
@@ -34,8 +35,12 @@ class appConfigN4d(QObject):
 		self.launchQueue={}
 		#No more global vars for credentials or methods, etc but server
 		self.server=server
+		self.key=''
 		self.username=username
 		self.password=password
+#		if self.username=='':
+#			self.password=''
+#			self.username=getpass.getuser() 
 		self.query=''
 		self.n4dClass="VariablesManager"
 		self.n4dMethod=''
@@ -188,6 +193,9 @@ class appConfigN4d(QObject):
 		if kwargs:
 			server_ip=kwargs.get('ip','server')
 			self._debug("Received server: {}".format(server_ip))
+			username=kwargs.get('username',self.username)
+			self.n4dCLient=None
+			self.username=username
 			
 		result={'status':-1,'return':''}
 		if server_ip=='localhost' and self.n4dClient==None:
@@ -342,7 +350,7 @@ class appConfigN4d(QObject):
 			n4dkey=n4d.client.Key(n4dkey)
 			client=n4d.client.Client(key=n4dkey)
 			self._debug("N4d Object2: {}".format(client.credential.auth_type))
-		else:
+		if client=='':
 			try:
 				socket.gethostbyname(server)
 			except:
@@ -360,6 +368,8 @@ class appConfigN4d(QObject):
 				
 			if self.username:
 				client=n4d.client.Client(server,self.username,self.password)
+				tk=client.create_ticket()
+				client=n4d.client.Client(ticket=tk)
 			else:
 				client=n4d.client.Client(server)
 		self._debug("N4d Object2: {}".format(client.credential.auth_type))
