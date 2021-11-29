@@ -1,6 +1,7 @@
-python3-appconfig (0.32) focal-updates; urgency=medium
+python3-appconfig (0.33) focal-updates; urgency=medium
 
   * Add auth by key
+  * Add auth by local ticket
 
  -- Juanma1980 <juanma1980@gmail.com>  Fri, 26 Nov 2021 18:53:49 +0100
 
