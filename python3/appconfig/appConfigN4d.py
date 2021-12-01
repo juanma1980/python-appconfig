@@ -31,7 +31,7 @@ class appConfigN4d(QObject):
 	onCredentials=Signal(dict)
 	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
 		super(appConfigN4d, self).__init__()
-		self.dbg=False
+		self.dbg=True
 		self.launchQueue={}
 		#No more global vars for credentials or methods, etc but server
 		self.server=server
@@ -367,8 +367,14 @@ class appConfigN4d(QObject):
 				server="{}:9779".format(server)
 				
 			if self.username:
+				self.error("USER: {} SERVERi self {} other {}".format(self.username,self.server,server))
 				client=n4d.client.Client(server,self.username,self.password)
-				tk=client.create_ticket()
+				try:
+				    tk=client.create_ticket()
+				except:
+					self.error("Using localhost as main server")
+					client=n4d.client.Client(self.server,self.username,self.password)
+					tk=client.create_ticket()
 				client=n4d.client.Client(ticket=tk)
 			else:
 				client=n4d.client.Client(server)
