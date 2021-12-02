@@ -31,7 +31,7 @@ class appConfigN4d(QObject):
 	onCredentials=Signal(dict)
 	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
 		super(appConfigN4d, self).__init__()
-		self.dbg=True
+		self.dbg=False
 		self.launchQueue={}
 		#No more global vars for credentials or methods, etc but server
 		self.server=server
