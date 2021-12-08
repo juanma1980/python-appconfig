@@ -10,6 +10,7 @@ import base64
 import os,subprocess,sys
 sys.path.insert(1, '/usr/lib/python3/dist-packages/appconfig')
 import n4dCredentialsBox as login
+import logging
 
 import gettext
 import getpass
@@ -31,7 +32,8 @@ class appConfigN4d(QObject):
 	onCredentials=Signal(dict)
 	def __init__(self,n4dmethod="",n4dclass="",n4dparms="",username='',password='',server='localhost'):
 		super(appConfigN4d, self).__init__()
-		self.dbg=False
+		self.dbg=True
+		logging.basicConfig(format='%(message)s')
 		self.launchQueue={}
 		#No more global vars for credentials or methods, etc but server
 		self.server=server
@@ -55,10 +57,10 @@ class appConfigN4d(QObject):
 
 	def _debug(self,msg):
 		if self.dbg:
-			print("appConfigN4d: %s"%msg)
+			logging.debug("appConfigN4d: {}".format(msg))
 
-	def error(self,error):
-		print("Error: %s"%error)
+	def error(self,msg):
+		logging.debug("appConfigN4d: {}".format(msg))
 	#def error
 
 	def writeConfig(self,n4dparms):
@@ -369,13 +371,21 @@ class appConfigN4d(QObject):
 			if self.username:
 				self.error("USER: {} SERVERi self {} other {}".format(self.username,self.server,server))
 				client=n4d.client.Client(server,self.username,self.password)
+				sw_tk=False
 				try:
-				    tk=client.create_ticket()
+					tk=client.create_ticket()
+					sw_tk=True
 				except:
 					self.error("Using localhost as main server")
 					client=n4d.client.Client(self.server,self.username,self.password)
-					tk=client.create_ticket()
-				client=n4d.client.Client(ticket=tk)
+					try:
+						tk=client.create_ticket()
+						sw_tk=True
+					except Exception as e:
+						self.error(e)
+						tk=""
+				if sw_tk:
+					client=n4d.client.Client(ticket=tk)
 			else:
 				client=n4d.client.Client(server)
 		self._debug("N4d Object2: {}".format(client.credential.auth_type))
