@@ -230,13 +230,17 @@ class appConfigN4d(QObject):
 			#Get credentials
 			self.server_ip=server_ip
 			self._debug("Registering to server: {}".format(server_ip))
-			self.onCredentials.connect(self.launchN4dQueue)
-			credentials=login.n4dCredentials(server_ip)
-			self.loginBox=credentials.dialog
-			self.loginBox.onTicket.connect(self.setCredentials)
-			if self.loginBox.exec():
-				result={'status':0,'code':USERNOTALLOWED_ERROR}
-				result=self.result
+			if os.environ.get('DISPLAY') and os.environ.get('SUDO_USER','')=='':
+				self.onCredentials.connect(self.launchN4dQueue)
+				credentials=login.n4dCredentials(server_ip)
+				self.loginBox=credentials.dialog
+				self.loginBox.onTicket.connect(self.setCredentials)
+				if self.loginBox.exec():
+					result={'status':0,'code':USERNOTALLOWED_ERROR}
+					result=self.result
+			elif os.environ.get('SUDO_USER'):
+				print("N4d Username: ")
+				print("N4d Password: ")
 		except n4d.client.InvalidServerResponseError as e:
 			self._debug("Response: {}".format(e))
 		except Exception as e:
