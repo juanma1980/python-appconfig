@@ -1,7 +1,8 @@
-python3-appconfig (0.34.2) focal-updates; urgency=medium
+python3-appconfig (0.34.2.1) focal-updates; urgency=medium
 
   * Add auth by key
   * Add auth by local ticket
+  * When no DISPLAY cancel login dialog
 
  -- Juanma1980 <juanma1980@gmail.com>  Fri, 26 Nov 2021 18:53:49 +0100
 
