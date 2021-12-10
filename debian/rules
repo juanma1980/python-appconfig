@@ -11,8 +11,7 @@
 export PYBUILD_NAME=appconfig
 
 %:
-	dh $@ --with python3,i18n --buildsystem pybuild
-#	dh $@ --with zero
+	dh $@ --with i18n,zero,python3 --buildsystem pybuild
 
 override_dh_fixperms:
 	chmod a+x python3/appconfig/n4dCredentialsBox.py

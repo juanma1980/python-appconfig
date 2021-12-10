@@ -1,6 +1,6 @@
 [
     {
-        "cmd": "/usr/share/appconfig/bin/appconfig-polkit-helper.py",
+        "cmd": "/usr/share/appconfig/auth/appconfig-polkit-helper.py",
         "prefix": "net.lliurex.appconfig-polkit-helper",
         "nameaction": "appconfig-polkit-helper",
         "icon": "appconfig",
