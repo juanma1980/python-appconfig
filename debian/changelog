@@ -1,3 +1,9 @@
+python3-appconfig (0.34.3) focal-updates; urgency=medium
+
+  * Fix polkit auth
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 10 Dec 2021 21:16:51 +0100
+
 python3-appconfig (0.34.2.1) focal-updates; urgency=medium
 
   * Add auth by key
