@@ -1,4 +1,4 @@
-python3-appconfig (0.35) focal-updates; urgency=medium
+python3-appconfig (0.35.1) focal-updates; urgency=medium
 
   * Remove "options" from navbar
   * Fix desc showing for invisible stacks
