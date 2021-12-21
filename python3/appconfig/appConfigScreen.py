@@ -312,8 +312,8 @@ class appConfigScreen(QWidget):
 		self.lst_options.itemClicked.connect(self._show_stack)
 
 		panel.setLayout(box)
-		self.lst_options.setFixedSize(self.lst_options.sizeHintForColumn(0)  +2 * (self.lst_options.frameWidth() +15), self.lst_options.sizeHintForRow(0) * self.lst_options.count() + 2 * (self.lst_options.frameWidth()+15))
 		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
+		self.lst_options.setFixedSize(self.lst_options.sizeHintForColumn(0)  +2 * (self.lst_options.frameWidth() +15), self.height())#self.lst_options.sizeHintForRow(0) * self.lst_options.count() + 2 * (self.lst_options.frameWidth()+15))
 
 		return(panel)
 	#def _left_panel
