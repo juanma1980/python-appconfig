@@ -30,7 +30,7 @@ class appConfigScreen(QWidget):
 	update_signal=Signal("QObject")
 	def __init__(self,appName,parms={}):
 		super().__init__()
-		self.dbg=True
+		self.dbg=False
 		self.level='user'
 		exePath=sys.argv[0]
 		if os.path.islink(sys.argv[0]):
