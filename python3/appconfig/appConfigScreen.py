@@ -30,7 +30,7 @@ class appConfigScreen(QWidget):
 	update_signal=Signal("QObject")
 	def __init__(self,appName,parms={}):
 		super().__init__()
-		self.dbg=False
+		self.dbg=True
 		self.level='user'
 		exePath=sys.argv[0]
 		if os.path.islink(sys.argv[0]):
@@ -251,7 +251,7 @@ class appConfigScreen(QWidget):
 		idx=0
 		if len(self.stacks)>2:
 			l_panel=self._left_panel()
-			box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1))
+			box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1)|Qt.AlignTop)
 		else:
 			idx=1
 			self.stk_widget.setCurrentIndex(1)
@@ -296,8 +296,8 @@ class appConfigScreen(QWidget):
 			self.stacks[idx]['widget' ]=lst_widget
 		orderedStacks={}
 		orderedStacks[0]=self.stacks[0]
-		self.lst_options.addItem(orderedStacks[0]['widget'])
-		cont=1
+		#self.lst_options.addItem(orderedStacks[0]['widget'])
+		cont=0
 		indexes.sort()
 		for index in indexes:
 			if index:
@@ -308,9 +308,13 @@ class appConfigScreen(QWidget):
 
 		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
+		self.lst_options.itemActivated.connect(self._show_stack)
 		self.lst_options.itemClicked.connect(self._show_stack)
+
 		panel.setLayout(box)
+		self.lst_options.setFixedSize(self.lst_options.sizeHintForColumn(0)  +2 * (self.lst_options.frameWidth() +15), self.lst_options.sizeHintForRow(0) * self.lst_options.count() + 2 * (self.lst_options.frameWidth()+15))
 		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
+
 		return(panel)
 	#def _left_panel
 
@@ -329,7 +333,9 @@ class appConfigScreen(QWidget):
 				stack.setLevel(self.level)
 				stack.setConfig(self.config)
 				stack._load_screen()
-				text.append("&nbsp;*&nbsp;<a href=\"appconf://%s\"><span style=\"font-weight:bold;text-decoration:none\">%s</span></a>"%(idx,stack.menu_description))
+
+				if self.stacks[idx].get('visible',True)==True:
+					text.append("&nbsp;*&nbsp;<a href=\"appconf://%s\"><span style=\"font-weight:bold;text-decoration:none\">%s</span></a>"%(idx+1,stack.menu_description))
 				try:
 					self.stk_widget.insertWidget(idx,stack)
 				except:
@@ -370,7 +376,7 @@ class appConfigScreen(QWidget):
 		self._show_stack(idx=idx,parms=parms)
 
 	def _show_stack(self,item=None,idx=None,parms=None):
-		if ((self.last_index==self.lst_options.currentRow()) and (idx==self.last_index or idx==None)):
+		if (self.last_index==abs(self.lst_options.currentRow())+1 and (idx==self.last_index or idx==None)):
 			return
 
 		try:
@@ -387,7 +393,7 @@ class appConfigScreen(QWidget):
 		except Exception as e:
 			print(e)
 		if idx==None:
-			idx=self.lst_options.currentRow()
+			idx=self.lst_options.currentRow()+1
 		self.last_index=idx
 		try:
 			self.stacks[idx]['module'].setConfig(self.config)
