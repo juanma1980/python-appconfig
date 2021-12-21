@@ -1,3 +1,11 @@
+python3-appconfig (0.35) focal-updates; urgency=medium
+
+  * Remove "options" from navbar
+  * Fix desc showing for invisible stacks
+  * Add keypress to navbar
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 21 Dec 2021 11:42:51 +0100
+
 python3-appconfig (0.34.3) focal-updates; urgency=medium
 
   * Fix polkit auth
