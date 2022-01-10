@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget
+from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget,QSlider
 from PySide2.QtCore import Signal,Qt
 from PySide2 import QtGui
 #from PySide2.QtWidgets import QApplication
@@ -178,6 +178,8 @@ class appConfigStack(QWidget):
 						widget.currentIndexChanged.connect(self.setChanged)
 					elif isinstance(widget,QLineEdit):
 						widget.textChanged.connect(self.setChanged)
+					elif isinstance(widget,QSlider):
+						widget.valueChanged.connect(self.setChanged)
 					elif isinstance(widget,QPushButton):
 						if widget.menu():
 							widget.menu().triggered.connect(self.setChanged)
