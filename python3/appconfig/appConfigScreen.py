@@ -379,7 +379,7 @@ class appConfigScreen(QWidget):
 		if (self.last_index==abs(self.lst_options.currentRow())+1 and (idx==self.last_index or idx==None)):
 			return
 
-		try:
+		if isinstance(self.stacks[self.last_index]['module'],QWidget)==False:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
 					self.lst_options.setCurrentRow(self.last_index)
@@ -390,8 +390,8 @@ class appConfigScreen(QWidget):
 			if self.stacks[self.last_index]['module'].refresh:
 				self._debug("Refresh config")
 				self.getConfig()
-		except Exception as e:
-			print(e)
+		else:
+			self._dbg(self.stacks[self.last_index]['module'])
 		if idx==None:
 			idx=self.lst_options.currentRow()+1
 		self.last_index=idx

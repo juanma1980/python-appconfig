@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit
+from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget,QSlider
 from PySide2.QtCore import Signal,Qt
 from PySide2 import QtGui
 #from PySide2.QtWidgets import QApplication
 from PySide2.QtQuick import QQuickView
 from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread,QSize
 from PySide2.QtQuick import QQuickView
+import logging
 import gettext
 import notify2
 #_ = nullTrans.gettext
@@ -16,7 +17,7 @@ class appConfigStack(QWidget):
 	message=Signal("QObject","QObject")
 	def __init__(self,stack):
 		super().__init__()
-		self.dbg=False
+		self.dbg=True
 		self.default_icon='shell'
 		self.menu_description=(_("Configure stack"))
 		self.description=(_("Configure custom stack"))
@@ -45,7 +46,7 @@ class appConfigStack(QWidget):
 	
 	def _debug(self,msg):
 		if self.dbg:
-				print("Stackdbg: %s: %s"%(self.description,msg))
+			logging.warning("Stack {0}: {1}".format(self.description,msg))
 	#def _debug
 
 	def initScreen(self):
@@ -70,13 +71,13 @@ class appConfigStack(QWidget):
 	#def apply_parms(self,app):
 
 	def getConfig(self,level=None,exclude=[]):
-		self._debug("Getting config for level %s"%level)
-		self._debug("Exclude keys: %s"%exclude)
+		self._debug("Getting config for level {}".format(level))
+		self._debug("Exclude keys: {}".format(exclude))
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
 		data={'system':{},'user':{},'n4d':{}}
-		self._debug("Refresh: %s"%self.refresh)
-		self._debug("Changes: %s"%self.changes)
+		self._debug("Refresh: {}".format(self.refresh))
+		self._debug("Changes: {}".format(self.changes))
 		if self.refresh or self.changes:
 			if level:
 				data=self.appConfig.getConfig(level,exclude)
@@ -94,7 +95,7 @@ class appConfigStack(QWidget):
 		else:
 			if self.config[self.level]:
 				data[self.level]=self.config[self.level].copy()
-		self._debug("Read level from config: %s"%self.level)
+		self._debug("Read level from config: {}".format(self.level))
 		self.refresh=False
 		cursor=QtGui.QCursor(Qt.PointingHandCursor)
 		self.setCursor(cursor)
@@ -116,7 +117,7 @@ class appConfigStack(QWidget):
 	
 	def _reset_screen(self):
 		self.updateScreen()
-		self.setChanged('',False)
+		self.setChanged(False)
 	#def _reset_screen
 
 	def updateScreen(self):
@@ -131,7 +132,7 @@ class appConfigStack(QWidget):
 		if not level:
 			self.getConfig()
 			level=self.level
-		self._debug("Saving to level %s"%level)
+		self._debug("Saving to level {}".format(level))
 		retval=True
 		if not self.appConfig.write_config(data,level=level,key=key):
 			self.btn_ok.setEnabled(True)
@@ -166,24 +167,27 @@ class appConfigStack(QWidget):
 
 	def showEvent(self,event):
 		def recursive_add_events(layout):
-
 			def recursive_explore_widgets(widget):
 					if widget==None:
 						return
-					if "QCheckBox" in str(widget):
-						widget.stateChanged.connect(lambda x:self.setChanged(widget))
-					elif "QComboBox" in str(widget):
-						widget.currentIndexChanged.connect(lambda x:self.setChanged(widget))
-					elif "QLineEdit" in str(widget):
-						widget.textChanged.connect(lambda x:self.setChanged(widget))
-					elif "QPushButton" in str(widget):
+					if isinstance(widget,QCheckBox):
+						widget.stateChanged.connect(self.setChanged)
+					if isinstance(widget,QRadioButton):
+						widget.toggled.connect(self.setChanged)
+					elif isinstance(widget,QComboBox):
+						widget.currentIndexChanged.connect(self.setChanged)
+					elif isinstance(widget,QLineEdit):
+						widget.textChanged.connect(self.setChanged)
+					elif isinstance(widget,QSlider):
+						widget.valueChanged.connect(self.setChanged)
+					elif isinstance(widget,QPushButton):
 						if widget.menu():
-							widget.menu().triggered.connect(lambda x:self.setChanged(widget))
+							widget.menu().triggered.connect(self.setChanged)
 						else:
-							widget.clicked.connect(lambda x:self.setChanged(widget))
+							widget.clicked.connect(self.setChanged)
 					elif 'dropButton' in str(widget):
-							widget.drop.connect(lambda x:self.setChanged(widget))
-					elif "Table" in str(widget):
+							widget.drop.connect(self.setChanged)
+					elif isinstance(widget,QTableWidget):
 						for x in range (0,widget.rowCount()):
 							for y in range (0,widget.columnCount()):
 								tableWidget=widget.cellWidget(x,y)
@@ -206,20 +210,20 @@ class appConfigStack(QWidget):
 				recursive_add_events(layout)
 				box_btns=QHBoxLayout()
 				self.btn_ok.clicked.connect(self.writeConfig)
-				self.btn_ok.setFixedWidth(100)
+				self.btn_ok.setFixedWidth(self.btn_ok.sizeHint().width())
 				self.btn_cancel.clicked.connect(self._reset_screen)
-				self.btn_cancel.setFixedWidth(100)
+				self.btn_cancel.setFixedWidth(self.btn_ok.sizeHint().width())
 				box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
 				box_btns.addWidget(self.btn_cancel,Qt.AlignRight)
 				try:
-					layout.addLayout(box_btns,Qt.Alignment(0))
+					layout.addLayout(box_btns,Qt.AlignRight)
 				except:
 					layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
 		self.btn_ok.setEnabled(False)
 		self.btn_cancel.setEnabled(False)
 		try:
 			self.updateScreen()
-			self.setChanged("",False)
+			self.setChanged(False)
 		except:
 			print("updateScreen method is not implemented in this stack")
 	#def showEvent
@@ -229,17 +233,19 @@ class appConfigStack(QWidget):
 		self.btn_cancel.hide()
 	#def hideControlButtons(self):
 
-	def setChanged(self,widget,state=True):
-		self._debug("State: %s"%state)
+	def setChanged(self,state=True):
+		self._debug("State: {}".format(state))
 		if self.btn_ok.isHidden()==False:
 			self.btn_ok.setEnabled(state)
 			self.btn_cancel.setEnabled(state)
 		else:
 			state=False
 		self.changes=state
+		self._debug("New State: {}".format(state))
 	#def setChanged
 
 	def getChanges(self):
+		self._debug("Read state: {}".format(self.changes))
 		return self.changes
 	#def getChanges
 
@@ -248,7 +254,7 @@ class appConfigStack(QWidget):
 	#def setParms
 
 	def showMsg(self,msg,title='',state=None):
-		self._debug("Sending %s"%msg)
+		self._debug("Sending {}".format(msg))
 		if title=='':
 			title=self.description
 		notify2.init(title)
