@@ -391,7 +391,7 @@ class appConfigScreen(QWidget):
 				self._debug("Refresh config")
 				self.getConfig()
 		else:
-			self._dbg(self.stacks[self.last_index]['module'])
+			self._debug(self.stacks[self.last_index]['module'])
 		if idx==None:
 			idx=self.lst_options.currentRow()+1
 		self.last_index=idx
