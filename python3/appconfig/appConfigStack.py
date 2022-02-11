@@ -175,7 +175,7 @@ class appConfigStack(QWidget):
 					if isinstance(widget,QRadioButton):
 						widget.toggled.connect(self.setChanged)
 					elif isinstance(widget,QComboBox):
-						widget.currentIndexChanged.connect(self.setChanged)
+						widget.currentTextChanged.connect(self.setChanged)
 					elif isinstance(widget,QLineEdit):
 						widget.textChanged.connect(self.setChanged)
 					elif isinstance(widget,QSlider):
