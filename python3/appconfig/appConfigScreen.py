@@ -11,6 +11,7 @@ from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLa
 from PySide2 import QtGui
 from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent
 from appconfig.appConfig import appConfig 
+from appconfig.appConfigStack import appConfigStack
 
 import gettext
 try:
@@ -256,7 +257,8 @@ class appConfigScreen(QWidget):
 			idx=1
 			self.stk_widget.setCurrentIndex(1)
 		r_panel=self._right_panel()
-		self.gotoStack(idx,"")
+		#self.gotoStack(idx,"")
+		self.stk_widget.setCurrentIndex(idx)
 		box.addWidget(r_panel,1,1,1,1)
 		self.setLayout(box)
 		self.show()
@@ -308,8 +310,9 @@ class appConfigScreen(QWidget):
 
 		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
-		self.lst_options.itemActivated.connect(self._show_stack)
-		self.lst_options.itemClicked.connect(self._show_stack)
+		#self.lst_options.itemActivated.connect(self._show_stack)
+		self.lst_options.currentItemChanged.connect(self._show_stack)
+		#self.lst_options.itemClicked.connect(self._show_stack)
 
 		panel.setLayout(box)
 		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
@@ -360,7 +363,7 @@ class appConfigScreen(QWidget):
 			s_box.addWidget(lbl_wiki,0,Qt.AlignRight)
 		stack.setLayout(s_box)
 		self.stk_widget.insertWidget(0,stack)
-		self.stacks[0]['module']=stack
+		#self.stacks[0]['module']=stack
 
 		box.addWidget(self.stk_widget)
 		panel.setLayout(box)
@@ -376,25 +379,26 @@ class appConfigScreen(QWidget):
 		self._show_stack(idx=idx,parms=parms)
 
 	def _show_stack(self,item=None,idx=None,parms=None):
-		if (self.last_index==abs(self.lst_options.currentRow())+1 and (idx==self.last_index or idx==None)):
+		if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index)):# or idx==None)):
 			return
 
-		if isinstance(self.stacks[self.last_index]['module'],QWidget)==False:
+		if isinstance(self.stacks[self.last_index]['module'],appConfigStack)==True:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
 					self.lst_options.setCurrentRow(self.last_index)
 					return
 				else:
-					self.stacks[self.last_index]['module'].setChanged("",False)
+					self.stacks[self.last_index]['module'].setChanged(False)
 			self.stacks[self.last_index]['module'].initScreen()
 			if self.stacks[self.last_index]['module'].refresh:
 				self._debug("Refresh config")
 				self.getConfig()
 		else:
 			self._debug(self.stacks[self.last_index]['module'])
-		if idx==None:
+			print(self.stacks[self.last_index]['module'])
+		if isinstance(idx,int)==False:
 			idx=self.lst_options.currentRow()+1
-		self.last_index=idx
+		self.last_index=idx-1
 		try:
 			self.stacks[idx]['module'].setConfig(self.config)
 		except:
