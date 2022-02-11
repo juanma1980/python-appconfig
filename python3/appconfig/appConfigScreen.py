@@ -7,9 +7,9 @@ from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLa
 				QDialog,QGridLayout,QHBoxLayout,QFormLayout,QLineEdit,QComboBox,\
 				QStatusBar,QFileDialog,QDialogButtonBox,QScrollBar,QScrollArea,QListWidget,\
 				QListWidgetItem,QStackedWidget,QButtonGroup,QComboBox,QTableWidget,QTableWidgetItem,\
-				QHeaderView,QMessageBox
+				QHeaderView,QMessageBox,QAbstractItemView
 from PySide2 import QtGui
-from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent
+from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent,QModelIndex
 from appconfig.appConfig import appConfig 
 from appconfig.appConfigStack import appConfigStack
 
@@ -253,12 +253,13 @@ class appConfigScreen(QWidget):
 		if len(self.stacks)>2:
 			l_panel=self._left_panel()
 			box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1)|Qt.AlignTop)
+		#	self.stk_widget.setCurrentIndex(0)
 		else:
 			idx=1
-			self.stk_widget.setCurrentIndex(1)
+		#	self.stk_widget.setCurrentIndex(1)
 		r_panel=self._right_panel()
-		#self.gotoStack(idx,"")
 		self.stk_widget.setCurrentIndex(idx)
+		#self.gotoStack(idx,"")
 		box.addWidget(r_panel,1,1,1,1)
 		self.setLayout(box)
 		self.show()
@@ -310,10 +311,9 @@ class appConfigScreen(QWidget):
 
 		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
-		#self.lst_options.itemActivated.connect(self._show_stack)
-		self.lst_options.currentItemChanged.connect(self._show_stack)
-		#self.lst_options.itemClicked.connect(self._show_stack)
-
+		self.lst_options.currentRowChanged.connect(self._show_stack)
+		self.lst_options.setCurrentIndex(QModelIndex())
+		self.last_index=None
 		panel.setLayout(box)
 		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
 		self.lst_options.setFixedSize(self.lst_options.sizeHintForColumn(0)  +2 * (self.lst_options.frameWidth() +15), self.height())#self.lst_options.sizeHintForRow(0) * self.lst_options.count() + 2 * (self.lst_options.frameWidth()+15))
@@ -379,10 +379,10 @@ class appConfigScreen(QWidget):
 		self._show_stack(idx=idx,parms=parms)
 
 	def _show_stack(self,item=None,idx=None,parms=None):
-		if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index)):# or idx==None)):
+		if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index or isinstance(item,int))):# or self.last_index==None)):
 			return
 
-		if isinstance(self.stacks[self.last_index]['module'],appConfigStack)==True:
+		if isinstance(self.stacks.get(self.last_index,{}).get('module',None),appConfigStack)==True:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
 					self.lst_options.setCurrentRow(self.last_index)
@@ -394,8 +394,8 @@ class appConfigScreen(QWidget):
 				self._debug("Refresh config")
 				self.getConfig()
 		else:
-			self._debug(self.stacks[self.last_index]['module'])
-			print(self.stacks[self.last_index]['module'])
+			self._debug(self.stacks.get(self.last_index,{}).get('module'))
+			self.last_index=0
 		if isinstance(idx,int)==False:
 			idx=self.lst_options.currentRow()+1
 		self.last_index=idx-1
