@@ -236,7 +236,9 @@ class appConfigStack(QWidget):
 	def setChanged(self,state=True):
 		self._debug("State: {}".format(state))
 		if isinstance(state,bool)==False:
-			if state:
+			if isinstance(state,int):
+				state=True
+			elif isinstance(state,str):
 				state=True
 			else:
 				state=False
