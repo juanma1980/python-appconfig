@@ -1,7 +1,8 @@
-python3-appconfig (0.35.3.2) focal; urgency=medium
+python3-appconfig (0.35.4) focal; urgency=medium
 
   * Improve navigation
   * Fix combobox setChange detection
+  * Fix checkbox setChange detection
 
  -- Juanma1980 <juanma1980@gmail.com>  Fri, 11 Feb 2022 13:13:26 +0100
 
