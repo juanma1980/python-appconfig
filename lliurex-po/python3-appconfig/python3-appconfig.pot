@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 08:41+0200\n"
+"POT-Creation-Date: 2022-02-21 15:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,97 +17,49 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../python3/appconfig/appConfigN4d.py:35
-msgid "Authentication is required"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:46
-msgid ""
-"This action needs authentication against\n"
-"the N4d Server"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:48
-msgid ""
-"An application is trying to do an action\n"
-"that requires N4d authentication"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:54
-msgid "Username"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:59
-msgid "Password"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:69
-msgid "Accept"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:73
-msgid "Cancel"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:171
-msgid "Validation error"
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:185
-msgid "Username: "
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:186
-msgid "Password: "
-msgstr ""
-
-#: ../python3/appconfig/appConfigN4d.py:187
-msgid "Server: "
-msgstr ""
-
-#: ../python3/appconfig/appConfigScreen.py:49
-#: ../python3/appconfig/appConfigScreen.py:270
+#: ../python3/appconfig/appConfigScreen.py:52
+#: ../python3/appconfig/appConfigScreen.py:277
 msgid "Options"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:318
+#: ../python3/appconfig/appConfigScreen.py:329
 msgid "Welcome to the configuration of "
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:319
+#: ../python3/appconfig/appConfigScreen.py:330
 msgid "From here you can:<br>"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:347
+#: ../python3/appconfig/appConfigScreen.py:360
 msgid "Wiki help"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:415
+#: ../python3/appconfig/appConfigScreen.py:430
 msgid "Apply changes"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:415
+#: ../python3/appconfig/appConfigScreen.py:430
 msgid ""
 "There're changes not saved at current screen.\n"
 "Discard them and continue?"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:17
+#: ../python3/appconfig/appConfigStack.py:22
 msgid "Configure stack"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:18
+#: ../python3/appconfig/appConfigStack.py:23
 msgid "Configure custom stack"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:20
+#: ../python3/appconfig/appConfigStack.py:25
 msgid "From here you can configure something"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:32
+#: ../python3/appconfig/appConfigStack.py:37
 msgid "Apply"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:33
+#: ../python3/appconfig/appConfigStack.py:38
 msgid "Undo"
 msgstr ""
