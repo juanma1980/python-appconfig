@@ -79,7 +79,7 @@ class n4dDialog(QDialog):
 		root=self.qview.rootObject()
 		qml=self.createWindowContainer(self.qview,self,Qt.FramelessWindowHint)
 		self._debug("Container ready")
-		qml.setMinimumSize(400, 250)
+		qml.setMinimumSize(400, 400)
 		qml.show()
 		if app:
 			self._debug("Container ready")
