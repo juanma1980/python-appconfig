@@ -1,4 +1,4 @@
-python3-appconfig (0.35.4) focal-updates; urgency=medium
+python3-appconfig (0.36) focal-updates; urgency=medium
 
   * Improve navigation
   * Fix combobox setChange detection
