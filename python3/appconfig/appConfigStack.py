@@ -93,7 +93,7 @@ class appConfigStack(QWidget):
 						data=self.appConfig.getConfig(level,exclude)
 						data[self.level]['config']=self.level
 		else:
-			if self.config[self.level]:
+			if self.config.get(self.level):
 				data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: {}".format(self.level))
 		self.refresh=False
