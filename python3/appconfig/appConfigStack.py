@@ -150,9 +150,9 @@ class appConfigStack(QWidget):
 		def states():
 			cursor=QtGui.QCursor(Qt.WaitCursor)
 			self.setCursor(cursor)
-			func()
 			self.btn_ok.setEnabled(False)
 			self.btn_cancel.setEnabled(False)
+			func()
 			self.refresh=True
 			self.changes=False
 			cursor=QtGui.QCursor(Qt.PointingHandCursor)
