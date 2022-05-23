@@ -435,7 +435,6 @@ class appConfigScreen(QWidget):
 		QPushButton{
 			padding: 6px;
 			margin:6px;
-			font: 14px Roboto;
 		}
 		QPushButton#menu:active{
 			background:none;
@@ -443,7 +442,6 @@ class appConfigScreen(QWidget):
 		QStatusBar{
 			background:red;
 			color:white;
-			font: 14px Roboto bold;
 		}
 		QLabel{
 			padding:6px;
@@ -451,7 +449,6 @@ class appConfigScreen(QWidget):
 		}
 	
 		#dlgLabel{
-			font:12px Roboto;
 			margin:0px;
 			border:0px;
 			padding:3px;
@@ -461,7 +458,6 @@ class appConfigScreen(QWidget):
 			border:0px;
 			border-bottom:1px solid grey;
 			padding:1px;
-			font:14px Roboto;
 			margin-right:6px;
 		}
 		#panel{
