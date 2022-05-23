@@ -209,12 +209,13 @@ class appConfigStack(QWidget):
 			if layout:
 				recursive_add_events(layout)
 				box_btns=QHBoxLayout()
+				box_btns.insertStretch(0)
 				self.btn_ok.clicked.connect(self.writeConfig)
-				self.btn_ok.setFixedWidth(self.btn_ok.sizeHint().width())
+				#self.btn_ok.setFixedWidth(self.btn_ok.sizeHint().width())
 				self.btn_cancel.clicked.connect(self._reset_screen)
-				self.btn_cancel.setFixedWidth(self.btn_ok.sizeHint().width())
-				box_btns.addWidget(self.btn_ok,1,Qt.AlignRight)
-				box_btns.addWidget(self.btn_cancel,Qt.AlignRight)
+				#self.btn_cancel.setFixedWidth(self.btn_ok.sizeHint().width())
+				box_btns.addWidget(self.btn_ok)#,1,Qt.AlignRight)
+				box_btns.addWidget(self.btn_cancel)#,1,Qt.AlignRight)
 				try:
 					layout.addLayout(box_btns,Qt.AlignRight)
 				except:
