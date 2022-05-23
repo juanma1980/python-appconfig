@@ -1,10 +1,11 @@
-python3-appconfig (0.36.2) focal-updates; urgency=medium
+python3-appconfig (0.36.3) focal-updates; urgency=medium
 
   * Improve navigation
   * Fix combobox setChange detection
   * Fix checkbox setChange detection
   * Set higher minimum height for n4dcredentialsbox
   * Remove font sizes from css
+  * Allow accept/undo to be resized
 
  -- Juanma1980 <juanma1980@gmail.com>  Fri, 11 Feb 2022 13:13:26 +0100
 
