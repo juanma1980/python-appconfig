@@ -1,4 +1,4 @@
-python3-appconfig (0.4) focal; urgency=medium
+python3-appconfig (0.40) focal; urgency=medium
 
   * Add new module with custom widgets
 
