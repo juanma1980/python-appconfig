@@ -1,6 +1,7 @@
-python3-appconfig (0.40) focal; urgency=medium
+python3-appconfig (0.40.1) focal; urgency=medium
 
   * Add new module with custom widgets
+  * Fix set parms on gotoStack
 
  -- Juanma1980 <juanma1980@gmail.com>  Wed, 01 Jun 2022 10:50:50 +0200
 
