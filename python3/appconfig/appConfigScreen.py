@@ -372,13 +372,18 @@ class appConfigScreen(QWidget):
 
 	def _linkStack(self,*args):
 		stack=args[0].split('/')[-1]
-		self.gotoStack(int(stack),'')
-
+		self.loadStack(int(stack),'')
 
 	def gotoStack(self,idx,parms):
+		self._show_stack(idx=idx-1,parms=parms,gotoIdx=idx)
+
+	def loadStack(self,idx,parms):
 		self._show_stack(idx=idx,parms=parms)
 
-	def _show_stack(self,item=None,idx=None,parms=None):
+	def _show_stack(self,*args,item=None,idx=None,parms=None,gotoIdx=None):
+		self._showStack(*args,item=None,idx=None,parms=None,gotoIdx=None)
+
+	def _show_stack(self,item=None,idx=None,parms=None,gotoIdx=None):
 		if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index or isinstance(item,int))):# or self.last_index==None)):
 			return
 
@@ -403,10 +408,13 @@ class appConfigScreen(QWidget):
 			self.stacks[idx]['module'].setConfig(self.config)
 		except:
 			pass
-		self.stk_widget.setCurrentIndex(idx)
+
 #		self.statusBar.hide()
 		if parms:
 			self.stacks[idx]['module'].setParms(parms)
+		if gotoIdx:
+			idx=gotoIdx
+		self.stk_widget.setCurrentIndex(idx)
 	#def _show_stack
 
 	def closeEvent(self,event):
