@@ -1,3 +1,12 @@
+python3-appconfig (0.41) focal; urgency=medium
+
+  * Add new controls 
+  *  QScreenShotContainer
+  *  QTouchTableWidget
+  *  QSearchBox
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 28 Jun 2022 14:13:33 +0200
+
 python3-appconfig (0.40.1) focal; urgency=medium
 
   * Add new module with custom widgets
