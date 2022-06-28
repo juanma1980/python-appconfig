@@ -1,13 +1,87 @@
 import os
-from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel
+from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView
 from PySide2 import QtGui
-from PySide2.QtCore import Qt,Signal,QEvent
+from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize
 import gettext
+import requests
 _ = gettext.gettext
 
 i18n={
 	"PRESSKEY":_("Press keys")
 }
+
+class QSearchBox(QWidget):
+	clicked=Signal()
+	editingFinished=Signal()
+	def __init__(self,parent=None):
+		QWidget.__init__(self, parent)
+		lay=QHBoxLayout()
+		self.setStyleSheet('QPushButton{margin-left:1px;} QLineEdit{margin-right:0px;}')
+		lay.setContentsMargins(0, 0, 0, 0)
+		lay.setSpacing(0)
+		self.txtSearch=QLineEdit()
+		self.txtSearch.editingFinished.connect(self._emitEdit)
+		lay.addWidget(self.txtSearch)
+		self.btnSearch=QPushButton()
+		icn=QtGui.QIcon.fromTheme("search")
+		self.btnSearch.clicked.connect(self._emitClick)
+		self.btnSearch.setIcon(icn)
+		lay.addWidget(self.btnSearch)
+		self.setLayout(lay)
+	#def __init__
+
+	def _emitClick(self):
+		self.clicked.emit()
+	#def _emitClick
+
+	def _emitEdit(self):
+		self.editingFinished.emit()
+	#def _emitEdit
+
+	def text(self):
+		return(self.txtSearch.text())
+	#def text
+
+	def setText(self,text):
+		self.txtSearch.setText(text)
+	#def setText
+#class QSearchBox
+
+class QTableTouchWidget(QTableWidget):
+	def __init__(self,parent=None):
+		QTableWidget.__init__(self, parent)
+		self.scroller=QScroller()
+		self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+		self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+#		sp=self.scroller.scrollerProperties()
+#		sp.setScrollMetric(QScrollerProperties.DragVelocitySmoothingFactor,0.6)
+#		sp.setScrollMetric(QScrollerProperties.MinimumVelocity,0.0)
+#		sp.setScrollMetric(QScrollerProperties.MaximumVelocity,0.5)
+#		sp.setScrollMetric(QScrollerProperties.AcceleratingFlickMaximumTime,0.4)
+#		sp.setScrollMetric(QScrollerProperties.AcceleratingFlickSpeedupFactor,1.2)
+#		sp.setScrollMetric(QScrollerProperties.SnapPositionRatio,0.2)
+#		sp.setScrollMetric(QScrollerProperties.MaximumClickThroughVelocity,0)
+#		sp.setScrollMetric(QScrollerProperties.DragStartDistance,0.001)
+#		sp.setScrollMetric(QScrollerProperties.MousePressEventDelay,0.5)
+		self.scroller.grabGesture(self,self.scroller.LeftMouseButtonGesture)
+	#def __init__
+#class QTableTouchWidget
+
+class loadScreenShot(QThread):
+	imageLoaded=Signal("PyObject")
+	def __init__(self,*args):
+		super().__init__()
+		self.img=args[0]
+	#def __init__
+
+	def run(self,*args):
+		img=requests.get(self.img)
+		pxm=QtGui.QPixmap()
+		pxm.loadFromData(img.content)
+		self.imageLoaded.emit(pxm)
+		return True
+	#def run
+
 class QHotkeyButton(QPushButton):
 	keybind_signal=Signal("PyObject")
 	hotkeyAssigned=Signal("PyObject")
@@ -113,7 +187,7 @@ class QScrollLabel(QScrollArea):
 		lay = QVBoxLayout(content)
 		self.label = QLabel(content)
 		self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-		self.label.setWordWrap(False)
+		self.label.setWordWrap(True)
 		lay.addWidget(self.label)
 		self.label.setText(text)
 		self.label.adjustSize()
@@ -123,10 +197,110 @@ class QScrollLabel(QScrollArea):
 
 	def setText(self,text):
 		self.label.setText(text)
+		self.setFixedWidth(self.label.sizeHint().width())
+		self.setFixedHeight(self.label.sizeHint().height())
 		self.label.adjustSize()
+	#def setText
+
+	def setWordWrap(self,boolWrap):
+		self.label.setWordWrap(boolWrap)
+	#def setWordWrap
 
 	def adjustWidth(self,width):
 		if self.width()<width-50:
 			self.setFixedWidth(width-50)
+	#def adjustWidth
 
+	def adjustHeight(self,height):
+		if self.height()<height-50:
+			self.setFixedHeight(height-50)
+	#def adjustHeight
 #class QScrollLabel
+
+class QScreenShotContainer(QWidget):
+	def __init__(self,parent=None):
+		QWidget.__init__(self, parent)
+		self.widget=QWidget()
+		self.lay=QHBoxLayout()
+		self.outLay=QHBoxLayout()
+		self.scroll=QScrollArea()
+		self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+		self.scroll.setWidgetResizable(True)
+		self.scroll.setWidget(self.widget)
+		self.outLay.addWidget(self.scroll)
+		self.setLayout(self.outLay)
+		self.widget.setLayout(self.lay)
+		self.th=[]
+		self.btnImg={}
+	#def __init__
+
+	def eventFilter(self,source,qevent):
+		if qevent.type()==QEvent.Type.MouseButtonPress:
+			self.carrousel(source)
+		return(False)
+	#def eventFilter
+
+	def carrousel(self,btn=""):
+		dlg=QDialog()	
+		dlg.setModal(True)
+		dlg.setFixedSize(680,540)
+		#widget=QWidget()
+		widget=QTableTouchWidget()
+		widget.setRowCount(1)
+		widget.setShowGrid(True)
+		widget.verticalHeader().hide()
+		widget.horizontalHeader().hide()
+		widget.setRowCount(1)
+		mainLay=QHBoxLayout()
+		selectedImg=""
+		arrayImg=[]
+		for btnImg,img in self.btnImg.items():
+			lbl=QLabel()
+			lbl.setPixmap(img.scaled(640,480))
+			if btnImg==btn:	
+				selectedImg=lbl
+			else:
+				arrayImg.append(lbl)
+		if selectedImg:
+			#lay.addWidget(selectedImg)
+			widget.setColumnCount(widget.columnCount()+1)
+			widget.setCellWidget(0,widget.columnCount()-1,selectedImg)
+			widget.horizontalHeader().setSectionResizeMode(widget.columnCount()-1,QHeaderView.ResizeToContents)
+
+		for lbl in arrayImg:
+			widget.setColumnCount(widget.columnCount()+1)
+			#lay.addWidget(lbl)
+			widget.setCellWidget(0,widget.columnCount()-1,lbl)
+			widget.horizontalHeader().setSectionResizeMode(widget.columnCount()-1,QHeaderView.ResizeToContents)
+		widget.verticalHeader().setSectionResizeMode(0,QHeaderView.ResizeToContents)
+		mainLay.addWidget(widget)
+		dlg.setLayout(mainLay)
+		dlg.exec()
+	#def carrousel
+	
+	def addImage(self,img):
+		scr=loadScreenShot(img)
+		self.th.append(scr)
+		scr.imageLoaded.connect(self.load)
+		scr.start()
+	#def addImage
+
+	def load(self,*args):
+		img=args[0]
+		btnImg=QPushButton()
+		self.lay.addWidget(btnImg)
+		self.btnImg[btnImg]=img
+		icn=QtGui.QIcon(img)
+		btnImg.setIcon(icn)
+		btnImg.setIconSize(QSize(128,128))
+		self.scroll.setFixedHeight(btnImg.sizeHint().height()+32)
+		btnImg.installEventFilter(self)
+		btnImg.show()
+	#def load
+
+	def clear(self):
+		for i in reversed(range(self.lay.count())): 
+			self.lay.itemAt(i).widget().setParent(None)
+		self.btnImg={}
+	#def clear
+#class QScreenShotContainer
