@@ -51,6 +51,7 @@ class appConfigScreen(QWidget):
 		self.last_index=0
 		self.stacks={0:{'name':_("Options"),'icon':'icon'}}
 		self.appConfig=appConfig()
+		self.hideLeftPanel=False
 		self.config={}
 	#def init
 	
@@ -62,6 +63,12 @@ class appConfigScreen(QWidget):
 	def setWiki(self,url):
 		self.wikiPage=url
 	#def setWiki
+
+	def hideNavMenu(self,hide=False):
+		self.hideLeftPanel=False
+		if isinstance(hide,bool):
+			self.hideLeftPanel=hide
+	#def hideNavMenu(self,hide=False):
 
 	def setTextDomain(self,textDomain):
 		self.textDomain=textDomain
@@ -252,10 +259,14 @@ class appConfigScreen(QWidget):
 		idx=0
 		if len(self.stacks)>2:
 			l_panel=self._left_panel()
-			box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1)|Qt.AlignTop)
+			if self.hideLeftPanel==False:
+				box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1)|Qt.AlignTop)
+			else:
+				idx=1
 		#	self.stk_widget.setCurrentIndex(0)
-		else:
+		elif self.hideLeftPanel==False:
 			idx=1
+
 		#	self.stk_widget.setCurrentIndex(1)
 		r_panel=self._right_panel()
 		self.stk_widget.setCurrentIndex(idx)
@@ -375,17 +386,18 @@ class appConfigScreen(QWidget):
 		self.loadStack(int(stack),'')
 
 	def gotoStack(self,idx,parms):
-		self._show_stack(idx=idx-1,parms=parms,gotoIdx=idx)
+		self._showStack(idx=idx-1,parms=parms,gotoIdx=idx)
 
 	def loadStack(self,idx,parms):
-		self._show_stack(idx=idx,parms=parms)
+		self._showStack(idx=idx,parms=parms)
 
 	def _show_stack(self,*args,item=None,idx=None,parms=None,gotoIdx=None):
-		self._showStack(*args,item=None,idx=None,parms=None,gotoIdx=None)
+		self._showStack(*args,item,idx,parms,gotoIdx)
 
-	def _show_stack(self,item=None,idx=None,parms=None,gotoIdx=None):
-		if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index or isinstance(item,int))):# or self.last_index==None)):
-			return
+	def _showStack(self,*args,item=None,idx=None,parms=None,gotoIdx=None):
+		if self.hideLeftPanel==False:
+			if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index or isinstance(item,int))):# or self.last_index==None)):
+				return
 
 		if isinstance(self.stacks.get(self.last_index,{}).get('module',None),appConfigStack)==True:
 			if self.stacks[self.last_index]['module'].getChanges():
