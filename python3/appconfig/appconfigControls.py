@@ -50,20 +50,21 @@ class QSearchBox(QWidget):
 class QTableTouchWidget(QTableWidget):
 	def __init__(self,parent=None):
 		QTableWidget.__init__(self, parent)
-		self.scroller=QScroller()
 		self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 		self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-#		sp=self.scroller.scrollerProperties()
-#		sp.setScrollMetric(QScrollerProperties.DragVelocitySmoothingFactor,0.6)
-#		sp.setScrollMetric(QScrollerProperties.MinimumVelocity,0.0)
-#		sp.setScrollMetric(QScrollerProperties.MaximumVelocity,0.5)
-#		sp.setScrollMetric(QScrollerProperties.AcceleratingFlickMaximumTime,0.4)
-#		sp.setScrollMetric(QScrollerProperties.AcceleratingFlickSpeedupFactor,1.2)
-#		sp.setScrollMetric(QScrollerProperties.SnapPositionRatio,0.2)
-#		sp.setScrollMetric(QScrollerProperties.MaximumClickThroughVelocity,0)
-#		sp.setScrollMetric(QScrollerProperties.DragStartDistance,0.001)
-#		sp.setScrollMetric(QScrollerProperties.MousePressEventDelay,0.5)
+		self.scroller=QScroller()
 		self.scroller.grabGesture(self,self.scroller.LeftMouseButtonGesture)
+		#Set properties segfaults
+	#	sp=self.scroller.scrollerProperties()
+	#	sp.setScrollMetric(QScrollerProperties.DragVelocitySmoothingFactor,0.6)
+	#	sp.setScrollMetric(QScrollerProperties.MinimumVelocity,0.0)
+	#	sp.setScrollMetric(QScrollerProperties.MaximumVelocity,0.5)
+	#	sp.setScrollMetric(QScrollerProperties.AcceleratingFlickMaximumTime,0.4)
+	#	sp.setScrollMetric(QScrollerProperties.AcceleratingFlickSpeedupFactor,1.2)
+	#	sp.setScrollMetric(QScrollerProperties.SnapPositionRatio,0.2)
+	#	sp.setScrollMetric(QScrollerProperties.MaximumClickThroughVelocity,0)
+	#	sp.setScrollMetric(QScrollerProperties.DragStartDistance,0.001)
+	#	sp.setScrollMetric(QScrollerProperties.MousePressEventDelay,0.5)
 	#def __init__
 #class QTableTouchWidget
 
