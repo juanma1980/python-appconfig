@@ -75,9 +75,16 @@ class loadScreenShot(QThread):
 	#def __init__
 
 	def run(self,*args):
-		img=requests.get(self.img)
-		pxm=QtGui.QPixmap()
-		pxm.loadFromData(img.content)
+		img=None
+		pxm=None
+		try:
+			img=requests.get(self.img)
+		except:
+			icn=QtGui.QIcon.fromTheme("image-x-generic")
+			pxm=icn.pixmap(512,512)
+		if img:
+			pxm=QtGui.QPixmap()
+			pxm.loadFromData(img.content)
 		self.imageLoaded.emit(pxm)
 		return True
 	#def run
@@ -235,8 +242,9 @@ class QScreenShotContainer(QWidget):
 	#def __init__
 
 	def eventFilter(self,source,qevent):
-		if qevent.type()==QEvent.Type.MouseButtonPress:
-			self.carrousel(source)
+		if isinstance(qevent,QEvent):
+			if qevent.type()==QEvent.Type.MouseButtonPress:
+				self.carrousel(source)
 		return(False)
 	#def eventFilter
 
