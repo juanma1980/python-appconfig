@@ -1,9 +1,11 @@
 import os
+import tempfile
 from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView
 from PySide2 import QtGui
 from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize
 import gettext
 import requests
+import hashlib
 _ = gettext.gettext
 
 i18n={
@@ -83,20 +85,54 @@ class loadScreenShot(QThread):
 	imageLoaded=Signal("PyObject")
 	def __init__(self,*args):
 		super().__init__()
+		self.cacheDir=None
+		if len(args)>1:
+			self.setCacheDir(args[1])
 		self.img=args[0]
 	#def __init__
 
+	def _debug(self,msg):
+		print("{}".format(msg))
+	
+	def setCacheDir(self,cacheDir):
+		if os.path.exists(cacheDir)==False:
+			try:
+				os.makedirs(cacheDir)
+			except Exception as e:
+				print("mdkdir {0} failed: {1}".format(cacheDir,e))
+		if os.path.isdir(cacheDir)==True:
+			self.cacheDir=cacheDir
+		self._debug("Cache set to {}".format(self.cacheDir))
+	#def setCacheDir
+
 	def run(self,*args):
 		img=None
-		pxm=None
-		try:
-			img=requests.get(self.img)
-		except:
-			icn=QtGui.QIcon.fromTheme("image-x-generic")
-			pxm=icn.pixmap(512,512)
+		md5Name=hashlib.md5(self.img.encode())
+		print("Md5: {}".format(md5Name.hexdigest()))
+		icn=QtGui.QIcon.fromTheme("image-x-generic")
+		pxm=icn.pixmap(512,512)
+		if self.cacheDir:
+			fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))#self.img.split('/')[-1])
+			if os.path.isfile(fPath)==True:
+				pxm=QtGui.QPixmap()
+				try:
+					pxm.load(fPath)
+					img=True
+				except Exception as e:
+					print("{}".format(e))
+		if img==None:
+			try:
+				img=requests.get(self.img)
+				pxm.loadFromData(img.content)
+			except Exception as e:
+				img=None
+				print("{}".format(e))
 		if img:
-			pxm=QtGui.QPixmap()
-			pxm.loadFromData(img.content)
+			if self.cacheDir:
+				fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))
+				if os.path.exists(fPath)==False:
+					p=pxm.save(fPath,"PNG",quality=0)
+					print("Saved to {} {}".format(fPath,p))
 		self.imageLoaded.emit(pxm)
 		return True
 	#def run
@@ -249,9 +285,20 @@ class QScreenShotContainer(QWidget):
 		self.outLay.addWidget(self.scroll)
 		self.setLayout(self.outLay)
 		self.widget.setLayout(self.lay)
+		self.cacheDir=None
 		self.th=[]
 		self.btnImg={}
 	#def __init__
+
+	def setCacheDir(self,cacheDir):
+		if os.path.exists(cacheDir)==False:
+			try:
+				os.makedirs(cacheDir)
+			except Exception as e:
+				print("mdkdir {0} failed: {1}".format(cacheDir,e))
+		if os.path.isdir(cacheDir)==True:
+			self.cacheDir=cacheDir
+	#def setCacheDir
 
 	def eventFilter(self,source,qevent):
 		if isinstance(qevent,QEvent):
@@ -299,7 +346,7 @@ class QScreenShotContainer(QWidget):
 	#def carrousel
 	
 	def addImage(self,img):
-		scr=loadScreenShot(img)
+		scr=loadScreenShot(img,self.cacheDir)
 		self.th.append(scr)
 		scr.imageLoaded.connect(self.load)
 		scr.start()
