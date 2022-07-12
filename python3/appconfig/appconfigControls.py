@@ -13,6 +13,8 @@ i18n={
 class QSearchBox(QWidget):
 	clicked=Signal()
 	editingFinished=Signal()
+	returnPressed=Signal()
+	textChanged=Signal()
 	def __init__(self,parent=None):
 		QWidget.__init__(self, parent)
 		lay=QHBoxLayout()
@@ -21,6 +23,8 @@ class QSearchBox(QWidget):
 		lay.setSpacing(0)
 		self.txtSearch=QLineEdit()
 		self.txtSearch.editingFinished.connect(self._emitEdit)
+		self.txtSearch.returnPressed.connect(self._emitReturn)
+		self.txtSearch.textChanged.connect(self._emitChange)
 		lay.addWidget(self.txtSearch)
 		self.btnSearch=QPushButton()
 		icn=QtGui.QIcon.fromTheme("search")
@@ -36,6 +40,14 @@ class QSearchBox(QWidget):
 
 	def _emitEdit(self):
 		self.editingFinished.emit()
+	#def _emitEdit
+
+	def _emitReturn(self):
+		self.returnPressed.emit()
+	#def _emitEdit
+
+	def _emitChange(self):
+		self.textChanged.emit()
 	#def _emitEdit
 
 	def text(self):
