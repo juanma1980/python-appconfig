@@ -119,9 +119,7 @@ class loadScreenShot(QThread):
 	def run(self,*args):
 		img=None
 		md5Name=""
-		print("IMG: {}".format(self.img))
 		md5Name=hashlib.md5(self.img.encode())
-		print("Md5: {}".format(md5Name.hexdigest()))
 		icn=QtGui.QIcon.fromTheme("image-x-generic")
 		pxm=icn.pixmap(512,512)
 		if self.cacheDir:
@@ -132,21 +130,20 @@ class loadScreenShot(QThread):
 					pxm.load(fPath)
 					img=True
 				except Exception as e:
-					print("1{}".format(e))
+					print("Loading cache pixmap: {}".format(e))
 		if img==None:
 			try:
 				img=requests.get(self.img)
 				pxm.loadFromData(img.content)
 			except Exception as e:
 				img=None
-				print("2{}".format(e))
+				print("request: {}".format(e))
 		if img:
 			if self.cacheDir:
 				fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))
 				if os.path.exists(fPath)==False:
-					pxm=pxm.scaled(340,340,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation)
+					pxm=pxm.scaled(256,256,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation)
 					p=pxm.save(fPath,"PNG")#,quality=5)
-					print("Saved to {} {}".format(fPath,p))
 		self.imageLoaded.emit(pxm)
 		return True
 	#def run
