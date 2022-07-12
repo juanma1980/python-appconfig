@@ -50,21 +50,20 @@ class QSearchBox(QWidget):
 class QTableTouchWidget(QTableWidget):
 	def __init__(self,parent=None):
 		QTableWidget.__init__(self, parent)
+		self.scroller=QScroller()
 		self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 		self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-		self.scroller=QScroller()
+#		sp=self.scroller.scrollerProperties()
+#		sp.setScrollMetric(QScrollerProperties.DragVelocitySmoothingFactor,0.6)
+#		sp.setScrollMetric(QScrollerProperties.MinimumVelocity,0.0)
+#		sp.setScrollMetric(QScrollerProperties.MaximumVelocity,0.5)
+#		sp.setScrollMetric(QScrollerProperties.AcceleratingFlickMaximumTime,0.4)
+#		sp.setScrollMetric(QScrollerProperties.AcceleratingFlickSpeedupFactor,1.2)
+#		sp.setScrollMetric(QScrollerProperties.SnapPositionRatio,0.2)
+#		sp.setScrollMetric(QScrollerProperties.MaximumClickThroughVelocity,0)
+#		sp.setScrollMetric(QScrollerProperties.DragStartDistance,0.001)
+#		sp.setScrollMetric(QScrollerProperties.MousePressEventDelay,0.5)
 		self.scroller.grabGesture(self,self.scroller.LeftMouseButtonGesture)
-		#Set properties segfaults
-	#	sp=self.scroller.scrollerProperties()
-	#	sp.setScrollMetric(QScrollerProperties.DragVelocitySmoothingFactor,0.6)
-	#	sp.setScrollMetric(QScrollerProperties.MinimumVelocity,0.0)
-	#	sp.setScrollMetric(QScrollerProperties.MaximumVelocity,0.5)
-	#	sp.setScrollMetric(QScrollerProperties.AcceleratingFlickMaximumTime,0.4)
-	#	sp.setScrollMetric(QScrollerProperties.AcceleratingFlickSpeedupFactor,1.2)
-	#	sp.setScrollMetric(QScrollerProperties.SnapPositionRatio,0.2)
-	#	sp.setScrollMetric(QScrollerProperties.MaximumClickThroughVelocity,0)
-	#	sp.setScrollMetric(QScrollerProperties.DragStartDistance,0.001)
-	#	sp.setScrollMetric(QScrollerProperties.MousePressEventDelay,0.5)
 	#def __init__
 #class QTableTouchWidget
 
@@ -76,9 +75,16 @@ class loadScreenShot(QThread):
 	#def __init__
 
 	def run(self,*args):
-		img=requests.get(self.img)
-		pxm=QtGui.QPixmap()
-		pxm.loadFromData(img.content)
+		img=None
+		pxm=None
+		try:
+			img=requests.get(self.img)
+		except:
+			icn=QtGui.QIcon.fromTheme("image-x-generic")
+			pxm=icn.pixmap(512,512)
+		if img:
+			pxm=QtGui.QPixmap()
+			pxm.loadFromData(img.content)
 		self.imageLoaded.emit(pxm)
 		return True
 	#def run
@@ -236,8 +242,9 @@ class QScreenShotContainer(QWidget):
 	#def __init__
 
 	def eventFilter(self,source,qevent):
-		if qevent.type()==QEvent.Type.MouseButtonPress:
-			self.carrousel(source)
+		if isinstance(qevent,QEvent):
+			if qevent.type()==QEvent.Type.MouseButtonPress:
+				self.carrousel(source)
 		return(False)
 	#def eventFilter
 
