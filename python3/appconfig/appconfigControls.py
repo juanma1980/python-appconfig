@@ -1,8 +1,8 @@
 import os
 import tempfile
-from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView
+from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout
 from PySide2 import QtGui
-from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize
+from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize,QPointF
 import gettext
 import requests
 import hashlib
@@ -77,7 +77,7 @@ class QTableTouchWidget(QTableWidget):
 #		sp.setScrollMetric(QScrollerProperties.MaximumClickThroughVelocity,0)
 #		sp.setScrollMetric(QScrollerProperties.DragStartDistance,0.001)
 #		sp.setScrollMetric(QScrollerProperties.MousePressEventDelay,0.5)
-		self.scroller.grabGesture(self,self.scroller.LeftMouseButtonGesture)
+		self.scroller.grabGesture(self.viewport(),self.scroller.LeftMouseButtonGesture)
 	#def __init__
 #class QTableTouchWidget
 
@@ -321,37 +321,55 @@ class QScreenShotContainer(QWidget):
 	def carrousel(self,btn=""):
 		dlg=QDialog()	
 		dlg.setModal(True)
-		dlg.setFixedSize(680,540)
+		xSize=640
+		ySize=480
+		dlg.setFixedSize(xSize+20,ySize+30)
 		#widget=QWidget()
 		widget=QTableTouchWidget()
 		widget.setRowCount(1)
 		widget.setShowGrid(True)
 		widget.verticalHeader().hide()
 		widget.horizontalHeader().hide()
+		#widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+		widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		widget.setRowCount(1)
-		mainLay=QHBoxLayout()
+		icn=QtGui.QIcon.fromTheme("go-next")
+		mainLay=QGridLayout()
 		selectedImg=""
 		arrayImg=[]
 		for btnImg,img in self.btnImg.items():
 			lbl=QLabel()
-			lbl.setPixmap(img.scaled(640,480,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation))
+			lbl.setPixmap(img.scaled(xSize,ySize,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation))
 			if btnImg==btn:	
 				selectedImg=lbl
 			else:
 				arrayImg.append(lbl)
 		if selectedImg:
-			#lay.addWidget(selectedImg)
 			widget.setColumnCount(widget.columnCount()+1)
-			widget.setCellWidget(0,widget.columnCount()-1,selectedImg)
-			widget.horizontalHeader().setSectionResizeMode(widget.columnCount()-1,QHeaderView.ResizeToContents)
+			container=QWidget()
+			lay=QHBoxLayout()
+			container.setLayout(lay)
+			container.setFixedSize(QSize(xSize,ySize))
+			lay.addStretch()
+			lay.addWidget(selectedImg)
+			lay.addStretch()
+			widget.setCellWidget(0,widget.columnCount()-1,container)
+			widget.setColumnWidth(widget.columnCount()-1,xSize)
+			widget.setRowHeight(widget.rowCount()-1,ySize)
 
 		for lbl in arrayImg:
 			widget.setColumnCount(widget.columnCount()+1)
-			#lay.addWidget(lbl)
-			widget.setCellWidget(0,widget.columnCount()-1,lbl)
-			widget.horizontalHeader().setSectionResizeMode(widget.columnCount()-1,QHeaderView.ResizeToContents)
-		widget.verticalHeader().setSectionResizeMode(0,QHeaderView.ResizeToContents)
-		mainLay.addWidget(widget)
+			container=QWidget()
+			container.setFixedSize(QSize(xSize,ySize))
+			lay=QHBoxLayout()
+			container.setLayout(lay)
+			lay.addStretch()
+			lay.addWidget(lbl)
+			lay.addStretch()
+			widget.setCellWidget(0,widget.columnCount()-1,container)
+			widget.setColumnWidth(widget.columnCount()-1,xSize)
+			widget.setRowHeight(widget.rowCount()-1,ySize)
+		mainLay.addWidget(widget,0,0,1,1)
 		dlg.setLayout(mainLay)
 		dlg.exec()
 	#def carrousel
