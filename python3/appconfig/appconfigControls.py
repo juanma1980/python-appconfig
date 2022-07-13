@@ -365,15 +365,17 @@ class QScreenShotContainer(QWidget):
 
 	def load(self,*args):
 		img=args[0]
-		btnImg=QPushButton()
-		self.lay.addWidget(btnImg)
-		self.btnImg[btnImg]=img
-		icn=QtGui.QIcon(img)
-		btnImg.setIcon(icn)
-		btnImg.setIconSize(QSize(128,128))
-		self.scroll.setFixedHeight(btnImg.sizeHint().height()+32)
-		btnImg.installEventFilter(self)
-		btnImg.show()
+		if isinstance(img,QtGui.QPixmap):
+			if img.isNull()==False:
+				btnImg=QPushButton()
+				self.lay.addWidget(btnImg)
+				self.btnImg[btnImg]=img
+				icn=QtGui.QIcon(img)
+				btnImg.setIcon(icn)
+				btnImg.setIconSize(QSize(128,128))
+				self.scroll.setFixedHeight(btnImg.sizeHint().height()+32)
+				btnImg.installEventFilter(self)
+				btnImg.show()
 	#def load
 
 	def clear(self):
