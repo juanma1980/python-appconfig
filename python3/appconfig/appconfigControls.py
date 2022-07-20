@@ -9,7 +9,8 @@ import hashlib
 _ = gettext.gettext
 
 i18n={
-	"PRESSKEY":_("Press keys")
+	"PRESSKEY":_("Press keys"),
+	"SEARCH":_("Search...")
 }
 
 class QSearchBox(QWidget):
@@ -27,6 +28,7 @@ class QSearchBox(QWidget):
 		self.txtSearch.editingFinished.connect(self._emitEdit)
 		self.txtSearch.returnPressed.connect(self._emitReturn)
 		self.txtSearch.textChanged.connect(self._emitChange)
+		self.txtSearch.setPlaceholderText(i18n.get("SEARCH"))
 		lay.addWidget(self.txtSearch)
 		self.btnSearch=QPushButton()
 		icn=QtGui.QIcon.fromTheme("search")
