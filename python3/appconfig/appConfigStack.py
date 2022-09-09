@@ -34,6 +34,7 @@ class appConfigStack(QWidget):
 		self.refresh=False
 		self.stack=stack
 		self.textdomain=''
+		self.force_change=False
 		self.btn_ok=QPushButton(_("Apply"))
 		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
@@ -46,7 +47,7 @@ class appConfigStack(QWidget):
 	
 	def _debug(self,msg):
 		if self.dbg:
-			logging.warning("Stack {0}: {1}".format(self.description,msg))
+			print("Stack {0}: {1}".format(self.description,msg))
 	#def _debug
 
 	def initScreen(self):
@@ -224,9 +225,9 @@ class appConfigStack(QWidget):
 		self.btn_cancel.setEnabled(False)
 		try:
 			self.updateScreen()
-			self.setChanged(False)
 		except:
 			print("updateScreen method is not implemented in this stack")
+		self.setChanged(False)
 	#def showEvent
 
 	def hideControlButtons(self):
@@ -236,6 +237,7 @@ class appConfigStack(QWidget):
 
 	def setChanged(self,state=True):
 		self._debug("State: {}".format(state))
+		self._debug("Force State: {}".format(self.force_change))
 		if isinstance(state,bool)==False:
 			if isinstance(state,int):
 				state=True
@@ -244,7 +246,9 @@ class appConfigStack(QWidget):
 			else:
 				state=False
 
-		if self.btn_ok.isHidden()==False:
+		if self.btn_ok.isHidden()==False or self.force_change==True:
+			if self.force_change==True:
+				state=True
 			self.btn_ok.setEnabled(state)
 			self.btn_cancel.setEnabled(state)
 		else:
