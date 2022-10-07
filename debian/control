@@ -10,7 +10,7 @@ Homepage: http://lliurex.net
 
 Package: python3-appconfig
 Architecture: all
-Depends: ${python3:Depends}, appconfig-polkit-helper
+Depends: ${python3:Depends},appconfig-polkit-helper,qml-module-edupals-n4d-agent,python3-n4d,python3-n4d-client,python3-notify2  
 Description: Modular app configuration
 
 Package: appconfig-polkit-helper
