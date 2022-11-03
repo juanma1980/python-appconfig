@@ -1,4 +1,4 @@
-python3-appconfig (0.41.8.1) lliurex22; urgency=medium
+python3-appconfig (0.41.8.2) lliurex22; urgency=medium
 
   * Add force_change for controlling buttons states
   * Traceback exceptions in updateScreen
