@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import traceback
 from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget,QSlider
 from PySide2.QtCore import Signal,Qt
 from PySide2 import QtGui
@@ -225,8 +226,11 @@ class appConfigStack(QWidget):
 		self.btn_cancel.setEnabled(False)
 		try:
 			self.updateScreen()
-		except:
+		except NotImplementedError as e:
 			print("updateScreen method is not implemented in this stack")
+		except Exception as e:
+			print("{}".format(e))
+			traceback.print_exc()
 		self.setChanged(False)
 	#def showEvent
 
