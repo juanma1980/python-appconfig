@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-21 15:47+0100\n"
+"POT-Creation-Date: 2022-11-03 18:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,49 +17,57 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../python3/appconfig/appconfigControls.py:12
+msgid "Press keys"
+msgstr ""
+
+#: ../python3/appconfig/appconfigControls.py:13
+msgid "Search..."
+msgstr ""
+
 #: ../python3/appconfig/appConfigScreen.py:52
-#: ../python3/appconfig/appConfigScreen.py:277
+#: ../python3/appconfig/appConfigScreen.py:288
 msgid "Options"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:329
+#: ../python3/appconfig/appConfigScreen.py:340
 msgid "Welcome to the configuration of "
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:330
+#: ../python3/appconfig/appConfigScreen.py:341
 msgid "From here you can:<br>"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:360
+#: ../python3/appconfig/appConfigScreen.py:371
 msgid "Wiki help"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:430
+#: ../python3/appconfig/appConfigScreen.py:450
 msgid "Apply changes"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:430
+#: ../python3/appconfig/appConfigScreen.py:450
 msgid ""
 "There're changes not saved at current screen.\n"
 "Discard them and continue?"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:22
+#: ../python3/appconfig/appConfigStack.py:23
 msgid "Configure stack"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:23
+#: ../python3/appconfig/appConfigStack.py:24
 msgid "Configure custom stack"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:25
+#: ../python3/appconfig/appConfigStack.py:26
 msgid "From here you can configure something"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:37
+#: ../python3/appconfig/appConfigStack.py:39
 msgid "Apply"
 msgstr ""
 
-#: ../python3/appconfig/appConfigStack.py:38
+#: ../python3/appconfig/appConfigStack.py:40
 msgid "Undo"
 msgstr ""
