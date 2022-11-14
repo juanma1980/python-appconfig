@@ -29,6 +29,7 @@ BTN_MENU_SIZE=24
 class leftPanel(QListWidget):
 	acceptChange=Signal()
 	pendingChange=Signal("PyObject","PyObject")
+	refreshConfig=Signal()
 
 	def __init__(self,stacks):
 		super().__init__()
@@ -84,7 +85,7 @@ class leftPanel(QListWidget):
 			self.stacks[self.lastIndex+1]['module'].initScreen()
 			if self.stacks[self.lastIndex+1]['module'].refresh:
 				self._debug("Refresh config")
-				self.getConfig()
+				self.refreshConfig.emit()
 		event.accept()
 		self._acceptChange(row)
 	#def _navigate
@@ -411,6 +412,7 @@ class appConfigScreen(QWidget):
 		#self.lst_options.currentRowChanged.connect(self._show_stack)
 		self.lst_options.acceptChange.connect(self._show_stack)
 		self.lst_options.pendingChange.connect(self._askForChanges)
+		self.lst_options.refreshConfig.connect(self._refreshConfig)
 		self.lst_options.setCurrentIndex(QModelIndex())
 		self.last_index=None
 		self.lst_options.updateIndex(self.last_index)
@@ -469,6 +471,9 @@ class appConfigScreen(QWidget):
 		panel.setLayout(box)
 		return(panel)
 	#def _right_panel
+
+	def _refreshConfig(self):
+		self.getConfig()
 
 	def _linkStack(self,*args):
 		stack=args[0].split('/')[-1]
