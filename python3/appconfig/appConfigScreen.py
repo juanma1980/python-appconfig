@@ -26,9 +26,88 @@ QInt=type(0)
 
 BTN_MENU_SIZE=24
 
+class leftPanel(QListWidget):
+	acceptChange=Signal()
+	pendingChange=Signal("PyObject","PyObject")
+
+	def __init__(self,stacks):
+		super().__init__()
+		self.stacks=stacks
+		self.lastIndex=0
+	#def __init__
+
+	def mousePressEvent(self, event):
+		x=event.pos().x()
+		y=event.pos().y()
+		row=self.currentRow()
+		item=self.currentItem()
+		newItem=self.itemAt(x,y)
+		self.setCurrentItem(newItem)
+		newRow=self.currentRow()
+		self._navigate(event,item,newItem,row,newRow)
+		return True
+	#def mousePressEvent
+
+	def keyPressEvent(self, event):
+		if event.key() in (Qt.Key_Enter, Qt.Key_Return, Qt.Key_Space):
+			newRow=self.currentRow()
+			newItem=self.currentItem()
+			self.setCurrentItem(newItem)
+			row=self.lastIndex
+			item=self.item(row)
+			self._navigate(event,item,newItem,row,newRow)
+		elif event.key()==Qt.Key_Up:
+			if self.currentRow()>0:
+				row=self.currentRow()-1
+				self.setCurrentRow(row)
+		elif event.key()==Qt.Key_Down:
+			if self.currentRow()<self.count()-1:
+				row=self.currentRow()+1
+				self.setCurrentRow(row)
+		event.ignore()
+		return False
+	#def keyPressEvent
+
+	def _navigate(self,event,item,newItem,row,newRow):
+		if isinstance(self.stacks.get(self.lastIndex+1,{}).get('module',None),appConfigStack)==True:
+			if self.stacks[self.lastIndex+1]['module'].getChanges():
+				event.ignore()
+				self.setCurrentItem(item)
+				self.pendingChange.emit(item,newItem)
+				return False
+			self.stacks[self.lastIndex+1]['module'].initScreen()
+			if self.stacks[self.lastIndex+1]['module'].refresh:
+				self._debug("Refresh config")
+				self.getConfig()
+		event.accept()
+		self._acceptChange(row)
+	#def _navigate
+
+	def _acceptChange(self,row):
+		self.acceptChange.emit()
+		return True
+	#def _acceptChange
+
+	def updateIndex(self,index):
+		if isinstance(index,int)==False:
+			index=0
+		self.lastIndex=index
+	#def updateIndex
+
+	def getIndex(self):
+		return(self.currentRow())
+	#def getIndex(self)
+
+	def getLastIndex(self):
+		return(self.lastIndex)
+	#def getLastIndex
+
+	def getIndexForStack(self):
+		return(self.currentRow()+1)
+	#def getIndexForStack
+#class leftPanel
+
 class appConfigScreen(QWidget):
-	keybind_signal=Signal("QObject")
-	update_signal=Signal("QObject")
 	def __init__(self,appName,parms={}):
 		super().__init__()
 		self.dbg=False
@@ -243,6 +322,7 @@ class appConfigScreen(QWidget):
 				pass
 		self._render_gui()
 		return(False)
+	#def Show
 	
 	def _render_gui(self):
 		self.getConfig()
@@ -254,7 +334,7 @@ class appConfigScreen(QWidget):
 		img_banner.setAlignment(Qt.AlignCenter)
 		img_banner.setObjectName("banner")
 		box.addWidget(img_banner,0,0,1,2)
-		self.lst_options=QListWidget()
+		self.lst_options=leftPanel(self.stacks)#QListWidget()
 		self.stk_widget=QStackedWidget()
 		idx=0
 		if len(self.stacks)>2:
@@ -322,9 +402,12 @@ class appConfigScreen(QWidget):
 
 		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
-		self.lst_options.currentRowChanged.connect(self._show_stack)
+		#self.lst_options.currentRowChanged.connect(self._show_stack)
+		self.lst_options.acceptChange.connect(self._show_stack)
+		self.lst_options.pendingChange.connect(self._askForChanges)
 		self.lst_options.setCurrentIndex(QModelIndex())
 		self.last_index=None
+		self.lst_options.updateIndex(self.last_index)
 		panel.setLayout(box)
 		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
 		self.lst_options.setFixedSize(self.lst_options.sizeHintForColumn(0)  +2 * (self.lst_options.frameWidth() +15), self.height())#self.lst_options.sizeHintForRow(0) * self.lst_options.count() + 2 * (self.lst_options.frameWidth()+15))
@@ -384,38 +467,29 @@ class appConfigScreen(QWidget):
 	def _linkStack(self,*args):
 		stack=args[0].split('/')[-1]
 		self.loadStack(int(stack),'')
+	#def _linkStack
 
 	def gotoStack(self,idx,parms):
 		self._showStack(idx=idx-1,parms=parms,gotoIdx=idx)
+	#def gotoStack
 
 	def loadStack(self,idx,parms):
 		self._showStack(idx=idx,parms=parms)
+	#def loadStack
 
 	def _show_stack(self,*args,item=None,idx=None,parms=None,gotoIdx=None):
 		self._showStack(*args,item,idx,parms,gotoIdx)
+	#def _show_stack
 
 	def _showStack(self,*args,item=None,idx=None,parms=None,gotoIdx=None):
 		if self.hideLeftPanel==False:
 			if (self.last_index==abs(self.lst_options.currentRow()) and (idx==self.last_index or isinstance(item,int))):# or self.last_index==None)):
 				return
 
-		if isinstance(self.stacks.get(self.last_index,{}).get('module',None),appConfigStack)==True:
-			if self.stacks[self.last_index]['module'].getChanges():
-				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
-					self.lst_options.setCurrentRow(self.last_index)
-					return
-				else:
-					self.stacks[self.last_index]['module'].setChanged(False)
-			self.stacks[self.last_index]['module'].initScreen()
-			if self.stacks[self.last_index]['module'].refresh:
-				self._debug("Refresh config")
-				self.getConfig()
-		else:
-			self._debug(self.stacks.get(self.last_index,{}).get('module'))
-			self.last_index=0
 		if isinstance(idx,int)==False:
 			idx=self.lst_options.currentRow()+1
 		self.last_index=idx-1
+		self.lst_options.updateIndex(self.last_index)
 		try:
 			self.stacks[idx]['module'].setConfig(self.config)
 		except:
@@ -430,12 +504,13 @@ class appConfigScreen(QWidget):
 	#def _show_stack
 
 	def closeEvent(self,event):
-		try:
-			if self.stacks[self.last_index]['module'].getChanges():
+		module=self.stacks.get(self.last_index,{}).get('module',None)
+		if module!=None:
+			if module.getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
+					print("IGNORE")
 					event.ignore()
-		except:
-			pass
+	#def closeEvent(self,event):
 
 	def _show_message(self,msg,status=None):
 		return
@@ -446,9 +521,30 @@ class appConfigScreen(QWidget):
 #		self.statusBar.show(status)
 	#def _show_message
 
+	def _askForChanges(self,*args):
+		if isinstance(self.stacks.get(self.last_index,{}).get('module',None),appConfigStack)==True:
+			if self.stacks[self.last_index]['module'].getChanges():
+				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
+					return False
+				else:
+					self.stacks[self.last_index]['module'].setChanged(False)
+			self.stacks[self.last_index]['module'].initScreen()
+			if self.stacks[self.last_index]['module'].refresh:
+				self._debug("Refresh config")
+				self.getConfig()
+		else:
+			self._debug(self.stacks.get(self.last_index,{}).get('module'))
+			self.last_index=0
+			self.lst_options.updateIndex(self.last_index)
+		self.lst_options.setCurrentItem(args[1])
+		self.stk_widget.setCurrentIndex(self.lst_options.getIndexForStack())
+	#def _askForChanges
+
 	def _save_changes(self,module):
 		dia=QMessageBox(QMessageBox.Question,_("Apply changes"),_("There're changes not saved at current screen.\nDiscard them and continue?"),QMessageBox.Discard|QMessageBox.Cancel,self)
-		return(dia.exec_())
+		resp=dia.exec()
+		return(resp)
+	#def _save_changes
 
 	def _define_css(self):
 		css="""
@@ -497,5 +593,5 @@ class appConfigScreen(QWidget):
 		}
 		"""%self.background
 		return(css)
-		#def _define_css
+	#def _define_css
 
