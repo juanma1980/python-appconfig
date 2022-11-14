@@ -34,7 +34,13 @@ class leftPanel(QListWidget):
 		super().__init__()
 		self.stacks=stacks
 		self.lastIndex=0
+		self.dbg=False
 	#def __init__
+
+	def _debug(self,msg):
+		if self.dbg:
+			print("%s"%msg)
+	#def _debug
 
 	def mousePressEvent(self, event):
 		x=event.pos().x()
