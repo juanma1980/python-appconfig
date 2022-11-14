@@ -1,4 +1,4 @@
-python3-appconfig (0.42.1) lliurex22; urgency=medium
+python3-appconfig (0.42.2) lliurex22; urgency=medium
 
   * Improve changes detection when navigating through stacks
 
