@@ -14,6 +14,9 @@ import notify2
 _=gettext.gettext
 QString=type("")
 
+i18n={"APPLY":_("Apply")}
+	
+
 class appConfigStack(QWidget):
 	message=Signal("QObject","QObject")
 	def __init__(self,stack):
@@ -36,7 +39,7 @@ class appConfigStack(QWidget):
 		self.stack=stack
 		self.textdomain=''
 		self.force_change=False
-		self.btn_ok=QPushButton(_("Apply"))
+		self.btn_ok=QPushButton(i18n["APPLY"])
 		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
 		self.writeConfig=self.writeDecorator(self.writeConfig)
