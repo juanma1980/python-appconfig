@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-03 18:16+0100\n"
+"POT-Creation-Date: 2022-11-14 13:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,28 +25,28 @@ msgstr ""
 msgid "Search..."
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:52
-#: ../python3/appconfig/appConfigScreen.py:288
+#: ../python3/appconfig/appConfigScreen.py:138
+#: ../python3/appconfig/appConfigScreen.py:375
 msgid "Options"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:340
+#: ../python3/appconfig/appConfigScreen.py:431
 msgid "Welcome to the configuration of "
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:341
+#: ../python3/appconfig/appConfigScreen.py:432
 msgid "From here you can:<br>"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:371
+#: ../python3/appconfig/appConfigScreen.py:462
 msgid "Wiki help"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:450
+#: ../python3/appconfig/appConfigScreen.py:555
 msgid "Apply changes"
 msgstr ""
 
-#: ../python3/appconfig/appConfigScreen.py:450
+#: ../python3/appconfig/appConfigScreen.py:555
 msgid ""
 "There're changes not saved at current screen.\n"
 "Discard them and continue?"

@@ -347,7 +347,7 @@ class appConfigScreen(QWidget):
 		if len(self.stacks)>2:
 			l_panel=self._left_panel()
 			if self.hideLeftPanel==False:
-				box.addWidget(l_panel,1,0,1,1,Qt.Alignment(1)|Qt.AlignTop)
+				box.addWidget(l_panel,1,0,1,1)
 			else:
 				idx=1
 		#	self.stk_widget.setCurrentIndex(0)
@@ -361,6 +361,8 @@ class appConfigScreen(QWidget):
 		box.addWidget(r_panel,1,1,1,1)
 		self.setLayout(box)
 		self.show()
+		margins=self.lst_options.geometry()
+		self.resize(self.lst_options.sizeHint().width()+self.stk_widget.sizeHint().width()+margins.right()/2,self.height()) 
 	#def _render_gui
 
 	def _left_panel(self):
@@ -397,7 +399,6 @@ class appConfigScreen(QWidget):
 			self.stacks[idx]['widget' ]=lst_widget
 		orderedStacks={}
 		orderedStacks[0]=self.stacks[0]
-		#self.lst_options.addItem(orderedStacks[0]['widget'])
 		cont=0
 		indexes.sort()
 		for index in indexes:
@@ -417,9 +418,7 @@ class appConfigScreen(QWidget):
 		self.last_index=None
 		self.lst_options.updateIndex(self.last_index)
 		panel.setLayout(box)
-		self.resize(self.size().width()+box.sizeHint().width(),self.size().height()+box.sizeHint().height()/2)
-		self.lst_options.setFixedSize(self.lst_options.sizeHintForColumn(0)  +2 * (self.lst_options.frameWidth() +15), self.height())#self.lst_options.sizeHintForRow(0) * self.lst_options.count() + 2 * (self.lst_options.frameWidth()+15))
-
+		self.lst_options.setMaximumSize((self.lst_options.sizeHintForColumn(0)  +2) * (self.lst_options.frameWidth() +15), self.height())
 		return(panel)
 	#def _left_panel
 
