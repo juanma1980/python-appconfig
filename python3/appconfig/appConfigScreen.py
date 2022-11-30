@@ -438,6 +438,7 @@ class appConfigScreen(QWidget):
 			_("From here you can:<br>")]
 		orderIdx=list(self.stacks.keys())
 		orderIdx.sort()
+		linkIdx=1
 		for idx in orderIdx:
 			data=self.stacks[idx]
 			stack=data.get('module',None)
@@ -447,11 +448,12 @@ class appConfigScreen(QWidget):
 				stack._load_screen()
 
 				if self.stacks[idx].get('visible',True)==True:
-					text.append("&nbsp;*&nbsp;<a href=\"appconf://%s\"><span style=\"font-weight:bold;text-decoration:none\">%s</span></a>"%(idx+1,stack.menu_description))
+					text.append("&nbsp;*&nbsp;<a href=\"appconf://%s\"><span style=\"font-weight:bold;text-decoration:none\">%s</span></a>"%(linkIdx,stack.menu_description))
 				try:
 					self.stk_widget.insertWidget(idx,stack)
 				except:
 					self.stk_widget.insertWidget(idx,stack.init_stack())
+				linkIdx+=1
 		stack=QWidget()
 		stack.setObjectName("panel")
 		s_box=QVBoxLayout()
