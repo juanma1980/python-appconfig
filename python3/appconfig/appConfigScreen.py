@@ -9,7 +9,7 @@ from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLa
 				QListWidgetItem,QStackedWidget,QButtonGroup,QComboBox,QTableWidget,QTableWidgetItem,\
 				QHeaderView,QMessageBox,QAbstractItemView
 from PySide2 import QtGui
-from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent,QModelIndex
+from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent,QModelIndex,QRect
 from appconfig.appConfig import appConfig 
 from appconfig.appConfigStack import appConfigStack
 
@@ -33,9 +33,11 @@ class leftPanel(QListWidget):
 
 	def __init__(self,stacks):
 		super().__init__()
+		self.dbg=False
 		self.stacks=stacks
 		self.lastIndex=0
-		self.dbg=False
+		self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+		self.setMinimumHeight(0)
 	#def __init__
 
 	def _debug(self,msg):
@@ -87,10 +89,10 @@ class leftPanel(QListWidget):
 				self._debug("Refresh config")
 				self.refreshConfig.emit()
 		event.accept()
-		self._acceptChange(row)
+		self._acceptNavigate(row)
 	#def _navigate
 
-	def _acceptChange(self,row):
+	def _acceptNavigate(self,row):
 		self.acceptChange.emit()
 		return True
 	#def _acceptChange
@@ -112,6 +114,12 @@ class leftPanel(QListWidget):
 	def getIndexForStack(self):
 		return(self.currentRow()+1)
 	#def getIndexForStack
+
+	def sizeHint(self):
+		s = QSize()
+		s.setHeight(super(QListWidget,self).sizeHint().height())
+		s.setWidth(self.sizeHintForColumn(0))
+		return s
 #class leftPanel
 
 class appConfigScreen(QWidget):
@@ -343,11 +351,15 @@ class appConfigScreen(QWidget):
 		box.addWidget(img_banner,0,0,1,2)
 		self.lst_options=leftPanel(self.stacks)#QListWidget()
 		self.stk_widget=QStackedWidget()
+		self.stk_widget.setMinimumHeight(1)
+		r_panel=self._right_panel()
+		box.addWidget(r_panel,1,1,1,1)
 		idx=0
 		if len(self.stacks)>2:
 			l_panel=self._left_panel()
 			if self.hideLeftPanel==False:
 				box.addWidget(l_panel,1,0,1,1)
+				box.setColumnStretch(1,1)
 			else:
 				idx=1
 		#	self.stk_widget.setCurrentIndex(0)
@@ -355,14 +367,11 @@ class appConfigScreen(QWidget):
 			idx=1
 
 		#	self.stk_widget.setCurrentIndex(1)
-		r_panel=self._right_panel()
 		self.stk_widget.setCurrentIndex(idx)
 		#self.gotoStack(idx,"")
-		box.addWidget(r_panel,1,1,1,1)
 		self.setLayout(box)
-		self.show()
 		margins=self.lst_options.geometry()
-		self.resize(self.lst_options.sizeHint().width()+self.stk_widget.sizeHint().width()+margins.right()/2,self.height()) 
+		self.show()
 	#def _render_gui
 
 	def _left_panel(self):
@@ -376,7 +385,6 @@ class appConfigScreen(QWidget):
 		btn_menu.setMaximumHeight(BTN_MENU_SIZE)
 		btn_menu.setToolTip(_("Options"))
 		btn_menu.setObjectName("menuButton")
-#		box.addWidget(btn_menu,Qt.Alignment(1))
 		indexes=[]
 		for index,option in self.stacks.items():
 			idx=index
@@ -410,7 +418,6 @@ class appConfigScreen(QWidget):
 
 		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
-		#self.lst_options.currentRowChanged.connect(self._show_stack)
 		self.lst_options.acceptChange.connect(self._show_stack)
 		self.lst_options.pendingChange.connect(self._askForChanges)
 		self.lst_options.refreshConfig.connect(self._refreshConfig)
@@ -418,7 +425,7 @@ class appConfigScreen(QWidget):
 		self.last_index=None
 		self.lst_options.updateIndex(self.last_index)
 		panel.setLayout(box)
-		self.lst_options.setMaximumSize((self.lst_options.sizeHintForColumn(0)  +2) * (self.lst_options.frameWidth() +15), self.height())
+
 		return(panel)
 	#def _left_panel
 
@@ -430,6 +437,7 @@ class appConfigScreen(QWidget):
 			_("Welcome to the configuration of ")+self.appName,
 			_("From here you can:<br>")]
 		orderIdx=list(self.stacks.keys())
+		orderIdx.sort()
 		for idx in orderIdx:
 			data=self.stacks[idx]
 			stack=data.get('module',None)
