@@ -61,6 +61,10 @@ class QSearchBox(QWidget):
 	def setText(self,text):
 		self.txtSearch.setText(text)
 	#def setText
+
+	def setPlaceholderText(self,text):
+		self.txtSearch.setPlaceholderText(text)
+	#def setPlaceholderText
 #class QSearchBox
 
 class QTableTouchWidget(QTableWidget):
