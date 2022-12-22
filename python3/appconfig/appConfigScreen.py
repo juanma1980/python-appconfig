@@ -433,9 +433,11 @@ class appConfigScreen(QWidget):
 		panel=QWidget()
 		box=QVBoxLayout()
 		idx=0
+		#text=[
+		#	_("Welcome to the configuration of ")+self.appName,
+		#	_("From here you can:<br>")]
 		text=[
-			_("Welcome to the configuration of ")+self.appName,
-			_("From here you can:<br>")]
+			_("Welcome to the configuration of ")+"{}.<br>".format(self.appName)]
 		orderIdx=list(self.stacks.keys())
 		orderIdx.sort()
 		linkIdx=1

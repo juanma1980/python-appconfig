@@ -8,20 +8,21 @@ from PySide2.QtQuick import QQuickView
 from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread,QSize
 from PySide2.QtQuick import QQuickView
 import logging
-import gettext
 import notify2
+import gettext
+try:
+	confText=gettext.translation("python3-appconfig")
+	_ = confText.gettext
+except:
+	gettext.textdomain('python3-appconfig')
+	_ = gettext.gettext
 #_ = nullTrans.gettext
-_=gettext.gettext
-QString=type("")
-
-i18n={"APPLY":_("Apply")}
-	
 
 class appConfigStack(QWidget):
 	message=Signal("QObject","QObject")
 	def __init__(self,stack):
 		super().__init__()
-		self.dbg=True
+		self.dbg=False
 		self.default_icon='shell'
 		self.menu_description=(_("Configure stack"))
 		self.description=(_("Configure custom stack"))
@@ -37,10 +38,10 @@ class appConfigStack(QWidget):
 		self.add_events=False
 		self.refresh=False
 		self.stack=stack
-		self.textdomain=''
+		self.textdomain='python3-appconfig'
 		self.force_change=False
-		self.btn_ok=QPushButton(i18n["APPLY"])
-		self.btn_cancel=QPushButton(_("Undo"))
+		self.btn_ok=QPushButton(self.translate("Apply"))
+		self.btn_cancel=QPushButton(self.translate("Undo"))
 		self.__init_stack__()
 		self.writeConfig=self.writeDecorator(self.writeConfig)
 	#def __init__
@@ -62,7 +63,8 @@ class appConfigStack(QWidget):
 	#def setAppConfig
 
 	def translate(self,msg=""):
-		return(gettext.dgettext(self.textdomain,msg))
+		translated=gettext.dgettext(self.textdomain,msg)
+		return(translated)
 
 	def setTextDomain(self,textDomain):
 			#gettext.textdomain(textDomain)
