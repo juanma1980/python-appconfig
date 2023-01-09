@@ -106,7 +106,10 @@ class QCheckableComboBox(QComboBox):
 	#def _checked
 
 	def setText(self,text):
+		if self.count()==0:
+			self.addItem("")
 		item=self.model().item(0)
+	
 		item.setText(text)
 
 	def hidePopup(self,*args,close=False):
