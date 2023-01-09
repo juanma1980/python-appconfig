@@ -1,8 +1,8 @@
 import os
 import tempfile
-from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout
+from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout,QComboBox
 from PySide2 import QtGui
-from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize,QPointF
+from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize,QPointF,QRectF,QRect
 import gettext
 import requests
 import hashlib
@@ -10,8 +10,147 @@ _ = gettext.gettext
 
 i18n={
 	"PRESSKEY":_("Press keys"),
-	"SEARCH":_("Search...")
+	"SEARCH":_("Search..."),
+	"FILTERS":_("Filters"),
+	"APPLY":_("Apply")
 }
+
+class loadScreenShot(QThread):
+	imageLoaded=Signal("PyObject")
+	def __init__(self,*args):
+		super().__init__()
+		self.img=args[0]
+		self.cacheDir=None
+		if len(args)>1:
+			self.setCacheDir(args[1])
+	#def __init__
+
+	def _debug(self,msg):
+		print("{}".format(msg))
+	
+	def setCacheDir(self,cacheDir):
+		sureDirs=["/tmp/.cache",os.path.join(os.environ.get('HOME',''),".cache")]
+		if isinstance(cacheDir,str)==False:
+			cacheDir=''
+		for sure in sureDirs:
+			if sure in cacheDir:
+				sureDirs=[]
+				break
+		if sureDirs:
+			return
+		if isinstance(cacheDir,str)==False:
+			cacheDir=""
+		if os.path.exists(cacheDir)==False:
+			try:
+				os.makedirs(cacheDir)
+			except Exception as e:
+				print("mdkdir {0} failed: {1}".format(cacheDir,e))
+		if os.path.isdir(cacheDir)==True:
+			self.cacheDir=cacheDir
+		self._debug("Cache set to {}".format(self.cacheDir))
+	#def setCacheDir
+
+	def run(self,*args):
+		img=None
+		md5Name=""
+		md5Name=hashlib.md5(self.img.encode())
+		icn=QtGui.QIcon.fromTheme("image-x-generic")
+		pxm=icn.pixmap(512,512)
+		if self.cacheDir:
+			fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))#self.img.split('/')[-1])
+			if os.path.isfile(fPath)==True:
+				pxm=QtGui.QPixmap()
+				try:
+					pxm.load(fPath)
+					img=True
+				except Exception as e:
+					print("Loading cache pixmap: {}".format(e))
+		if img==None:
+			try:
+				img=requests.get(self.img)
+				pxm.loadFromData(img.content)
+			except Exception as e:
+				img=None
+				print("request: {}".format(e))
+		if img:
+			if self.cacheDir:
+				fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))
+				if os.path.exists(fPath)==False:
+					pxm=pxm.scaled(256,256,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation)
+					p=pxm.save(fPath,"PNG")#,quality=5)
+		self.imageLoaded.emit(pxm)
+		return True
+	#def run
+
+class QCheckableComboBox(QComboBox):
+	clicked=Signal()
+	def __init__(self,parent=None):
+		QComboBox.__init__(self, parent)
+		self.view().pressed.connect(self._checked)
+		self.setModel(QtGui.QStandardItemModel(self))
+		self.btn=QPushButton(i18n.get("APPLY"),self.view())
+		self.btn.clicked.connect(self.applyBtn)
+		self.view().setViewportMargins(0,0,0,self.btn.sizeHint().height()+6)
+		self.addItem("")
+	#def __init__
+
+	def _checked(self, index):
+		if index.row()==0:
+			return
+		item = self.model().itemFromIndex(index)
+		if item.checkState() == Qt.Checked:
+			item.setCheckState(Qt.Unchecked)
+		else:
+			item.setCheckState(Qt.Checked)
+		return(False)
+	#def _checked
+
+	def setText(self,text):
+		item=self.model().item(0)
+		item.setText(text)
+
+	def hidePopup(self,*args,close=False):
+		self.setCurrentIndex(0)
+		if close==False:
+			return close
+		super().hidePopup()
+	#def hidePopup
+
+	def addItem(self,*args,state=True):
+		super().addItem(args[0])
+		item=self.model().item(self.count()-1)
+		if self.count()>1:
+			if state==True:
+				item.setCheckState(Qt.Checked)
+			else:
+				item.setCheckState(Qt.Unchecked)
+		rect=self.view().sizeHint()
+		Xpos=0
+		Ypos=rect.height()
+		self.btn.move(Xpos,Ypos)
+	#def addItem
+
+	def getItems(self,*args):
+		items=[]
+		for i in range(0,self.count()):
+			item=self.model().item(i)
+			items.append(item)
+		return(items)
+	#def getItems
+
+	def setState(self,idx,state):
+		item=self.model().item(idx)
+		if state==True:
+			item.setCheckState(Qt.Checked)
+		else:
+			item.setCheckState(Qt.Unchecked)
+	#def setState
+
+	def applyBtn(self,*args):
+		self.hidePopup(close=True)
+		self.clicked.emit()
+	#def applyBtn
+#class QCheckableComboBox
 
 class QSearchBox(QWidget):
 	clicked=Signal()
@@ -86,73 +225,6 @@ class QTableTouchWidget(QTableWidget):
 		self.scroller.grabGesture(self.viewport(),self.scroller.LeftMouseButtonGesture)
 	#def __init__
 #class QTableTouchWidget
-
-class loadScreenShot(QThread):
-	imageLoaded=Signal("PyObject")
-	def __init__(self,*args):
-		super().__init__()
-		self.img=args[0]
-		self.cacheDir=None
-		if len(args)>1:
-			self.setCacheDir(args[1])
-	#def __init__
-
-	def _debug(self,msg):
-		print("{}".format(msg))
-	
-	def setCacheDir(self,cacheDir):
-		sureDirs=["/tmp/.cache",os.path.join(os.environ.get('HOME',''),".cache")]
-		if isinstance(cacheDir,str)==False:
-			cacheDir=''
-		for sure in sureDirs:
-			if sure in cacheDir:
-				sureDirs=[]
-				break
-		if sureDirs:
-			return
-		if isinstance(cacheDir,str)==False:
-			cacheDir=""
-		if os.path.exists(cacheDir)==False:
-			try:
-				os.makedirs(cacheDir)
-			except Exception as e:
-				print("mdkdir {0} failed: {1}".format(cacheDir,e))
-		if os.path.isdir(cacheDir)==True:
-			self.cacheDir=cacheDir
-		self._debug("Cache set to {}".format(self.cacheDir))
-	#def setCacheDir
-
-	def run(self,*args):
-		img=None
-		md5Name=""
-		md5Name=hashlib.md5(self.img.encode())
-		icn=QtGui.QIcon.fromTheme("image-x-generic")
-		pxm=icn.pixmap(512,512)
-		if self.cacheDir:
-			fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))#self.img.split('/')[-1])
-			if os.path.isfile(fPath)==True:
-				pxm=QtGui.QPixmap()
-				try:
-					pxm.load(fPath)
-					img=True
-				except Exception as e:
-					print("Loading cache pixmap: {}".format(e))
-		if img==None:
-			try:
-				img=requests.get(self.img)
-				pxm.loadFromData(img.content)
-			except Exception as e:
-				img=None
-				print("request: {}".format(e))
-		if img:
-			if self.cacheDir:
-				fPath=os.path.join(self.cacheDir,str(md5Name.hexdigest()))
-				if os.path.exists(fPath)==False:
-					pxm=pxm.scaled(256,256,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation)
-					p=pxm.save(fPath,"PNG")#,quality=5)
-		self.imageLoaded.emit(pxm)
-		return True
-	#def run
 
 class QHotkeyButton(QPushButton):
 	keybind_signal=Signal("PyObject")
@@ -324,12 +396,11 @@ class QScreenShotContainer(QWidget):
 		return(False)
 	#def eventFilter
 
-	def carrousel(self,btn=""):
+	def carrousel(self,btn="",w=640,h=480):
 		dlg=QDialog()	
 		dlg.setModal(True)
-		xSize=640
-		ySize=480
-		dlg.setFixedSize(xSize+20,ySize+30)
+		xSize=w
+		ySize=h
 		#widget=QWidget()
 		widget=QTableTouchWidget()
 		widget.setRowCount(1)
@@ -341,6 +412,7 @@ class QScreenShotContainer(QWidget):
 		widget.setRowCount(1)
 		icn=QtGui.QIcon.fromTheme("go-next")
 		mainLay=QGridLayout()
+		mainLay.setHorizontalSpacing(0)
 		selectedImg=""
 		arrayImg=[]
 		for btnImg,img in self.btnImg.items():
@@ -375,10 +447,23 @@ class QScreenShotContainer(QWidget):
 			widget.setCellWidget(0,widget.columnCount()-1,container)
 			widget.setColumnWidth(widget.columnCount()-1,xSize)
 			widget.setRowHeight(widget.rowCount()-1,ySize)
-		mainLay.addWidget(widget,0,0,1,1)
+		btnPrev=QPushButton("<")
+		btnNext=QPushButton(">")
+		font=btnPrev.font().pointSize()
+		btnPrev.setFixedWidth(font+2)
+		btnPrev.clicked.connect(self.scrollWdg)
+		btnNext.setFixedWidth(font+2)
+		mainLay.addWidget(btnPrev,0,0,1,1,Qt.AlignRight)
+		mainLay.addWidget(widget,0,1,1,1)
+		mainLay.addWidget(btnNext,0,2,1,1,Qt.AlignLeft)
 		dlg.setLayout(mainLay)
+		dlg.setFixedSize(xSize+20+(font*2),ySize+30)
 		dlg.exec()
 	#def carrousel
+	
+	def scrollWdg(self,*args):
+		print("SCR")
+
 	
 	def addImage(self,img):
 		scr=loadScreenShot(img,self.cacheDir)
