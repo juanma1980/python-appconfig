@@ -1,4 +1,4 @@
-python3-appconfig (0.43) focal; urgency=medium
+python3-appconfig (0.43.1) focal; urgency=medium
 
   * Add new control QCheckableComboBox
 
