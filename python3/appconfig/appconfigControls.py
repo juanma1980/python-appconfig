@@ -91,10 +91,12 @@ class QCheckableComboBox(QComboBox):
 		self.btn=QPushButton(i18n.get("APPLY"),self.view())
 		self.btn.clicked.connect(self.applyBtn)
 		self.view().setViewportMargins(0,0,0,self.btn.sizeHint().height()+6)
+		self.checked=False
 		self.addItem("")
 	#def __init__
 
 	def _checked(self, index):
+		self.checked=True
 		if index.row()==0:
 			return
 		item = self.model().itemFromIndex(index)
@@ -109,12 +111,13 @@ class QCheckableComboBox(QComboBox):
 		if self.count()==0:
 			self.addItem("")
 		item=self.model().item(0)
-	
 		item.setText(text)
+	#def setText
 
 	def hidePopup(self,*args,close=False):
 		self.setCurrentIndex(0)
-		if close==False:
+		if close==False and self.checked==True:
+			self.checked=False
 			return close
 		super().hidePopup()
 	#def hidePopup
