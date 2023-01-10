@@ -1,6 +1,6 @@
 import os
 import tempfile
-from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout,QComboBox
+from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout,QComboBox,QTableWidgetItem
 from PySide2 import QtGui
 from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize,QPointF,QRectF,QRect
 import gettext
@@ -411,14 +411,14 @@ class QScreenShotContainer(QWidget):
 		xSize=w
 		ySize=h
 		#widget=QWidget()
-		widget=QTableTouchWidget()
-		widget.setRowCount(1)
-		widget.setShowGrid(True)
-		widget.verticalHeader().hide()
-		widget.horizontalHeader().hide()
+		self.widget=QTableTouchWidget()
+		self.widget.setRowCount(1)
+		self.widget.setShowGrid(True)
+		self.widget.verticalHeader().hide()
+		self.widget.horizontalHeader().hide()
 		#widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-		widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-		widget.setRowCount(1)
+		self.widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+		self.widget.setRowCount(1)
 		icn=QtGui.QIcon.fromTheme("go-next")
 		mainLay=QGridLayout()
 		mainLay.setHorizontalSpacing(0)
@@ -432,7 +432,7 @@ class QScreenShotContainer(QWidget):
 			else:
 				arrayImg.append(lbl)
 		if selectedImg:
-			widget.setColumnCount(widget.columnCount()+1)
+			self.widget.setColumnCount(self.widget.columnCount()+1)
 			container=QWidget()
 			lay=QHBoxLayout()
 			container.setLayout(lay)
@@ -440,12 +440,13 @@ class QScreenShotContainer(QWidget):
 			lay.addStretch()
 			lay.addWidget(selectedImg)
 			lay.addStretch()
-			widget.setCellWidget(0,widget.columnCount()-1,container)
-			widget.setColumnWidth(widget.columnCount()-1,xSize)
-			widget.setRowHeight(widget.rowCount()-1,ySize)
+			self.widget.setCellWidget(0,self.widget.columnCount()-1,container)
+			self.widget.setItem(0,self.widget.columnCount()-1,QTableWidgetItem())
+			self.widget.setColumnWidth(self.widget.columnCount()-1,xSize)
+			self.widget.setRowHeight(self.widget.rowCount()-1,ySize)
 
 		for lbl in arrayImg:
-			widget.setColumnCount(widget.columnCount()+1)
+			self.widget.setColumnCount(self.widget.columnCount()+1)
 			container=QWidget()
 			container.setFixedSize(QSize(xSize,ySize))
 			lay=QHBoxLayout()
@@ -453,26 +454,37 @@ class QScreenShotContainer(QWidget):
 			lay.addStretch()
 			lay.addWidget(lbl)
 			lay.addStretch()
-			widget.setCellWidget(0,widget.columnCount()-1,container)
-			widget.setColumnWidth(widget.columnCount()-1,xSize)
-			widget.setRowHeight(widget.rowCount()-1,ySize)
+			self.widget.setCellWidget(0,self.widget.columnCount()-1,container)
+			self.widget.setItem(0,self.widget.columnCount()-1,QTableWidgetItem())
+			self.widget.setColumnWidth(self.widget.columnCount()-1,xSize)
+			self.widget.setRowHeight(self.widget.rowCount()-1,ySize)
 		btnPrev=QPushButton("<")
 		btnNext=QPushButton(">")
 		font=btnPrev.font().pointSize()
 		btnPrev.setFixedWidth(font+2)
-		btnPrev.clicked.connect(self.scrollWdg)
+		btnPrev.clicked.connect(lambda x:self.scrollContainer("left"))
 		btnNext.setFixedWidth(font+2)
+		btnNext.clicked.connect(lambda x:self.scrollContainer("right"))
 		mainLay.addWidget(btnPrev,0,0,1,1,Qt.AlignRight)
-		mainLay.addWidget(widget,0,1,1,1)
+		mainLay.addWidget(self.widget,0,1,1,1)
 		mainLay.addWidget(btnNext,0,2,1,1,Qt.AlignLeft)
 		dlg.setLayout(mainLay)
 		dlg.setFixedSize(xSize+20+(font*2),ySize+30)
 		dlg.exec()
 	#def carrousel
 	
-	def scrollWdg(self,*args):
-		print("SCR")
-
+	def scrollContainer(self,*args):
+		if len(args)==0:
+			return
+		visible = self.widget.itemAt(200, 20)
+		column=1
+		if visible is not None:
+			column=visible.column()
+		if args[0]=="left":
+			self.widget.scrollToItem(self.widget.item(visible.row(), column-1))
+		elif args[0]=="right":
+			self.widget.scrollToItem(self.widget.item(visible.row(), column+1))
+	#def scrollContainer(self,*args):
 	
 	def addImage(self,img):
 		scr=loadScreenShot(img,self.cacheDir)
