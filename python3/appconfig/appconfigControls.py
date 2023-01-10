@@ -84,13 +84,14 @@ class loadScreenShot(QThread):
 
 class QCheckableComboBox(QComboBox):
 	clicked=Signal()
+	closed=Signal()
 	def __init__(self,parent=None):
 		QComboBox.__init__(self, parent)
 		self.view().pressed.connect(self._checked)
 		self.setModel(QtGui.QStandardItemModel(self))
-		self.btn=QPushButton(i18n.get("APPLY"),self.view())
-		self.btn.clicked.connect(self.applyBtn)
-		self.view().setViewportMargins(0,0,0,self.btn.sizeHint().height()+6)
+		#self.btn=QPushButton(i18n.get("APPLY"),self.view())
+		#self.btn.clicked.connect(self.applyBtn)
+		#self.view().setViewportMargins(0,0,0,self.btn.sizeHint().height()+6)
 		self.checked=False
 		self.addItem("")
 	#def __init__
@@ -104,6 +105,7 @@ class QCheckableComboBox(QComboBox):
 			item.setCheckState(Qt.Unchecked)
 		else:
 			item.setCheckState(Qt.Checked)
+		self.clicked.emit()
 		return(False)
 	#def _checked
 
@@ -118,6 +120,7 @@ class QCheckableComboBox(QComboBox):
 		self.setCurrentIndex(0)
 		if close==False and self.checked==True:
 			self.checked=False
+			self.closed.emit()
 			return close
 		super().hidePopup()
 	#def hidePopup
@@ -130,10 +133,10 @@ class QCheckableComboBox(QComboBox):
 				item.setCheckState(Qt.Checked)
 			else:
 				item.setCheckState(Qt.Unchecked)
-		rect=self.view().sizeHint()
-		Xpos=0
-		Ypos=rect.height()
-		self.btn.move(Xpos,Ypos)
+	#	rect=self.view().sizeHint()
+	#	Xpos=0
+	#	Ypos=rect.height()
+	#	self.btn.move(Xpos,Ypos)
 	#def addItem
 
 	def getItems(self,*args):
