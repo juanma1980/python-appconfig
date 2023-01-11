@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 import traceback
 from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget,QSlider
-from PySide2.QtCore import Signal,Qt
 from PySide2 import QtGui
 #from PySide2.QtWidgets import QApplication
-from PySide2.QtQuick import QQuickView
-from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread,QSize
-from PySide2.QtQuick import QQuickView
+from PySide2.QtCore import Qt,QUrl,QObject, Slot, Signal, Property,QThread,QSize
 import logging
 import notify2
 import gettext
@@ -19,7 +16,7 @@ except:
 #_ = nullTrans.gettext
 
 class appConfigStack(QWidget):
-	message=Signal("QObject","QObject")
+	requestWindowTitle=Signal(str)
 	def __init__(self,stack):
 		super().__init__()
 		self.dbg=False
@@ -121,6 +118,10 @@ class appConfigStack(QWidget):
 	def setLevel(self,level):
 		self.level=level
 	#def setLevel
+
+	def setWindowTitle(self,title):
+		self.requestWindowTitle.emit("{}".format(title))
+	#def setWindowTitle
 	
 	def _reset_screen(self):
 		self.updateScreen()
@@ -283,7 +284,6 @@ class appConfigStack(QWidget):
 		notice = notify2.Notification(msg)
 		notice.show()
 		return
-#self.message.emit(msg,state)
 	#def showMsg
 
 	def n4dGetVar(self,client=None,var=''):
