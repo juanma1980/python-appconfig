@@ -1,6 +1,7 @@
-python3-appconfig (0.44) focal; urgency=medium
+python3-appconfig (0.44.1) focal; urgency=medium
 
   *	Add setWindowTitle method 
+  * Fix "undo" translation
 
  -- Juanma1980 <juanma1980@gmail.com>  Wed, 11 Jan 2023 09:39:26 +0100
 
