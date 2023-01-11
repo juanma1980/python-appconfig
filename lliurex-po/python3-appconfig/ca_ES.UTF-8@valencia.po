@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-11 09:37+0100\n"
-"PO-Revision-Date: 2023-01-11 09:38+0100\n"
+"POT-Creation-Date: 2023-01-11 12:18+0100\n"
+"PO-Revision-Date: 2023-01-11 12:19+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ca_ES\n"
@@ -27,6 +27,7 @@ msgid "Filters"
 msgstr "Filtres"
 
 #: ../python3/appconfig/appconfigControls.py:15
+#: ../python3/appconfig/appConfigStack.py:40
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -67,11 +68,12 @@ msgstr "Configurar stack personalitzat"
 msgid "From here you can configure something"
 msgstr "Desde aci es poden configurar coses"
 
+#: ../python3/appconfig/appConfigStack.py:41
+msgid "Undo"
+msgstr "Desfer"
+
 #~ msgid "From here you can:<br>"
 #~ msgstr "Desde ací es pot:<br>"
-
-#~ msgid "Undo"
-#~ msgstr "Desfer"
 
 #~ msgid "Authentication is required"
 #~ msgstr "Es requereix autenticació"
