@@ -37,8 +37,8 @@ class appConfigStack(QWidget):
 		self.stack=stack
 		self.textdomain='python3-appconfig'
 		self.force_change=False
-		self.btn_ok=QPushButton(self.translate("Apply"))
-		self.btn_cancel=QPushButton(self.translate("Undo"))
+		self.btn_ok=QPushButton(_("Apply"))
+		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
 		self.writeConfig=self.writeDecorator(self.writeConfig)
 	#def __init__
