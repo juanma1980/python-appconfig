@@ -332,7 +332,8 @@ class appConfigScreen(QWidget):
 				visible=True
 			self.stacks[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod,'visible':visible}
 			try:
-				mod.message.connect(self._show_message)
+				#mod.message.connect(self._show_message)
+				mod.requestWindowTitle.connect(self._requestWindowTitle)
 			except:
 				pass
 		self._render_gui()
@@ -533,6 +534,10 @@ class appConfigScreen(QWidget):
 					print("IGNORE")
 					event.ignore()
 	#def closeEvent(self,event):
+
+	def _requestWindowTitle(self,title):
+		self.setWindowTitle("{}".format(title))
+	#def _requestWindowTitle
 
 	def _show_message(self,msg,status=None):
 		return

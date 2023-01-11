@@ -476,7 +476,7 @@ class QScreenShotContainer(QWidget):
 	def scrollContainer(self,*args):
 		if len(args)==0:
 			return
-		visible = self.widget.itemAt(200, 20)
+		visible = self.widget.itemAt(20, 20)
 		column=1
 		if visible is not None:
 			column=visible.column()
