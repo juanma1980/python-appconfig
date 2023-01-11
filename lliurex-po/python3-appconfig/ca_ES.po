@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-14 13:01+0100\n"
-"PO-Revision-Date: 2022-11-14 13:02+0100\n"
+"POT-Creation-Date: 2023-01-11 09:37+0100\n"
+"PO-Revision-Date: 2023-01-11 09:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ca_ES\n"
@@ -22,28 +22,32 @@ msgstr "Prem tecles"
 msgid "Search..."
 msgstr "Cercar..."
 
-#: ../python3/appconfig/appConfigScreen.py:138
-#: ../python3/appconfig/appConfigScreen.py:375
+#: ../python3/appconfig/appconfigControls.py:14
+msgid "Filters"
+msgstr "Filtres"
+
+#: ../python3/appconfig/appconfigControls.py:15
+msgid "Apply"
+msgstr "Aplicar"
+
+#: ../python3/appconfig/appConfigScreen.py:146
+#: ../python3/appconfig/appConfigScreen.py:387
 msgid "Options"
 msgstr "Opcions"
 
-#: ../python3/appconfig/appConfigScreen.py:431
+#: ../python3/appconfig/appConfigScreen.py:441
 msgid "Welcome to the configuration of "
 msgstr "Benvingut a la configuració del "
 
-#: ../python3/appconfig/appConfigScreen.py:432
-msgid "From here you can:<br>"
-msgstr "Desde ací es pot:<br>"
-
-#: ../python3/appconfig/appConfigScreen.py:462
+#: ../python3/appconfig/appConfigScreen.py:474
 msgid "Wiki help"
 msgstr "Wiki"
 
-#: ../python3/appconfig/appConfigScreen.py:555
+#: ../python3/appconfig/appConfigScreen.py:571
 msgid "Apply changes"
 msgstr "Aplicar canvis"
 
-#: ../python3/appconfig/appConfigScreen.py:555
+#: ../python3/appconfig/appConfigScreen.py:571
 msgid ""
 "There're changes not saved at current screen.\n"
 "Discard them and continue?"
@@ -51,25 +55,23 @@ msgstr ""
 "Hi han canvis sense guardar.\n"
 "Ignorar-los i continuar?"
 
-#: ../python3/appconfig/appConfigStack.py:23
+#: ../python3/appconfig/appConfigStack.py:24
 msgid "Configure stack"
 msgstr "Configurar stack"
 
-#: ../python3/appconfig/appConfigStack.py:24
+#: ../python3/appconfig/appConfigStack.py:25
 msgid "Configure custom stack"
 msgstr "Configurar stack personalitzat"
 
-#: ../python3/appconfig/appConfigStack.py:26
+#: ../python3/appconfig/appConfigStack.py:27
 msgid "From here you can configure something"
 msgstr "Desde aci es poden configurar coses"
 
-#: ../python3/appconfig/appConfigStack.py:39
-msgid "Apply"
-msgstr "Aplicar"
+#~ msgid "From here you can:<br>"
+#~ msgstr "Desde ací es pot:<br>"
 
-#: ../python3/appconfig/appConfigStack.py:40
-msgid "Undo"
-msgstr "Desfer"
+#~ msgid "Undo"
+#~ msgstr "Desfer"
 
 #~ msgid "Authentication is required"
 #~ msgstr "Es requereix autenticació"
