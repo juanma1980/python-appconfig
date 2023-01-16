@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-11 12:18+0100\n"
+"POT-Creation-Date: 2023-01-16 10:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,4 +71,8 @@ msgstr ""
 
 #: ../python3/appconfig/appConfigStack.py:41
 msgid "Undo"
+msgstr ""
+
+#: ../python3/appconfig/appConfigStack.py:151
+msgid "Not enough permissions. Operation failed"
 msgstr ""

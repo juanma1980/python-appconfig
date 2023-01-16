@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-11 12:18+0100\n"
-"PO-Revision-Date: 2023-01-11 12:19+0100\n"
+"POT-Creation-Date: 2023-01-16 10:19+0100\n"
+"PO-Revision-Date: 2023-01-16 10:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -75,6 +75,10 @@ msgstr "Desde aquí puedes configurar cosas"
 #: ../python3/appconfig/appConfigStack.py:41
 msgid "Undo"
 msgstr "Deshacer"
+
+#: ../python3/appconfig/appConfigStack.py:151
+msgid "Not enough permissions. Operation failed"
+msgstr "No hay permisos suficientes"
 
 #~ msgid "From here you can:<br>"
 #~ msgstr "Desde aquí se puede:<br>"
