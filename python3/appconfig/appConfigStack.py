@@ -148,7 +148,7 @@ class appConfigStack(QWidget):
 			self.refresh=False
 			self.changes=True
 			retval=False
-			self.showMsg("Failed to write config")
+			self.showMsg(_("Not enough permissions. Operation failed"))
 		cursor=QtGui.QCursor(Qt.PointingHandCursor)
 		self.setCursor(cursor)
 		return retval
@@ -280,9 +280,12 @@ class appConfigStack(QWidget):
 		self._debug("Sending {}".format(msg))
 		if title=='':
 			title=self.description
-		notify2.init(title)
-		notice = notify2.Notification(msg)
-		notice.show()
+		try:
+			notify2.init(title)
+			notice = notify2.Notification(msg)
+			notice.show()
+		except:
+			print(msg)
 		return
 	#def showMsg
 
