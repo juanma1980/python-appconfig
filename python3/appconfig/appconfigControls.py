@@ -89,9 +89,6 @@ class QCheckableComboBox(QComboBox):
 		QComboBox.__init__(self, parent)
 		self.view().pressed.connect(self._checked)
 		self.setModel(QtGui.QStandardItemModel(self))
-		#self.btn=QPushButton(i18n.get("APPLY"),self.view())
-		#self.btn.clicked.connect(self.applyBtn)
-		#self.view().setViewportMargins(0,0,0,self.btn.sizeHint().height()+6)
 		self.checked=False
 		self.addItem("")
 	#def __init__
@@ -154,11 +151,6 @@ class QCheckableComboBox(QComboBox):
 		else:
 			item.setCheckState(Qt.Unchecked)
 	#def setState
-
-	def applyBtn(self,*args):
-		self.hidePopup(close=True)
-		self.clicked.emit()
-	#def applyBtn
 #class QCheckableComboBox
 
 class QSearchBox(QWidget):
@@ -402,11 +394,11 @@ class QScreenShotContainer(QWidget):
 	def eventFilter(self,source,qevent):
 		if isinstance(qevent,QEvent):
 			if qevent.type()==QEvent.Type.MouseButtonPress:
-				self.carrousel(source)
+				self._carrousel(source)
 		return(False)
 	#def eventFilter
 
-	def carrousel(self,btn="",w=640,h=480):
+	def _carrousel(self,btn="",w=640,h=480):
 		dlg=QDialog()	
 		dlg.setModal(True)
 		xSize=w
@@ -420,7 +412,6 @@ class QScreenShotContainer(QWidget):
 		#widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		self.widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		self.widget.setRowCount(1)
-		icn=QtGui.QIcon.fromTheme("go-next")
 		mainLay=QGridLayout()
 		mainLay.setHorizontalSpacing(0)
 		selectedImg=""
@@ -459,13 +450,17 @@ class QScreenShotContainer(QWidget):
 			self.widget.setItem(0,self.widget.columnCount()-1,QTableWidgetItem())
 			self.widget.setColumnWidth(self.widget.columnCount()-1,xSize)
 			self.widget.setRowHeight(self.widget.rowCount()-1,ySize)
-		btnPrev=QPushButton("<")
-		btnNext=QPushButton(">")
+		icn=QtGui.QIcon.fromTheme("go-previous")
+		btnPrev=QPushButton()
+		btnPrev.setIcon(icn)
+		btnPrev.setIconSize(QSize(24,24))
+		icn=QtGui.QIcon.fromTheme("go-next")
+		btnNext=QPushButton()
+		btnNext.setIcon(icn)
+		btnNext.setIconSize(QSize(24,24))
 		font=btnPrev.font().pointSize()
-		btnPrev.setFixedWidth(font+2)
-		btnPrev.clicked.connect(lambda x:self.scrollContainer("left"))
-		btnNext.setFixedWidth(font+2)
-		btnNext.clicked.connect(lambda x:self.scrollContainer("right"))
+		btnPrev.clicked.connect(lambda x:self._scrollContainer("left"))
+		btnNext.clicked.connect(lambda x:self._scrollContainer("right"))
 		mainLay.addWidget(btnPrev,0,0,1,1,Qt.AlignRight)
 		mainLay.addWidget(self.widget,0,1,1,1)
 		mainLay.addWidget(btnNext,0,2,1,1,Qt.AlignLeft)
@@ -474,7 +469,7 @@ class QScreenShotContainer(QWidget):
 		dlg.exec()
 	#def carrousel
 	
-	def scrollContainer(self,*args):
+	def _scrollContainer(self,*args):
 		if len(args)==0:
 			return
 		visible = self.widget.itemAt(20, 20)
@@ -490,11 +485,11 @@ class QScreenShotContainer(QWidget):
 	def addImage(self,img):
 		scr=loadScreenShot(img,self.cacheDir)
 		self.th.append(scr)
-		scr.imageLoaded.connect(self.load)
+		scr.imageLoaded.connect(self._load)
 		scr.start()
 	#def addImage
 
-	def load(self,*args):
+	def _load(self,*args):
 		img=args[0]
 		if isinstance(img,QtGui.QPixmap):
 			if img.isNull()==False:
@@ -509,15 +504,15 @@ class QScreenShotContainer(QWidget):
 				btnImg.show()
 	#def load
 
-	def _cleanThreads(self):
-		for th in self.th:
-			th.quit()
-			th.wait()
-	#def _cleanThreads
-
 	def clear(self):
 		for i in reversed(range(self.lay.count())): 
 			self.lay.itemAt(i).widget().setParent(None)
 		self.btnImg={}
 	#def clear
+
+	def _cleanThreads(self):
+		for th in self.th:
+			th.quit()
+			th.wait()
+	#def _cleanThreads
 #class QScreenShotContainer
