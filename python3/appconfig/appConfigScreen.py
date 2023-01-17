@@ -146,6 +146,7 @@ class appConfigScreen(QWidget):
 		self.stacks={0:{'name':_("Options"),'icon':'icon'}}
 		self.appConfig=appConfig()
 		self.hideLeftPanel=False
+		self.setAttribute(Qt.WA_DeleteOnClose, True)
 		self.config={}
 	#def init
 	
