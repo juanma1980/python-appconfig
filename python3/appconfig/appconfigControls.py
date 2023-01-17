@@ -386,6 +386,7 @@ class QScreenShotContainer(QWidget):
 		self.cacheDir=None
 		self.th=[]
 		self.btnImg={}
+		self.destroyed.connect(lambda: self._cleanThreads())
 	#def __init__
 
 	def setCacheDir(self,cacheDir):
@@ -507,6 +508,12 @@ class QScreenShotContainer(QWidget):
 				btnImg.installEventFilter(self)
 				btnImg.show()
 	#def load
+
+	def _cleanThreads(self):
+		for th in self.th:
+			th.quit()
+			th.wait()
+	#def _cleanThreads
 
 	def clear(self):
 		for i in reversed(range(self.lay.count())): 
