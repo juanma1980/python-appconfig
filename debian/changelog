@@ -1,3 +1,9 @@
+python3-appconfig (0.45) focal; urgency=medium
+
+  * Translate item names to item idx for improved detection of changes
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 14 Feb 2023 10:26:00 +0100
+
 python3-appconfig (0.44.4) focal; urgency=medium
 
   *	Add setWindowTitle method 
