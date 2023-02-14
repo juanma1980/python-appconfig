@@ -78,14 +78,22 @@ class leftPanel(QListWidget):
 	#def keyPressEvent
 
 	def _navigate(self,event,item,newItem,row,newRow):
-		if isinstance(self.stacks.get(self.lastIndex+1,{}).get('module',None),appConfigStack)==True:
-			if self.stacks[self.lastIndex+1]['module'].getChanges():
+		if isinstance(item,QListWidgetItem):
+			for idx,data in self.stacks.items():
+				if item.text().lower()==data.get("name","").lower():
+					self.lastIndex=idx
+					self.updateIndex(idx)
+		else:
+			self.lastIndex+=1
+
+		if isinstance(self.stacks.get(self.lastIndex,{}).get('module',None),appConfigStack)==True:
+			if self.stacks[self.lastIndex]['module'].getChanges():
 				event.ignore()
 				self.setCurrentItem(item)
 				self.pendingChange.emit(item,newItem)
 				return False
-			self.stacks[self.lastIndex+1]['module'].initScreen()
-			if self.stacks[self.lastIndex+1]['module'].refresh:
+			self.stacks[self.lastIndex]['module'].initScreen()
+			if self.stacks[self.lastIndex]['module'].refresh:
 				self._debug("Refresh config")
 				self.refreshConfig.emit()
 		event.accept()
@@ -98,10 +106,19 @@ class leftPanel(QListWidget):
 	#def _acceptChange
 
 	def updateIndex(self,index):
+		self._debug("Updating index: {}. Was {}".format(index,self.lastIndex))
 		if isinstance(index,int)==False:
 			index=0
 		self.lastIndex=index
 	#def updateIndex
+
+	def updateIndexFromName(self,name):
+		self._debug("Searching idx of {}".format(name))
+		for idx,data in self.stacks.items():
+			if data.get("name","").lower()==str(name).lower():
+				self._debug("List Located {} at idx {}".format(name,idx))
+				self.updateIndex(idx)
+	#def updateIndexFromName
 
 	def getIndex(self):
 		return(self.currentRow())
@@ -424,7 +441,7 @@ class appConfigScreen(QWidget):
 		self.lst_options.pendingChange.connect(self._askForChanges)
 		self.lst_options.refreshConfig.connect(self._refreshConfig)
 		self.lst_options.setCurrentIndex(QModelIndex())
-		self.last_index=None
+		self.last_index=0
 		self.lst_options.updateIndex(self.last_index)
 		panel.setLayout(box)
 
@@ -512,8 +529,8 @@ class appConfigScreen(QWidget):
 
 		if isinstance(idx,int)==False:
 			idx=self.lst_options.currentRow()+1
-		self.last_index=idx-1
-		self.lst_options.updateIndex(self.last_index)
+		#self.last_index=idx-1
+		#self.lst_options.updateIndex(self.last_index)
 		try:
 			self.stacks[idx]['module'].setConfig(self.config)
 		except:
@@ -532,7 +549,6 @@ class appConfigScreen(QWidget):
 		if module!=None:
 			if module.getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
-					print("IGNORE")
 					event.ignore()
 	#def closeEvent(self,event):
 
@@ -550,6 +566,14 @@ class appConfigScreen(QWidget):
 	#def _show_message
 
 	def _askForChanges(self,*args):
+		item=self.lst_options.currentItem()
+		#Update last index
+		if isinstance(item,QListWidgetItem):
+			for idx,data in self.stacks.items():
+				if item.text().lower()==data.get("name","").lower():
+					self.last_index=idx
+					self.lst_options.updateIndexFromName(data.get("name"))
+					break
 		if isinstance(self.stacks.get(self.last_index,{}).get('module',None),appConfigStack)==True:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
@@ -563,7 +587,7 @@ class appConfigScreen(QWidget):
 		else:
 			self._debug(self.stacks.get(self.last_index,{}).get('module'))
 			self.last_index=0
-			self.lst_options.updateIndex(self.last_index)
+			#self.lst_options.updateIndex(self.last_index)
 		self.lst_options.setCurrentItem(args[1])
 		self.stk_widget.setCurrentIndex(self.lst_options.getIndexForStack())
 	#def _askForChanges
