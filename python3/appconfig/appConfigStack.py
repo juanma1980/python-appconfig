@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import traceback
-from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget,QSlider
+from PySide2.QtWidgets import QDialog,QWidget,QHBoxLayout,QPushButton,QGridLayout,QLabel,QPushButton,QLineEdit,QRadioButton,QCheckBox,QComboBox,QTableWidget,QSlider,QScrollArea
 from PySide2 import QtGui
 #from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt,QUrl,QObject, Slot, Signal, Property,QThread,QSize
@@ -200,6 +200,14 @@ class appConfigStack(QWidget):
 							for y in range (0,widget.columnCount()):
 								tableWidget=widget.cellWidget(x,y)
 								recursive_explore_widgets(tableWidget)
+					elif isinstance(widget,QScrollArea):
+						wdg=widget.widget()
+						if wdg:
+							recursive_explore_widgets(wdg)
+						else:
+							lay=widget.layout()
+							if lay:
+								recursive_explore_widgets(lay)
 					elif widget.layout():
 						recursive_add_events(widget.layout())
 
