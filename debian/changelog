@@ -1,3 +1,9 @@
+python3-appconfig (0.46) focal; urgency=medium
+
+  * Add support for events inside QScrollArea
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 22 Feb 2023 13:07:06 +0100
+
 python3-appconfig (0.45) focal; urgency=medium
 
   * Translate item names to item idx for improved detection of changes
