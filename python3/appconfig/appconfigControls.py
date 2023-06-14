@@ -466,7 +466,7 @@ class QScreenShotContainer(QWidget):
 		btnNext=QPushButton()
 		btnNext.setIcon(icn)
 		btnNext.setIconSize(QSize(24,24))
-		font=btnPrev.font().pointSize()
+		fontSize=btnPrev.font().pointSize()
 		btnClose.clicked.connect(dlg.reject)
 		btnPrev.clicked.connect(lambda x:self._scrollContainer("left"))
 		btnNext.clicked.connect(lambda x:self._scrollContainer("right"))
@@ -475,7 +475,7 @@ class QScreenShotContainer(QWidget):
 		mainLay.addWidget(btnClose,0,2,1,1,Qt.AlignTop|Qt.AlignRight)
 		mainLay.addWidget(btnNext,0,2,1,1,Qt.AlignLeft)
 		dlg.setLayout(mainLay)
-		dlg.setFixedSize(xSize+36+(font*2),ySize+36)
+		dlg.setFixedSize(xSize+(0.1*xSize),ySize+(0.1*ySize))
 		dlg.exec()
 	#def carrousel
 	
