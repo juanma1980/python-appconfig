@@ -1,3 +1,10 @@
+python3-appconfig (0.47) focal; urgency=medium
+
+  * Improved carrousel
+  * If there's no banner remove assigned space (fit window to contents)
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 14 Jun 2023 11:39:50 +0200
+
 python3-appconfig (0.46) focal; urgency=medium
 
   * Add support for events inside QScrollArea
