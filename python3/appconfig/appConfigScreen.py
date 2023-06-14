@@ -208,8 +208,8 @@ class appConfigScreen(QWidget):
 				else:
 					self._debug("%s found at theme"%icon)
 					self._debug("Name: %s found at theme"%icn.name())
-			elif os.path.isfile("%s/%s"%(self.rsrc,icon)):
-				icon="%s/%s"%(self.rsrc,icon)
+			elif os.path.isfile(os.path.join(self.rsrc,icon)):
+				icon=os.path.join(self.rsrc,icon)
 				self._debug("%s found at rsrc folder"%icon)
 				icn=QtGui.QIcon(icon)
 			else:
@@ -223,8 +223,8 @@ class appConfigScreen(QWidget):
 
 	def setBanner(self,banner):
 		if not os.path.isfile(banner):
-			if os.path.isfile("%s/%s"%(self.rsrc,banner)):
-				banner="%s/%s"%(self.rsrc,banner)
+			if os.path.isfile(os.path.join(self.rsrc,banner)):
+				banner=os.path.join(self.rsrc,banner)
 			else:
 				banner=""
 				self._debug("Banner not found at %s"%self.rsrc)
@@ -233,8 +233,8 @@ class appConfigScreen(QWidget):
 	
 	def setBackgroundImage(self,background):
 		if not os.path.isfile(background):
-			if os.path.isfile("%s/%s"%(self.rsrc,background)):
-				background="%s/%s"%(self.rsrc,background)
+			if os.path.isfile(os.path.join(self.rsrc,background)):
+				banner=os.path.join(self.rsrc,background)
 			else:
 				background=""
 				self._debug("Background not found at %s"%self.rsrc)
@@ -248,11 +248,11 @@ class appConfigScreen(QWidget):
 	
 	def _searchWiki(self):
 		url=""
-		baseUrl="https://wiki.edu.gva.es/lliurex/tiki-index.php?page="
+		baseUrl="https://wiki.edu.gva.es/lliurex/tiki-index.php?page"
 		if self.wikiPage.startswith("http"):
 			url=self.wikiPage
 		else:
-			url="%s%s"%(baseUrl,self.wikiPage)
+			url="{0}={1}".format(baseUrl,self.wikiPage)
 		#try:
 		#	req=Request(url)
 		#	content=urlopen(req).read()
@@ -365,9 +365,9 @@ class appConfigScreen(QWidget):
 		if os.path.isfile(self.banner):
 			img=QtGui.QPixmap(self.banner)
 			img_banner.setPixmap(img)
-		img_banner.setAlignment(Qt.AlignCenter)
-		img_banner.setObjectName("banner")
-		box.addWidget(img_banner,0,0,1,2)
+			img_banner.setAlignment(Qt.AlignCenter)
+			img_banner.setObjectName("banner")
+			box.addWidget(img_banner,0,0,1,2)
 		self.lst_options=leftPanel(self.stacks)#QListWidget()
 		self.stk_widget=QStackedWidget()
 		self.stk_widget.setMinimumHeight(1)
