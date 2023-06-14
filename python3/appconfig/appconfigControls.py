@@ -487,8 +487,12 @@ class QScreenShotContainer(QWidget):
 		if visible is not None:
 			column=visible.column()
 		if args[0]=="left":
+			if column<=0:
+				column=self.widget.columnCount()
 			self.widget.scrollToItem(self.widget.item(visible.row(), column-1))
 		elif args[0]=="right":
+			if column>=self.widget.columnCount()-1:
+				column=-1
 			self.widget.scrollToItem(self.widget.item(visible.row(), column+1))
 	#def scrollContainer(self,*args):
 	
