@@ -1,6 +1,6 @@
 import os
 import tempfile
-from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout,QComboBox,QTableWidgetItem
+from PySide2.QtWidgets import QWidget, QPushButton,QScrollArea,QVBoxLayout,QLabel,QHBoxLayout,QDialog,QScroller,QScrollerProperties,QTableWidget,QLineEdit,QListWidget,QHeaderView,QAbstractItemView,QGridLayout,QComboBox,QTableWidgetItem,QDesktopWidget
 from PySide2 import QtGui
 from PySide2.QtCore import Qt,Signal,QEvent,QThread,QSize,QPointF,QRectF,QRect
 import gettext
@@ -398,9 +398,13 @@ class QScreenShotContainer(QWidget):
 		return(False)
 	#def eventFilter
 
-	def _carrousel(self,btn="",w=640,h=480):
+	def _carrousel(self,btn="",w=0,h=0):
 		dlg=QDialog()	
 		dlg.setModal(True)
+		if (w==0) or (h==0):
+			sizeObject = QDesktopWidget().screenGeometry(-1)
+			w=int(sizeObject.width()/2)
+			h=int(sizeObject.height()/2)
 		xSize=w
 		ySize=h
 		#widget=QWidget()
@@ -450,6 +454,10 @@ class QScreenShotContainer(QWidget):
 			self.widget.setItem(0,self.widget.columnCount()-1,QTableWidgetItem())
 			self.widget.setColumnWidth(self.widget.columnCount()-1,xSize)
 			self.widget.setRowHeight(self.widget.rowCount()-1,ySize)
+		icn=QtGui.QIcon.fromTheme("window-close")
+		btnClose=QPushButton()
+		btnClose.setIcon(icn)
+		btnClose.setIconSize(QSize(24,24))
 		icn=QtGui.QIcon.fromTheme("go-previous")
 		btnPrev=QPushButton()
 		btnPrev.setIcon(icn)
@@ -459,13 +467,15 @@ class QScreenShotContainer(QWidget):
 		btnNext.setIcon(icn)
 		btnNext.setIconSize(QSize(24,24))
 		font=btnPrev.font().pointSize()
+		btnClose.clicked.connect(dlg.reject)
 		btnPrev.clicked.connect(lambda x:self._scrollContainer("left"))
 		btnNext.clicked.connect(lambda x:self._scrollContainer("right"))
 		mainLay.addWidget(btnPrev,0,0,1,1,Qt.AlignRight)
 		mainLay.addWidget(self.widget,0,1,1,1)
+		mainLay.addWidget(btnClose,0,2,1,1,Qt.AlignTop|Qt.AlignRight)
 		mainLay.addWidget(btnNext,0,2,1,1,Qt.AlignLeft)
 		dlg.setLayout(mainLay)
-		dlg.setFixedSize(xSize+20+(font*2),ySize+30)
+		dlg.setFixedSize(xSize+36+(font*2),ySize+36)
 		dlg.exec()
 	#def carrousel
 	
