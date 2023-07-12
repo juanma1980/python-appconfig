@@ -33,7 +33,7 @@ class leftPanel(QListWidget):
 
 	def __init__(self,stacks):
 		super().__init__()
-		self.dbg=True
+		self.dbg=False
 		self.stacks=stacks
 		self.lastIndex=0
 		self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -264,8 +264,10 @@ class appConfigScreen(QWidget):
 
 	def _get_default_config(self):
 		data={}
-		data=self.appConfig.getConfig('system')
-		self.level=data['system'].get('config','user')
+		self._debug("Forcing system for level {}".format(self.level))
+		#data=self.appConfig.getConfig('system')
+		data=self.appConfig.getConfig()
+		self.level=data.get('system',{}).get('config','user')
 		if self.level!='system':
 			data=self.appConfig.getConfig(self.level)
 			level=data[self.level].get('config','n4d')
