@@ -9,7 +9,7 @@ from appconfig.appConfigN4d import appConfigN4d
 
 class appConfig():
 	def __init__(self):
-		self.dbg=True
+		self.dbg=False
 		self.confFile="appconfig.conf"
 		self.home=os.environ.get('HOME',"/usr/share/{}".format(self.confFile.split('.')[0]))
 		self.localConf=self.confFile
@@ -68,6 +68,7 @@ class appConfig():
 	#def set_level
 
 	def getLevel(self):
+		self._debug("getLevel")
 		config=self.getConfig('system')
 		level=config['system'].get('config','user')
 		self.set_level(level)
@@ -85,6 +86,12 @@ class appConfig():
 #				self.confFile=self.n4dConf
 				self._read_config_from_n4d(exclude)
 				self.config['system']['config']='n4d'
+				level="n4d"
+			#check and force level value if None
+			if not isinstance(level,str):
+				self._debug("Forcing value for level")
+				level=self.config.get('system',{}).get('config','user')
+				self._debug("Level: {}".format(level))
 
 		if self.config[level]=={}:
 			self.config[level]['config']=level
@@ -184,7 +191,7 @@ class appConfig():
 				print("Can't create dir {}: {}".format(confDir,e))
 				retval=False
 		if retval:
-			confFile=(os.path.join(confDir,self.confFile))
+			confFile=("{}/{}".format(confDir,self.confFile))
 			self.config[level]=conf[level]
 #			self._debug("New: %s"%self.config[level])
 			try:
