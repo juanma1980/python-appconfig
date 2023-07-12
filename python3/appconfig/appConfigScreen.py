@@ -42,7 +42,7 @@ class leftPanel(QListWidget):
 
 	def _debug(self,msg):
 		if self.dbg:
-			print("%s"%msg)
+			print("{}".format(msg))
 	#def _debug
 
 	def mousePressEvent(self, event):
@@ -149,7 +149,7 @@ class appConfigScreen(QWidget):
 			exePath=os.path.realpath(sys.argv[0])
 		baseDir=os.path.abspath(os.path.dirname(exePath))
 		os.chdir(baseDir)
-		self.rsrc="%s/rsrc"%baseDir
+		self.rsrc=os.path.join(baseDir,"rsrc")
 		self.parms=parms
 		self.modules=[]
 		self.appName=appName
@@ -157,8 +157,8 @@ class appConfigScreen(QWidget):
 		gettext.textdomain('{}'.format(self.textDomain))
 		_ = gettext.gettext
 		self.wikiPage=appName
-		self.background="%s/background.png"%self.rsrc
-		self.banner="%s/%s"%(self.rsrc,"banner.png")
+		self.background=os.path.join(self.rsrc,"background.png")
+		self.banner=os.path.join(self.rsrc,"banner.png")
 		self.last_index=0
 		self.stacks={0:{'name':_("Options"),'icon':'icon'}}
 		self.appConfig=appConfig()
@@ -169,7 +169,7 @@ class appConfigScreen(QWidget):
 	
 	def _debug(self,msg):
 		if self.dbg:
-			print("%s"%msg)
+			print("ConfigScreen: {}".format(msg))
 	#def _debug
 
 	def setWiki(self,url):
@@ -190,34 +190,34 @@ class appConfigScreen(QWidget):
 		if os.path.isdir(rsrc):
 			self.rsrc=rsrc
 		else:
-			self._debug("%s doesn't exists")
-		self._debug("Resources dir: %s"%self.rsrc)
+			self._debug("{} doesn't exists".format(rsrc))
+		self._debug("Resources dir: {}".format(self.rsrc))
 	#def setRsrcPath
 
 	def setIcon(self,icon):
-		self._debug("Icon: %s"%icon)
+		self._debug("Icon: {}".format(icon))
 		icn=icon
 		if not os.path.isfile(icon):
 			sw_ko=False
-			self._debug("%s not found"%icon)
+			self._debug("{} not found".format(icon))
 			if QtGui.QIcon.fromTheme(icon):
 				icn=QtGui.QIcon.fromTheme(icon)
 				if icn.name()=="":
-					self._debug("%s not present at theme"%icon)
+					self._debug("{} not present at theme".format(icon))
 					sw_ko=True
 				else:
-					self._debug("%s found at theme"%icon)
-					self._debug("Name: %s found at theme"%icn.name())
+					self._debug("{} found at theme".format(icon))
+					self._debug("Name: {} found at theme".format(icn.name()))
 			elif os.path.isfile(os.path.join(self.rsrc,icon)):
 				icon=os.path.join(self.rsrc,icon)
-				self._debug("%s found at rsrc folder"%icon)
+				self._debug("{} found at rsrc folder".format(icon))
 				icn=QtGui.QIcon(icon)
 			else:
 				icn=QtGui.QIcon.fromTheme("application-menu")
-				self._debug("Icon not found at %s"%self.rsrc)
+				self._debug("Icon not found at {}".format(self.rsrc))
 			if sw_ko:
 				icn=QtGui.QIcon.fromTheme("application-menu")
-				self._debug("Icon %s not found at theme"%icon)
+				self._debug("Icon {} not found at theme".format(icon))
 		self.setWindowIcon(icn)
 	#def setIcon
 
@@ -227,7 +227,7 @@ class appConfigScreen(QWidget):
 				banner=os.path.join(self.rsrc,banner)
 			else:
 				banner=""
-				self._debug("Banner not found at %s"%self.rsrc)
+				self._debug("Banner not found at {}".format(self.rsrc))
 		self.banner=banner
 	#def setBanner
 	
@@ -237,7 +237,7 @@ class appConfigScreen(QWidget):
 				banner=os.path.join(self.rsrc,background)
 			else:
 				background=""
-				self._debug("Background not found at %s"%self.rsrc)
+				self._debug("Background not found at {}".format(self.rsrc))
 		self.background=background
 	#def setBanner
 
@@ -264,8 +264,10 @@ class appConfigScreen(QWidget):
 
 	def _get_default_config(self):
 		data={}
-		data=self.appConfig.getConfig('system')
-		self.level=data['system'].get('config','user')
+		self._debug("Forcing system for level {}".format(self.level))
+		#data=self.appConfig.getConfig('system')
+		data=self.appConfig.getConfig()
+		self.level=data.get('system',{}).get('config','user')
 		if self.level!='system':
 			data=self.appConfig.getConfig(self.level)
 			level=data[self.level].get('config','n4d')
@@ -274,7 +276,7 @@ class appConfigScreen(QWidget):
 				data=self.appConfig.getConfig(level)
 				data[self.level]['config']=self.level
 				
-		self._debug("Read level from config: %s"%self.level)
+		self._debug("Read level from config: {}".format(self.level))
 		return (data)
 	#def _get_default_config(self,level):
 	
@@ -286,7 +288,7 @@ class appConfigScreen(QWidget):
 			data={}
 			data=self.appConfig.getConfig(level,exclude)
 		self.config=data.copy()
-		self._debug("Read level from config: %s"%level)
+		self._debug("Read level from config: {}".format(level))
 		return (data)
 	#def getConfig(self,level):
 
@@ -298,21 +300,21 @@ class appConfigScreen(QWidget):
 			for mod in os.listdir("stacks"):
 				if mod.endswith(".py"):
 					mod_name=mod.split(".")[0]
-					mod_import="from stacks.%s import *"%mod_name
+					mod_import="from stacks.{0} import {0}".format(mod_name)
 					try:
 						exec(mod_import)
 						self.modules.append(mod_name)
-						self._debug("Load stack %s"%mod_name)
+						self._debug("Load stack {}".format(mod_name))
 					except Exception as e:
-#						self._debug("Unable to load %s: %s"%(mod_name,e))
-						print("Unable to load %s: %s"%(mod_name,e))
+						self._debug("Unable to load {0} (perhaps aux lib): {1}".format(mod_name,e))
+#						print("Unable to load %s: %s"%(mod_name,e))
 		idx=1
 		for mod_name in self.modules:
 			try:
-				mod=eval("%s(self)"%mod_name)
+				mod=eval("{}(self)".format(mod_name))
 			except Exception as e:
 #				self._debug("Import failed for %s: %s"%(mod_name,e))
-				print("Import failed for %s: %s"%(mod_name,e))
+				print("Import failed for {0}: {1}".format(mod_name,e))
 				continue
 			if type(mod.index)==type(0):
 				if mod.index>0:
@@ -324,23 +326,23 @@ class appConfigScreen(QWidget):
 				pass
 			while idx in self.stacks.keys():
 				idx+=1
-				self._debug("New idx for %s: %s"%(mod_name,idx))
+				self._debug("New idx for {}: {}".format(mod_name,idx))
 			if 'parm' in mod.__dict__.keys():
 				try:
 					if mod.parm:
-						self._debug("Setting parms for %s"%mod_name)
-						self._debug("self.parms['%s']"%mod.parm)
-						mod.apply_parms(eval("self.parms['%s']"%mod.parm))
+						self._debug("Setting parms for {}".format(mod_name))
+						self._debug("self.parms['{}']".format(mod.parm))
+						mod.apply_parms(eval("self.parms['{}']".format(mod.parm)))
 				except Exception as e:
-					self._debug("Failed to pass parm %s to %s: %s"%(mod.parm,mod_name,e))
+					self._debug("Failed to pass parm {0} to {1}: {2}".format(mod.parm,mod_name,e))
 			try:
 				mod.setTextDomain(self.textDomain)
 			except Exception as e:
-				print("Can't set textdomain for %s: %s"%(mod_name,e))
+				print("Can't set textdomain for {}: {}".format(mod_name,e))
 			try:
 				mod.setAppConfig(self.appConfig)
 			except Exception as e:
-				print("Can't set appConfig for %s: %s"%(mod_name,e))
+				print("Can't set appConfig for {}: {}".format(mod_name,e))
 			try:
 				if mod.visible==False:
 					visible=False
@@ -469,7 +471,7 @@ class appConfigScreen(QWidget):
 				stack._load_screen()
 
 				if self.stacks[idx].get('visible',True)==True:
-					text.append("&nbsp;*&nbsp;<a href=\"appconf://%s\"><span style=\"font-weight:bold;text-decoration:none\">%s</span></a>"%(linkIdx,stack.menu_description))
+					text.append("&nbsp;*&nbsp;<a href=\"appconf://{0}\"><span style=\"font-weight:bold;text-decoration:none\">{1}</span></a>".format(linkIdx,stack.menu_description))
 				try:
 					self.stk_widget.insertWidget(idx,stack)
 				except:
@@ -490,7 +492,7 @@ class appConfigScreen(QWidget):
 		url=self._searchWiki()
 		if url:
 			desc=_("Wiki help")
-			lbl_wiki=QLabel("<a href=\"%s\"><span style=\"text-align: right;\">%s</span></a>"%(url,desc))
+			lbl_wiki=QLabel("<a href=\"{0}\"><span style=\"text-align: right;\">{1}</span></a>".format(url,desc))
 			lbl_wiki.setOpenExternalLinks(True)
 			s_box.addWidget(lbl_wiki,0,Qt.AlignRight)
 		stack.setLayout(s_box)
