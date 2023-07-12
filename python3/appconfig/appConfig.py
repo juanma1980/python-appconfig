@@ -9,7 +9,7 @@ from appconfig.appConfigN4d import appConfigN4d
 
 class appConfig():
 	def __init__(self):
-		self.dbg=False
+		self.dbg=True
 		self.confFile="appconfig.conf"
 		self.home=os.environ.get('HOME',"/usr/share/{}".format(self.confFile.split('.')[0]))
 		self.localConf=self.confFile
@@ -96,12 +96,12 @@ class appConfig():
 	def _read_config_from_system(self,level=None,exclude=[]):
 		def _read_file(confFile,level):
 			data={}
-			self._debug("Reading %s -> %s"%(confFile,level))
+			self._debug("Reading {} -> {}".format(confFile,level))
 			if os.path.isfile(confFile):
 				try:
 					data=json.loads(open(confFile).read())
 				except Exception as e:
-					self._debug("Error opening %s: %s"%(confFile,e))
+					self._debug("Error opening {}: {}".format(confFile,e))
 					
 			if data:
 				if not 'config' in data.keys():
@@ -109,12 +109,15 @@ class appConfig():
 				for excludeKey in exclude:
 					if excludeKey in list(data.keys()):
 						del data[excludeKey]
-				self._debug("Updating %s -> %s"%(confFile,level))
+				self._debug("Updating {} -> {}".format(confFile,level))
+				self._debug("Updating {}".format(data))
 				self.config.update({level:data})
 		#def _read_file
 		fileRead=False
 		confFiles=self.get_configFile(level)
+		self._debug("Reading {} -> {}".format(confFiles,level))
 		for confLevel,confFile in confFiles.items():
+			self._debug("Checking {}".format(confFile))
 			if os.path.isfile(confFile):
 				fileRead=True
 				_read_file(confFile,confLevel)
@@ -123,7 +126,7 @@ class appConfig():
 	#def read_config_from_system
 
 	def write_config(self,data,level=None,key=None,pk=None,create=True):
-		self._debug("Writing key %s to %s Polkit:%s"%(key,level,pk))
+		self._debug("Writing key {0} to {1} Polkit:{2}".format(key,level,pk))
 		retval=True
 		if level==None:
 			level=self.getLevel()
@@ -137,7 +140,7 @@ class appConfig():
 				data=json.dumps(data)
 				subprocess.check_call(["pkexec","/usr/share/appconfig/auth/appconfig-polkit-helper.py",data,level,key,self.confFile,self.baseDirs[level]])
 			except Exception as e:
-				self._debug("Invoking pk failed: %s"%e)
+				self._debug("Invoking pk failed: {}".format(e))
 				retval=False
 		else:
 			oldConf=self.getConfig(level)
@@ -178,10 +181,10 @@ class appConfig():
 			try:
 				os.makedirs(confDir)
 			except Exception as e:
-				print("Can't create dir %s: %s"%(confDir,e))
+				print("Can't create dir {}: {}".format(confDir,e))
 				retval=False
 		if retval:
-			confFile=("%s/%s"%(confDir,self.confFile))
+			confFile=(os.path.join(confDir,self.confFile))
 			self.config[level]=conf[level]
 #			self._debug("New: %s"%self.config[level])
 			try:
@@ -189,19 +192,19 @@ class appConfig():
 					json.dump(self.config[level],f,indent=4,sort_keys=True)
 			except Exception as e:
 				retval=False
-				print("Error writing system config: %s"%e)
+				print("Error writing system config: {}".format(e))
 		return (retval)
 	#def _write_config_to_system
 
 	def _write_config_to_n4d(self,conf):
-		ret=self.n4d.writeConfig(n4dparms="%s,%s"%(self.confFile,conf['n4d']))
-		self._debug("N4d returns: %s"%ret)
+		ret=self.n4d.writeConfig(n4dparms="{},{}".format(self.confFile,conf['n4d']))
+		self._debug("N4d returns: {}".format(ret))
 		return(ret)
 	#def _write_config_to_n4d
 	
 	def _read_config_from_n4d(self,exclude=[]):
 		tmpStr="{}"
-		ret=self.n4d.readConfig(n4dparms="%s"%self.confFile,exclude=exclude)
+		ret=self.n4d.readConfig(n4dparms="{}".format(self.confFile),exclude=exclude)
 		self.config.update({'n4d':ret})
 		return(ret)
 	#def _read_config_from_n4d
