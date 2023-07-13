@@ -1,4 +1,4 @@
-python3-appconfig (0.48) focal; urgency=medium
+python3-appconfig (0.48.1) focal; urgency=medium
 
   * Improved carrousel
   * If there's no banner remove assigned space (fit window to contents)
