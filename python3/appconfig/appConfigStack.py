@@ -275,11 +275,9 @@ class appConfigStack(QWidget):
 					wdg=widget.widget()
 					if wdg:
 						recursive_explore_widgets(wdg)
-						print(1)
 					else:
 						lay=widget.layout()
 						if lay:
-							print(2)
 							recursive_explore_widgets(lay)
 				elif widget.layout():
 					self.recursive_add_events(widget.layout(),connect)
