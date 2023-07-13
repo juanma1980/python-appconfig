@@ -2,6 +2,7 @@
 import sys
 import os
 from urllib.request import Request,urlopen,urlretrieve
+import traceback
 from pathlib import Path
 from PySide2.QtWidgets import QApplication, QLabel, QWidget, QPushButton,QVBoxLayout,\
 				QDialog,QGridLayout,QHBoxLayout,QFormLayout,QLineEdit,QComboBox,\
@@ -306,7 +307,9 @@ class appConfigScreen(QWidget):
 						self.modules.append(mod_name)
 						self._debug("Load stack {}".format(mod_name))
 					except Exception as e:
-						self._debug("Unable to load {0} (perhaps aux lib): {1}".format(mod_name,e))
+						self._debug("Unable to load {0} (perhaps aux lib): {1}".format(mod_name,str(e).split("(")[0]))
+						if isinstance(e,SyntaxError):
+							traceback.print_exc()
 #						print("Unable to load %s: %s"%(mod_name,e))
 		idx=1
 		for mod_name in self.modules:
