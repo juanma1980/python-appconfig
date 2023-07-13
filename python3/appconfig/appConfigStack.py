@@ -40,7 +40,8 @@ class appConfigStack(QWidget):
 		self.btn_ok=QPushButton(_("Apply"))
 		self.btn_cancel=QPushButton(_("Undo"))
 		self.__init_stack__()
-		self.writeConfig=self.writeDecorator(self.writeConfig)
+		self.writeConfig=self.decorator_writeConfig(self.writeConfig)
+		self.updateScreen=self.decorator_updateScreen(self.updateScreen)
 	#def __init__
 
 	def __init_stack__(self):
@@ -125,8 +126,24 @@ class appConfigStack(QWidget):
 	
 	def _reset_screen(self):
 		self.updateScreen()
-		self.setChanged(False)
+		#self.setChanged(False)
 	#def _reset_screen
+
+	def decorator_updateScreen(self,func):
+		def states(*args):
+			self.dbg=True
+			self._debug("Updating screen: Disconnecting signals")
+			layout=self.layout()
+			if layout:
+				print("DBLOCK")
+				self.recursive_add_events(layout,False)
+			func(*args)
+			if layout:
+				print("DUNBLOCK")
+				self.recursive_add_events(layout)
+			self._debug("Updated screen: Connecting signals")
+		return (states)
+	#def decorator_updateScreen
 
 	def updateScreen(self):
 		print("updateScreen method not implemented in this stack")
@@ -154,7 +171,7 @@ class appConfigStack(QWidget):
 		return retval
 	#def saveChanges
 	
-	def writeDecorator(self,func):
+	def decorator_writeConfig(self,func):
 		def states():
 			cursor=QtGui.QCursor(Qt.WaitCursor)
 			self.setCursor(cursor)
@@ -166,64 +183,127 @@ class appConfigStack(QWidget):
 			cursor=QtGui.QCursor(Qt.PointingHandCursor)
 			self.setCursor(cursor)
 		return states
-	#def writeDecorator
+	#def decorator_writeConfig
 
 	def writeConfig(self):
 		print("writeConfig method not implemented in this stack")
 		raise NotImplementedError()
 	#def writeConfig
 
-	def showEvent(self,event):
-		def recursive_add_events(layout):
-			def recursive_explore_widgets(widget):
-					if widget==None:
-						return
-					if isinstance(widget,QCheckBox):
+
+	def recursive_add_events(self,layout,connect=True):
+			
+		def recursive_explore_widgets(widget):
+				if widget==None:
+					return
+				if isinstance(widget,QCheckBox):
+					if connect:
 						widget.stateChanged.connect(self.setChanged)
-					if isinstance(widget,QRadioButton):
+					else:
+						try:
+							widget.stateChanged.disconnect(self.setChanged)
+						except:
+							pass
+				if isinstance(widget,QRadioButton):
+					if connect:
 						widget.toggled.connect(self.setChanged)
-					elif isinstance(widget,QComboBox):
+					else:
+						try:
+							widget.toggled.disconnect(self.setChanged)
+						except:
+							pass
+				elif isinstance(widget,QComboBox):
+					if connect:
 						widget.currentTextChanged.connect(self.setChanged)
-					elif isinstance(widget,QLineEdit):
+					else:
+						try:
+							widget.currentTextChanged.disconnect(self.setChanged)
+						except:
+							pass
+				elif isinstance(widget,QLineEdit):
+					if connect:
 						widget.textChanged.connect(self.setChanged)
-					elif isinstance(widget,QSlider):
+					else:
+						try:
+							widget.textChanged.disconnect(self.setChanged)
+						except:
+							pass
+				elif isinstance(widget,QSlider):
+					if connect:
 						widget.valueChanged.connect(self.setChanged)
-					elif isinstance(widget,QPushButton):
-						if widget.menu():
+					else:
+						try:
+							widget.valueChanged.disconnect(self.setChanged)
+						except:
+							pass
+				elif isinstance(widget,QTableWidget):
+					if connect:
+						widget.cellChanged.connect(self.setChanged)
+					else:
+						try:
+							widget.cellChanged.disconnect(self.setChanged)
+						except:
+							pass
+				elif isinstance(widget,QPushButton):
+					if widget.menu():
+						if connect:
 							widget.menu().triggered.connect(self.setChanged)
 						else:
+							try:
+								widget.menu().triggered.disconnect(self.setChanged)
+							except:
+								pass
+					else:
+						if connect:
 							widget.clicked.connect(self.setChanged)
-					elif 'dropButton' in str(widget):
-							widget.drop.connect(self.setChanged)
-					elif isinstance(widget,QTableWidget):
-						for x in range (0,widget.rowCount()):
-							for y in range (0,widget.columnCount()):
-								tableWidget=widget.cellWidget(x,y)
-								recursive_explore_widgets(tableWidget)
-					elif isinstance(widget,QScrollArea):
-						wdg=widget.widget()
-						if wdg:
-							recursive_explore_widgets(wdg)
 						else:
-							lay=widget.layout()
-							if lay:
-								recursive_explore_widgets(lay)
-					elif widget.layout():
-						recursive_add_events(widget.layout())
+							try:
+								widget.clicked.disconnect(self.setChanged)
+							except:
+								pass
+				elif 'dropButton' in str(widget):
+					if connect:
+						widget.drop.connect(self.setChanged)
+					else:
+						try:
+							widget.drop.disconnect(self.setChanged)
+						except:
+							pass
+				elif isinstance(widget,QTableWidget):
+					for x in range (0,widget.rowCount()):
+						for y in range (0,widget.columnCount()):
+							tableWidget=widget.cellWidget(x,y)
+							recursive_explore_widgets(tableWidget)
+				elif isinstance(widget,QScrollArea):
+					wdg=widget.widget()
+					if wdg:
+						recursive_explore_widgets(wdg)
+						print(1)
+					else:
+						lay=widget.layout()
+						if lay:
+							print(2)
+							recursive_explore_widgets(lay)
+				elif widget.layout():
+					self.recursive_add_events(widget.layout(),connect)
+			#def recursive_explore_widgets(widget):
+		self._debug("Settting events from layout {0} to {1}".format(layout,connect))
+		for idx in range(0,layout.count()):
+			widget=layout.itemAt(idx).widget()
+			if widget:
+				recursive_explore_widgets(widget)
 
-			for idx in range(0,layout.count()):
-				widget=layout.itemAt(idx).widget()
-				if widget:
-					recursive_explore_widgets(widget)
+			elif layout.itemAt(idx).layout():
+				self.recursive_add_events(layout.itemAt(idx).layout(),connect)
+		#recursive_add_events
 
-				elif layout.itemAt(idx).layout():
-					recursive_add_events(layout.itemAt(idx).layout())
+	def showEvent(self,event):
 
 		if self.add_events==False:
 			self.add_events=True
 			layout=self.layout()
 			if layout:
-				recursive_add_events(layout)
+				#self.recursive_add_events(layout,False)
 				box_btns=QHBoxLayout()
 				box_btns.insertStretch(0)
 				self.btn_ok.clicked.connect(self.writeConfig)
@@ -236,6 +316,7 @@ class appConfigStack(QWidget):
 					layout.addLayout(box_btns,Qt.AlignRight)
 				except:
 					layout.addLayout(box_btns,layout.rowCount(),0,1,layout.columnCount())
+				#self.recursive_add_events(layout)
 		self.btn_ok.setEnabled(False)
 		self.btn_cancel.setEnabled(False)
 		try:
@@ -253,7 +334,7 @@ class appConfigStack(QWidget):
 		self.btn_cancel.hide()
 	#def hideControlButtons(self):
 
-	def setChanged(self,state=True):
+	def setChanged(self,state=True,*args):
 		self._debug("State: {}".format(state))
 		self._debug("Force State: {}".format(self.force_change))
 		if isinstance(state,bool)==False:
@@ -267,10 +348,10 @@ class appConfigStack(QWidget):
 		if self.btn_ok.isHidden()==False or self.force_change==True:
 			if self.force_change==True:
 				state=True
-			self.btn_ok.setEnabled(state)
-			self.btn_cancel.setEnabled(state)
 		else:
 			state=False
+		self.btn_ok.setEnabled(state)
+		self.btn_cancel.setEnabled(state)
 		self.changes=state
 		self._debug("New State: {}".format(state))
 	#def setChanged
