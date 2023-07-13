@@ -79,6 +79,9 @@ class leftPanel(QListWidget):
 	#def keyPressEvent
 
 	def _navigate(self,event,item,newItem,row,newRow):
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		oldcursor=self.cursor()
+		self.setCursor(cursor)
 		if isinstance(item,QListWidgetItem):
 			for idx,data in self.stacks.items():
 				if item.text().lower()==data.get("name","").lower():
@@ -99,6 +102,7 @@ class leftPanel(QListWidget):
 				self.refreshConfig.emit()
 		event.accept()
 		self._acceptNavigate(row)
+		self.setCursor(oldcursor)
 	#def _navigate
 
 	def _acceptNavigate(self,row):
