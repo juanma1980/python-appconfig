@@ -131,15 +131,12 @@ class appConfigStack(QWidget):
 
 	def decorator_updateScreen(self,func):
 		def states(*args):
-			self.dbg=True
 			self._debug("Updating screen: Disconnecting signals")
 			layout=self.layout()
 			if layout:
-				print("DBLOCK")
 				self.recursive_add_events(layout,False)
 			func(*args)
 			if layout:
-				print("DUNBLOCK")
 				self.recursive_add_events(layout)
 			self._debug("Updated screen: Connecting signals")
 		return (states)
