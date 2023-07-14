@@ -95,6 +95,7 @@ class leftPanel(QListWidget):
 				event.ignore()
 				self.setCurrentItem(item)
 				self.pendingChange.emit(item,newItem)
+				self.setCursor(oldcursor)
 				return False
 			self.stacks[self.lastIndex]['module'].initScreen()
 			if self.stacks[self.lastIndex]['module'].refresh:
@@ -576,6 +577,9 @@ class appConfigScreen(QWidget):
 
 	def _askForChanges(self,*args):
 		item=self.lst_options.currentItem()
+		cursor=QtGui.QCursor(Qt.WaitCursor)
+		oldcursor=self.lst_options.cursor()
+		self.lst_options.setCursor(cursor)
 		#Update last index
 		if isinstance(item,QListWidgetItem):
 			for idx,data in self.stacks.items():
@@ -586,6 +590,7 @@ class appConfigScreen(QWidget):
 		if isinstance(self.stacks.get(self.last_index,{}).get('module',None),appConfigStack)==True:
 			if self.stacks[self.last_index]['module'].getChanges():
 				if self._save_changes(self.stacks[self.last_index]['module'])==QMessageBox.Cancel:
+					self.lst_options.setCursor(oldcursor)
 					return False
 				else:
 					self.stacks[self.last_index]['module'].setChanged(False)
@@ -599,6 +604,7 @@ class appConfigScreen(QWidget):
 			#self.lst_options.updateIndex(self.last_index)
 		self.lst_options.setCurrentItem(args[1])
 		self.stk_widget.setCurrentIndex(self.lst_options.getIndexForStack())
+		self.lst_options.setCursor(cursor)
 	#def _askForChanges
 
 	def _save_changes(self,module):
