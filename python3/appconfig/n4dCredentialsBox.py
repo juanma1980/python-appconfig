@@ -3,10 +3,10 @@
 #This class creates an authentication dialog against a N4d server using qml n4dAgent
 #Works with both qt and non qt apps
 
-from PySide2.QtWidgets import QDialog,QApplication,QMainWindow
+from PySide2.QtWidgets import QDialog,QApplication,QMainWindow,QGridLayout,QWidget
 from PySide2.QtQuick import QQuickView
 from PySide2.QtQml import QQmlApplicationEngine
-from PySide2.QtCore import Qt,QUrl, QObject, Slot, Signal,QEventLoop
+from PySide2.QtCore import Qt,QUrl, QObject, Slot, Signal,QEventLoop, QSize
 import time
 import os
 import subprocess
@@ -68,6 +68,7 @@ class n4dDialog(QDialog):
 	def loginBox(self,app):
 		self.tickets=[]
 		self.qview = QQuickView()
+		self.qview.setResizeMode(self.qview.SizeRootObjectToView)
 		self._debug("Accesing server: {}".format(self.server))
 		root=self.qview.rootContext()
 		root.setContextProperty("server", str(self.server))
@@ -79,7 +80,7 @@ class n4dDialog(QDialog):
 		root=self.qview.rootObject()
 		qml=self.createWindowContainer(self.qview,self,Qt.FramelessWindowHint)
 		self._debug("Container ready")
-		qml.setMinimumSize(400, 400)
+		qml.setFixedSize(self.qview.sizeHint())
 		qml.show()
 		if app:
 			self._debug("Container ready")
