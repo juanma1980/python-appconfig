@@ -4,7 +4,7 @@ import time
 import json
 from PySide2.QtWidgets import QApplication
 from PySide2.QtQuick import QQuickView
-from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property,QThread
+from PySide2.QtCore import QUrl,QObject, Slot, Signal, Property
 from PySide2.QtQuick import QQuickView
 import base64
 import os,subprocess,sys
@@ -64,36 +64,8 @@ class appConfigN4d(QObject):
 	#def error
 
 	def writeConfig(self,n4dparms):
-		#OLD CODE. Call to _execAction it's unnnecessary so we can delete
-		#all this ugly code
+		#DEPRECATED
 		self.retval=True
-		return(self.retval)
-		self.n4dMethod="set_variable"
-		tmp=n4dparms.split(",")
-		parms=tmp[1:]
-		#Empty the variable data
-		self.varName=tmp[0].upper()
-		self.varData="{}"
-		self.retval=self._execAction(auth=True).get('status',False)
-		#On error create variable
-		if self.retval!=True:
-			self.error("Ret: %s"%self.retval)
-			self._debug("Adding non existent variable")
-			tmp=[]
-			tmp=n4dparms.split(",")
-			self.varData=self.varData+"\",\"%s configuration\","%self.varName
-			self.varData=self.varData+"\"stores %s configuration"%self.varName
-			self.n4dMethod="add_variable"
-			self._execAction(auth=True)
-		#Else put the value
-		else:
-			self.varData=",".join(tmp[1:])
-			self.varDepends=[]
-			self._execAction(auth=True)
-		if self.retval==0:
-			self.retval=True
-		self.varName=''
-		################# -> And all is all. Call to nd4client.set_variable it's enough
 		return(self.retval)
 	#def writeConfig
 	
