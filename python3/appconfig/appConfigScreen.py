@@ -552,6 +552,7 @@ class appConfigScreen(QWidget):
 		if gotoIdx:
 			idx=gotoIdx
 		self.stk_widget.setCurrentIndex(idx)
+		self.lst_options.setCurrentRow(idx-1)
 	#def _show_stack
 
 	def closeEvent(self,event):
@@ -608,8 +609,8 @@ class appConfigScreen(QWidget):
 	#def _askForChanges
 
 	def _save_changes(self,module):
-		dia=QMessageBox(QMessageBox.Question,_("Apply changes"),_("There're changes not saved at current screen.\nDiscard them and continue?"),QMessageBox.Discard|QMessageBox.Cancel,self)
-		resp=dia.exec()
+		dlg=QMessageBox(QMessageBox.Question,_("Apply changes"),_("There're changes not saved at current screen.\nDiscard them and continue?"),QMessageBox.Discard|QMessageBox.Cancel,self)
+		resp=dlg.exec()
 		return(resp)
 	#def _save_changes
 
