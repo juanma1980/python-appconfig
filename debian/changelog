@@ -1,0 +1,333 @@
+python3-appconfig (0.49) focal-updates; urgency=medium
+
+  * Improve event management
+
+ -- Juanma1980 <juanma1980@gmail.com>  Mon, 24 Jul 2023 11:51:27 +0200
+
+python3-appconfig (0.48.1) focal; urgency=medium
+
+  * Improved carrousel
+  * If there's no banner remove assigned space (fit window to contents)
+  * If there's no system config try to load the user's one
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 14 Jun 2023 11:39:50 +0200
+
+python3-appconfig (0.46) focal; urgency=medium
+
+  * Add support for events inside QScrollArea
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 22 Feb 2023 13:07:06 +0100
+
+python3-appconfig (0.45) focal; urgency=medium
+
+  * Translate item names to item idx for improved detection of changes
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 14 Feb 2023 10:26:00 +0100
+
+python3-appconfig (0.44.4) focal; urgency=medium
+
+  *	Add setWindowTitle method 
+  * Fix "undo" translation
+  * Fix dbus exception when notifying more than once at a time
+  * Clean all threads before close/destroy (QScreenShotContainer)
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 11 Jan 2023 09:39:26 +0100
+
+python3-appconfig (0.43.4) focal; urgency=medium
+
+  * Add new control QCheckableComboBox
+  * Add navigation buttons to QTouchTableWidget
+
+ -- Juanma1980 <juanma1980@gmail.com>  Mon, 09 Jan 2023 16:39:18 +0100
+
+python3-appconfig (0.42.8) lliurex22; urgency=medium
+
+  * Improve changes detection when navigating through stacks
+  * Unset all fixed sizes for widgets
+  * leftPanel sets it's own size
+  * Improve i18n
+
+ -- Juanma1980 <juanma1980@gmail.com>  Mon, 14 Nov 2022 12:37:16 +0100
+
+python3-appconfig (0.41.8.2) lliurex22; urgency=medium
+
+  * Add force_change for controlling buttons states
+  * Traceback exceptions in updateScreen
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 09 Sep 2022 11:21:00 +0200
+
+python3-appconfig (0.41.7) lliurex22; urgency=medium
+
+  * Add new controls 
+  *  QScreenShotContainer
+  *  QTouchTableWidget
+  *  QSearchBox
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 28 Jun 2022 14:13:33 +0200
+
+python3-appconfig (0.40.1) focal; urgency=medium
+
+  * Add new module with custom widgets
+  * Fix set parms on gotoStack
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 01 Jun 2022 10:50:50 +0200
+
+python3-appconfig (0.36.5) focal; urgency=medium
+
+  * Improve navigation
+  * Fix combobox setChange detection
+  * Fix checkbox setChange detection
+  * Set higher minimum height for n4dcredentialsbox
+  * Remove font sizes from css
+  * Allow accept/undo to be resized and disable/disable from stack own writeConfig
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 11 Feb 2022 13:13:26 +0100
+
+python3-appconfig (0.35.2.1) focal-updates; urgency=medium
+
+  * Remove "options" from navbar
+  * Fix: Hide description in menu for invisible stacks
+  * Add keypress to navbar
+  * QSlider support
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 21 Dec 2021 11:42:51 +0100
+
+python3-appconfig (0.34.3) focal-updates; urgency=medium
+
+  * Fix polkit auth
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 10 Dec 2021 21:16:51 +0100
+
+python3-appconfig (0.34.2.1) focal-updates; urgency=medium
+
+  * Add auth by key
+  * Add auth by local ticket
+  * When no DISPLAY cancel login dialog
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 26 Nov 2021 18:53:49 +0100
+
+python3-appconfig (0.31.5) focal; urgency=medium
+
+  * Merged with 7be6d6b9e8fe9b6fed2ae1892b123c129969b5a6 commit of edupals component login
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 31 Aug 2021 11:14:45 +0200
+
+python3-appconfig (0.31.4) focal; urgency=medium
+
+  * Add compatibility with non-qt apps
+  * Fix register issues
+  * Add valencian translations
+  * Fix textdomain on first stack loaded
+  * Added set_variable from n4d as n4dSetVar method
+  * Added delete_variable from n4d as n4dDelVar method
+  * Improve look and feel
+  * i18n support
+  * Return n4d retun message description to client
+  * Hide navigation when menu when there's only one stack
+  * BUGFIX Only go to "options" stack when there's more than one stack
+  * Create new connection with server only if server ip changes
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 27 May 2021 09:22:40 +0200
+
+python3-appconfig (0.30.3) focal; urgency=medium
+
+  * n4dCredentials as new module implementing n4d-agent
+  * Added get_variable from n4d as n4dGetVar method
+  * Register with both remote and local servers
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 13 May 2021 19:40:45 +0200
+
+python3-appconfig (0.29.10) focal; urgency=medium
+
+  * first focal release
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 19 Jan 2021 11:50:39 +0100
+
+python3-appconfig (0.28) bionic; urgency=medium
+
+  * Add forceserver directive to n4d config
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 02 Dec 2020 09:19:33 +0100
+
+python3-appconfig (0.27.3) bionic; urgency=medium
+
+  * When using n4d set localhost as server when there's no other known machine
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Tue, 04 Aug 2020 13:38:34 +0100
+
+python3-appconfig (0.27.2) bionic; urgency=medium
+
+  * Updated translations
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 15 Jun 2020 08:45:44 +0200
+
+python3-appconfig (0.27) bionic; urgency=medium
+
+  * Fix depends
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Wed, 10 Jun 2020 10:18:04 +0200
+
+python3-appconfig (0.26) bionic; urgency=medium
+
+  * Error control for gettext
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 13 Feb 2020 13:19:40 +0100
+
+python3-appconfig (0.25) bionic; urgency=medium
+
+  * Improved setIcon method
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 12 Feb 2020 11:51:53 +0100
+
+python3-appconfig (0.24) bionic; urgency=medium
+  
+  * Disable debug
+  * Add method for hide control buttons
+  * Remove n4d config file
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 16 Jan 2020 12:31:36 +0100
+
+python3-appconfig (0.20) bionic; urgency=medium
+
+  * configScreen shows a wiki link if there's a wiki page of the app
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 16 Jan 2020 10:57:30 +0100
+
+python3-appconfig (0.19) bionic; urgency=medium
+
+  * Show links at main screen
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 15 Jan 2020 13:37:42 +0100
+
+python3-appconfig (0.18) bionic; urgency=medium
+
+  * Improved n4d workflow
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 15 Jan 2020 09:00:29 +0100
+
+python3-appconfig (0.17) bionic; urgency=medium
+
+  * Fix returned status
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 17 Dec 2019 13:09:12 +0100
+
+python3-appconfig (0.16) bionic; urgency=medium
+
+  * Fix return status when n4d call fails for any reason
+
+ -- Juanma1980 <juanma1980@gmail.com>  Mon, 16 Dec 2019 12:55:41 +0100
+
+python3-appconfig (0.15) bionic; urgency=medium
+
+  * Implemented visible option for stacks
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 12 Dec 2019 14:15:19 +0100
+
+python3-appconfig (0.14) bionic; urgency=medium
+
+  * On login error shake the window
+
+ -- Juanma1980 <juanma1980@gmail.com>  Wed, 11 Dec 2019 13:56:20 +0100
+
+python3-appconfig (0.13) bionic; urgency=medium
+
+  * Ask for pending changes on exit
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 10 Dec 2019 14:41:57 +0100
+
+python3-appconfig (0.12) bionic; urgency=medium
+
+  * Reworkd messaging system
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 10 Dec 2019 14:20:48 +0100
+
+python3-appconfig (0.11) bionic; urgency=medium
+
+  * Mask text password on n4d dialog
+
+ -- Juanma1980 <juanma1980@gmail.com>  Mon, 09 Dec 2019 10:24:14 +0100
+
+python3-appconfig (0.10) bionic; urgency=medium
+
+  * Change appply changes question
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 05 Dec 2019 14:28:40 +0100
+
+python3-appconfig (0.9) bionic; urgency=medium
+
+  * Add decorator for writeConfig function
+  * Accept 0 as True from N4d
+
+ -- Juanma1980 <juanma1980@gmail.com>  Thu, 05 Dec 2019 13:04:55 +0100
+
+python3-appconfig (0.8) bionic; urgency=medium
+
+  * Add translations support
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Thu, 28 Nov 2019 14:29:07 +0100
+
+python3-appconfig (0.7.1) bionic; urgency=medium
+
+  * Add busy cursors when needed
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 18 Nov 2019 14:57:12 +0100
+
+python3-appconfig (0.7) bionic; urgency=medium
+
+  * Add initScreen method for initialize screen values
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 18 Nov 2019 12:03:11 +0100
+
+python3-appconfig (0.6) bionic; urgency=medium
+
+  * AppConfigStack method getConfig accepts level as parameter
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Mon, 14 Oct 2019 11:32:14 +0200
+
+python3-appconfig (0.5.3) bionic; urgency=medium
+
+  * Fix config key when configuration file is empty
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 11 Oct 2019 13:02:11 +0200
+
+python3-appconfig (0.5.2) bionic; urgency=medium
+
+  * Fix config key not present in config file
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 11 Oct 2019 10:17:12 +0200
+
+python3-appconfig (0.5.1) bionic; urgency=medium
+
+  * Fix no layout in screen
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Tue, 08 Oct 2019 11:28:43 +0200
+
+python3-appconfig (0.5) bionic; urgency=medium
+
+  * Fix no config fouund for n4d
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 04 Oct 2019 09:57:48 +0200
+
+python3-appconfig (0.4) bionic; urgency=medium
+
+  * Get the current script path
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 04 Oct 2019 09:24:54 +0200
+
+python3-appconfig (0.3.1) bionic; urgency=medium
+
+  * RC 1
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Thu, 03 Oct 2019 15:36:52 +0200
+
+python3-appconfig (0.2) bionic; urgency=medium
+
+  * Add config screen
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 30 Aug 2019 14:59:08 +0200
+
+python3-appconfig (0.1) bionic; urgency=medium
+
+  * Initial release. 
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Wed, 03 Apr 2019 16:37:19 +0200

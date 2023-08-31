@@ -1,0 +1,27 @@
+[
+    {
+        "cmd": "/usr/share/appconfig/auth/appconfig-polkit-helper.py",
+        "prefix": "net.lliurex.appconfig-polkit-helper",
+        "nameaction": "appconfig-polkit-helper",
+        "icon": "appconfig",
+        "auths": [
+            {
+                "type": "group",
+                "members": [
+                    "teachers",
+                    "sudo",
+					"adm"
+                ],
+                "any": "no",
+                "inactive": "no",
+                "active": "auth_self_keep"
+            }
+        ],
+        "default_auth": {
+            "any": "no",
+            "inactive": "no",
+            "active": "no"
+        },
+        "requiredx": "false"
+    }
+]
