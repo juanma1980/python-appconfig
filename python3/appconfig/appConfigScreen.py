@@ -552,7 +552,8 @@ class appConfigScreen(QWidget):
 		if gotoIdx:
 			idx=gotoIdx
 		self.stk_widget.setCurrentIndex(idx)
-		self.lst_options.setCurrentRow(idx-1)
+		if self.hideLeftPanel==False:
+		    self.lst_options.setCurrentRow(idx-1)
 	#def _show_stack
 
 	def closeEvent(self,event):
