@@ -19,7 +19,7 @@ class appConfigStack(QWidget):
 	requestWindowTitle=Signal(str)
 	def __init__(self,stack):
 		super().__init__()
-		self.dbg=False
+		self.dbg=True
 		self.default_icon='shell'
 		self.menu_description=(_("Configure stack"))
 		self.description=(_("Configure custom stack"))
@@ -92,7 +92,7 @@ class appConfigStack(QWidget):
 				self.level=data['system'].get('config','user')
 				if self.level!='system':
 					data=self.appConfig.getConfig(self.level,exclude)
-					level=data[self.level].get('config','n4d')
+					level=data[self.level].get('config','user')
 					if level!=self.level:
 						self.level=level
 						data=self.appConfig.getConfig(level,exclude)
