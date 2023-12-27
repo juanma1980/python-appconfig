@@ -19,7 +19,7 @@ class appConfigStack(QWidget):
 	requestWindowTitle=Signal(str)
 	def __init__(self,stack):
 		super().__init__()
-		self.dbg=True
+		self.dbg=False
 		self.default_icon='shell'
 		self.menu_description=(_("Configure stack"))
 		self.description=(_("Configure custom stack"))
