@@ -13,12 +13,13 @@ class appConfig():
 		self.confFile="appconfig.conf"
 		self.home=os.environ.get('HOME',"/usr/share/{}".format(self.confFile.split('.')[0]))
 		self.localConf=self.confFile
-		self.n4dConf="n4d-%s"%self.confFile
+		self.n4dConf="n4d-{}".format(self.confFile)
 		self.baseDirs={"user":"{}/.config".format(self.home),"system":"/usr/share/{}".format(self.confFile.split('.')[0]),"n4d":"/usr/share/{}".format(self.confFile.split('.')[0])}
 		self.config={'user':{},'system':{},'n4d':{}}
 		self.n4dcredentials=[]
 		self.server="172.20.9.174"
 		self.n4d=appConfigN4d()
+		self._debug("Init")
 	#def __init__
 
 	def _debug(self,msg):
