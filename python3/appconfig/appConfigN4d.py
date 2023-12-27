@@ -20,12 +20,6 @@ QString=type("")
 N4D=True
 import n4d.client 
 import n4d.responses
-#try:
-#	import xmlrpc.client as n4d
-#except ImportError:
-#	raise ImportError("xmlrpc not available. Disabling server queries")
-#	N4D=False
-#import ssl
 USERNOTALLOWED_ERROR=-10
 
 class appConfigN4d(QObject):
@@ -40,9 +34,6 @@ class appConfigN4d(QObject):
 		self.key=''
 		self.username=username
 		self.password=password
-#		if self.username=='':
-#			self.password=''
-#			self.username=getpass.getuser() 
 		self.query=''
 		self.n4dClass="VariablesManager"
 		self.n4dMethod=''
@@ -79,7 +70,6 @@ class appConfigN4d(QObject):
 		self.varDepends=[]
 		self.n4dParms=n4dparms
 		self.n4dMethod="get_variable"
-		#ret=self._execAction(auth=False)
 		try:
 			ret=self.n4dClient.get_variable(self.varName)
 		except:
@@ -216,7 +206,7 @@ class appConfigN4d(QObject):
 		except n4d.client.InvalidServerResponseError as e:
 			self._debug("Response: {}".format(e))
 		except Exception as e:
-			print('Error: {}'.format(e))
+			self._debug('Error: {}'.format(e))
 		self._debug("N4d response: {}".format(result))
 		return(result)
 	#def n4dQuery(self,n4dclass,n4dmethod,*args):
@@ -307,7 +297,7 @@ class appConfigN4d(QObject):
 			else:
 				result=proxy.call()
 		except Exception as e:
-			print(e)
+			self._debug(e)
 			raise e
 		self._debug("Launch Result: {}".format(result))
 		return result
