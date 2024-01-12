@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import sys
 import os
+import importlib
+import inspect
 from urllib.request import Request,urlopen,urlretrieve
 import traceback
 from pathlib import Path
@@ -13,6 +15,7 @@ from PySide2 import QtGui
 from PySide2.QtCore import QSize,Slot,Qt, QPropertyAnimation,QThread,QRect,QTimer,Signal,QSignalMapper,QProcess,QEvent,QModelIndex,QRect
 from appconfig.appConfig import appConfig 
 from appconfig.appConfigStack import appConfigStack
+import tokenize
 
 import gettext
 try:
@@ -171,6 +174,7 @@ class appConfigScreen(QWidget):
 		self.hideLeftPanel=False
 		self.setAttribute(Qt.WA_DeleteOnClose, True)
 		self.config={}
+		self._debug("Init screen")
 	#def init
 	
 	def _debug(self,msg):
@@ -297,73 +301,72 @@ class appConfigScreen(QWidget):
 		self._debug("Read level from config: {}".format(level))
 		return (data)
 	#def getConfig(self,level):
-
-	def Show(self):
+	
+	def _importStacks(self):
 		if self.config=={}:
 			self.getConfig()
 		self.setStyleSheet(self._define_css())
-		if os.path.isdir("stacks"):
-			for mod in os.listdir("stacks"):
-				if mod.endswith(".py"):
-					mod_name=mod.split(".")[0]
-					mod_import="from stacks.{0} import {0}".format(mod_name)
-					try:
-						exec(mod_import)
-						self.modules.append(mod_name)
-						self._debug("Load stack {}".format(mod_name))
-					except Exception as e:
-						self._debug("Unable to load {0} (perhaps aux lib): {1}".format(mod_name,str(e).split("(")[0]))
-						if isinstance(e,SyntaxError):
-							traceback.print_exc()
-#						print("Unable to load %s: %s"%(mod_name,e))
-		idx=1
-		for mod_name in self.modules:
-			try:
-				mod=eval("{}(self)".format(mod_name))
-			except Exception as e:
-#				self._debug("Import failed for %s: %s"%(mod_name,e))
-				print("Import failed for {0}: {1}".format(mod_name,e))
-				continue
-			if type(mod.index)==type(0):
-				if mod.index>0:
-					idx=mod.index
-			try:
-				if mod.enabled==False:
+		if os.path.isdir("stacks")==False:
+			return
+			#sys.path.insert(1,"stacks")
+		for plugin in os.scandir("stacks"):
+			if plugin.path.endswith(".py") and os.path.basename(plugin.path)!='__init__.py':
+				module=plugin.path.replace(".py","").replace("/",".")
+				try:
+					spec = importlib.util.spec_from_file_location(module,plugin.path )
+					module = importlib.util.module_from_spec(spec)
+				except Exception as e:
+					self._debug("Unable to load {0} (perhaps aux lib): {1}".format(module,str(e)))
+					#traceback.print_exc()
 					continue
-			except:
-				pass
+				try:
+					spec.loader.exec_module(module)
+				except Exception as e:
+					print("DISCARD {}: {}".format(module,e))
+					continue
+				for moduleClass in inspect.getmembers(module, predicate=inspect.isclass):
+					if str(moduleClass[0]).lower() in module.__name__.lower():
+						module=moduleClass[1]
+						try:
+							self.modules.append(module(self))
+						except Exception as e:
+							self._debug("Unable to imort {0}: {1}".format(module,str(e)))
+							#traceback.print_exc()
+	#def _importStacks(self):
+
+	def Show(self):
+		self._importStacks()
+		idx=1
+		for module in self.modules:
+			if hasattr(module,"__dict__")==False:
+				self._debug("Unable to process {}".format(module))
+				continue
+			if isinstance(module.index,int):
+				if module.index>0:
+					idx=module.index
+			if hasattr(module,"enabled"):
+				if module.enabled==False:
+					continue
 			while idx in self.stacks.keys():
 				idx+=1
-				self._debug("New idx for {}: {}".format(mod_name,idx))
-			if 'parm' in mod.__dict__.keys():
+				self._debug("New idx for {}: {}".format(module,idx))
+			if 'parm' in module.__dict__.keys():
 				try:
-					if mod.parm:
-						self._debug("Setting parms for {}".format(mod_name))
-						self._debug("self.parms['{}']".format(mod.parm))
-						mod.apply_parms(eval("self.parms['{}']".format(mod.parm)))
+					if module.parm:
+						self._debug("Setting parms for {}".format(module))
+						self._debug("self.parms['{}']".format(module.parm))
+						mod.apply_parms(eval("self.parms['{}']".format(module.parm)))
 				except Exception as e:
-					self._debug("Failed to pass parm {0} to {1}: {2}".format(mod.parm,mod_name,e))
-			try:
-				mod.setTextDomain(self.textDomain)
-			except Exception as e:
-				print("Can't set textdomain for {}: {}".format(mod_name,e))
-			try:
-				mod.setAppConfig(self.appConfig)
-			except Exception as e:
-				print("Can't set appConfig for {}: {}".format(mod_name,e))
-			try:
-				if mod.visible==False:
+					self._debug("Failed to pass parm {0} to {1}: {2}".format(module.parm,module,e))
+			module.setTextDomain(self.textDomain)
+			module.setAppConfig(self.appConfig)
+			visible=True
+			if hasattr(module,"visible"):
+				if module.visible==False:
 					visible=False
-				else:
-					visible=True
-			except:
-				visible=True
-			self.stacks[idx]={'name':mod.description,'icon':mod.icon,'tooltip':mod.tooltip,'module':mod,'visible':visible}
-			try:
-				#mod.message.connect(self._show_message)
-				mod.requestWindowTitle.connect(self._requestWindowTitle)
-			except:
-				pass
+			self.stacks[idx]={'name':module.description,'icon':module.icon,'tooltip':module.tooltip,'module':module,'visible':visible}
+			#mod.message.connect(self._show_message)
+			module.requestWindowTitle.connect(self._requestWindowTitle)
 		self._render_gui()
 		return(False)
 	#def Show
@@ -444,7 +447,6 @@ class appConfigScreen(QWidget):
 				if self.stacks[index].get('visible',True)==True:
 					self.lst_options.addItem(orderedStacks[cont]['widget'])
 				cont+=1
-
 		self.stacks=orderedStacks.copy()
 		box.addWidget(self.lst_options)
 		self.lst_options.acceptChange.connect(self._show_stack)
@@ -454,7 +456,6 @@ class appConfigScreen(QWidget):
 		self.last_index=0
 		self.lst_options.updateIndex(self.last_index)
 		panel.setLayout(box)
-
 		return(panel)
 	#def _left_panel
 
@@ -552,6 +553,8 @@ class appConfigScreen(QWidget):
 		if gotoIdx:
 			idx=gotoIdx
 		self.stk_widget.setCurrentIndex(idx)
+		if self.hideLeftPanel==False:
+		    self.lst_options.setCurrentRow(idx-1)
 	#def _show_stack
 
 	def closeEvent(self,event):
@@ -608,8 +611,8 @@ class appConfigScreen(QWidget):
 	#def _askForChanges
 
 	def _save_changes(self,module):
-		dia=QMessageBox(QMessageBox.Question,_("Apply changes"),_("There're changes not saved at current screen.\nDiscard them and continue?"),QMessageBox.Discard|QMessageBox.Cancel,self)
-		resp=dia.exec()
+		dlg=QMessageBox(QMessageBox.Question,_("Apply changes"),_("There're changes not saved at current screen.\nDiscard them and continue?"),QMessageBox.Discard|QMessageBox.Cancel,self)
+		resp=dlg.exec()
 		return(resp)
 	#def _save_changes
 

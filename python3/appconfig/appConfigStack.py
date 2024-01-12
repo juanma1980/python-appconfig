@@ -78,6 +78,7 @@ class appConfigStack(QWidget):
 	def getConfig(self,level=None,exclude=[]):
 		self._debug("Getting config for level {}".format(level))
 		self._debug("Exclude keys: {}".format(exclude))
+		oldcursor=self.cursor()
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
 		data={'system':{},'user':{},'n4d':{}}
@@ -92,7 +93,7 @@ class appConfigStack(QWidget):
 				self.level=data['system'].get('config','user')
 				if self.level!='system':
 					data=self.appConfig.getConfig(self.level,exclude)
-					level=data[self.level].get('config','n4d')
+					level=data[self.level].get('config','user')
 					if level!=self.level:
 						self.level=level
 						data=self.appConfig.getConfig(level,exclude)
@@ -102,8 +103,7 @@ class appConfigStack(QWidget):
 				data[self.level]=self.config[self.level].copy()
 		self._debug("Read level from config: {}".format(self.level))
 		self.refresh=False
-		cursor=QtGui.QCursor(Qt.PointingHandCursor)
-		self.setCursor(cursor)
+		self.setCursor(oldcursor)
 		return (data)
 	#def get_default_config
 
@@ -150,6 +150,7 @@ class appConfigStack(QWidget):
 	#def updateScreen
 
 	def saveChanges(self,key,data,level=None):
+		oldcursor=self.cursor()
 		cursor=QtGui.QCursor(Qt.WaitCursor)
 		self.setCursor(cursor)
 		retval=False
@@ -165,13 +166,13 @@ class appConfigStack(QWidget):
 			self.changes=True
 			retval=False
 			self.showMsg(_("Not enough permissions. Operation failed"))
-		cursor=QtGui.QCursor(Qt.PointingHandCursor)
-		self.setCursor(cursor)
+		self.setCursor(oldcursor)
 		return retval
 	#def saveChanges
 	
 	def decorator_writeConfig(self,func):
 		def states():
+			oldcursor=self.cursor()
 			cursor=QtGui.QCursor(Qt.WaitCursor)
 			self.setCursor(cursor)
 			self.setEnabled(False)
@@ -181,8 +182,7 @@ class appConfigStack(QWidget):
 			self.setEnabled(True)
 			self.btn_ok.setEnabled(False)
 			self.btn_cancel.setEnabled(False)
-			cursor=QtGui.QCursor(Qt.PointingHandCursor)
-			self.setCursor(cursor)
+			self.setCursor(oldcursor)
 		return states
 	#def decorator_writeConfig
 
