@@ -27,6 +27,11 @@ class appConfig():
 			print("Config: {}".format(msg))
 	#def _debug
 
+	def setConfig(self,confDirs,confFile):
+		self.set_baseDirs(confDirs)
+		self.set_configFile(confFile)
+	#def setConfig
+
 	def set_baseDirs(self,dirs):
 		self.baseDirs=dirs.copy()
 		if 'nd4' not in self.baseDirs.keys():
@@ -60,8 +65,12 @@ class appConfig():
 #		self._debug(self.config)
 	#def set_defaultConfig
 
-	def set_level(self,level):
+	def setLevel(self,level):
 		self.level=level
+	#def setLevel
+
+	def set_level(self,level):
+		self.setLevel(level)
 #		if level=='n4d':
 #			self.confFile=self.n4dConf
 #		else:
@@ -132,6 +141,15 @@ class appConfig():
 		return fileRead
 
 	#def read_config_from_system
+
+	def saveChanges(self,key,data,level=None):
+		retval=False
+		if not level:
+			self.getConfig()
+			level=self.level
+		self._debug("Saving to level {}".format(level))
+		return(self.write_config(data,level=level,key=key))
+	#def saveChanges
 
 	def write_config(self,data,level=None,key=None,pk=None,create=True):
 		self._debug("Writing key {0} to {1} Polkit:{2}".format(key,level,pk))
