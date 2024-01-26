@@ -652,10 +652,6 @@ class appConfigScreen(QWidget):
 			background-repeat:no-repeat;
 			background-position:center;
 		}
-		#desc{
-			background-color:rgba(255,255,255,0.7);
-			color:black;
-		}
 		#banner{
 			padding:1px;
 			margin:1px;
