@@ -1,3 +1,9 @@
+python3-appconfig (0.51) focal; urgency=medium
+
+  * backport from jammy
+
+ -- Juanma1980 <juanma1980@gmail.com>  Sat, 17 Feb 2024 10:18:45 +0100
+
 python3-appconfig (0.50) focal; urgency=medium
 
   * Improve stacks import
