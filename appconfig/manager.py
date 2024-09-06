@@ -58,7 +58,7 @@ class manager():
 
 	def _readJsonFile(self):
 		fcontent={}
-		path=os.path.join(self.basePaths.get(self.level),self.path)
+		path=os.path.join(self.basePaths.get(self.level),self.relativepath)
 		self._debug("Reading JSON {}".format(path))
 		if os.path.exists(path):
 			with open(path,"r") as f:
@@ -85,7 +85,7 @@ class manager():
 	#def writeConfig
 
 	def _writeJsonFile(self,data):
-		path=os.path.join(self.basePaths.get(self.level),self.path)
+		path=os.path.join(self.basePaths.get(self.level),self.relativepath)
 		if os.path.exists(os.path.dirname(path))==False:
 			os.makedirs(os.path.dirname(path))
 		self._debug("Writing JSON {}".format(path))
