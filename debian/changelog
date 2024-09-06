@@ -1,3 +1,10 @@
+python3-appconfig (0.99) jammy; urgency=medium
+
+  * Noble release
+  * Remove all legacy code
+
+ -- Juanma1980 <juanma1980@gmail.com>  Fri, 06 Sep 2024 10:53:01 +0200
+
 python3-appconfig (0.51.1) jammy; urgency=medium
 
   * Improve stacks import
