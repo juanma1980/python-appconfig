@@ -26,7 +26,7 @@ class manager():
 		else:
 			relativepath="appconfig"
 		if name=="":
-			self.fname="appconfig.{}".format(self.formats[self.currentFormat])
+			self.fname="{}.{}".format(os.path.basename(relativepath),self.formats[self.currentFormat])
 		else:
 			self.fname=name
 		self.relativepath=os.path.join(relativepath,self.fname)
