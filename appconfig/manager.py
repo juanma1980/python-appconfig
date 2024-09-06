@@ -17,10 +17,9 @@ class manager():
 		if relativepath!="":
 			if os.path.exists(relativepath)==False:
 				if relativepath.endswith("/")==False:
-					if "." in path.split("/")[-1]==True:
+					if "." in relativepath.split("/")[-1]==True:
 						relativepath=os.path.dirname(relativepath)
-					path=path+"/"
-				os.makedirs(path)
+					relativepath=relativepath+"/"
 			elif os.path.isdir(relativepath)==False:
 				relativepath=os.path.dirname(relativepath)
 				name=os.path.basename(relativepath)
@@ -30,7 +29,7 @@ class manager():
 			self.fname="appconfig.{}".format(self.formats[self.currentFormat])
 		else:
 			self.fname=name
-		self.path=os.path.join(relativepath,self.fname)
+		self.relativepath=os.path.join(relativepath,self.fname)
 		if level=="":
 			level="user"
 		self.level=level
