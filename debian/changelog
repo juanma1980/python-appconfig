@@ -1,4 +1,4 @@
-python3-appconfig (0.99) jammy; urgency=medium
+python3-appconfig (0.99) noble; urgency=medium
 
   * Noble release
   * Remove all legacy code
