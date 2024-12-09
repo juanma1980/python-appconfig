@@ -12,7 +12,7 @@ class manager():
 		idx=0
 		if fileformat!="":
 			if fileformat in self.formats:
-				idx=self.formats.index(fileFormat)
+				idx=self.formats.index(fileformat)
 		self.currentFormat=idx
 		if relativepath!="":
 			if os.path.exists(relativepath)==False:
